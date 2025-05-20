@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.petcaremanagerproject.Controladores.AsignarVideojuegoControlador"
+            prefHeight="600.0" prefWidth="800.0" stylesheets="@css/general.css">
+
+    <VBox alignment="CENTER" spacing="20" AnchorPane.topAnchor="0.0" 
+          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" 
+          AnchorPane.rightAnchor="0.0">
+
+        <ImageView>
+            <Image url="@imagenes/7.png"/>
+        </ImageView>
+
+        <HBox spacing="20" alignment="CENTER">
+            <!-- Tabla de Videojuegos -->
+            <VBox spacing="10">
+                <TableView fx:id="tablaVideojuegos" prefHeight="200.0" prefWidth="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdVideojuego" text="ID" prefWidth="75.0"/>
+                        <TableColumn fx:id="colNombreVideojuego" text="Nombre" prefWidth="224.0"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <!-- Tabla de Programadores -->
+            <VBox spacing="10">
+                <TableView fx:id="tablaProgramadores" prefHeight="200.0" prefWidth="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdProgramador" text="ID" prefWidth="75.0"/>
+                        <TableColumn fx:id="colNombreProgramador" text="Nombre" prefWidth="224.0"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </HBox>
+
+        <!-- Fechas -->
+        <HBox spacing="20" alignment="CENTER">
+            <VBox spacing="10" alignment="CENTER">
+                <Label text="Fecha Inicio"/>
+                <DatePicker fx:id="fechaInicio"/>
+            </VBox>
+
+            <VBox spacing="10" alignment="CENTER">
+                <Label text="Fecha Final"/>
+                <DatePicker fx:id="fechaFinal"/>
+            </VBox>
+        </HBox>
+
+        <!-- Botones -->
+        <HBox spacing="20" alignment="CENTER">
+            <Button text="Asignar" onAction="#asignarOnAction">
+                <graphic>
+                    <ImageView>
+                        <Image url="@imagenes/add.png"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button text="Salir" onAction="#salirOnAction">
+                <graphic>
+                    <ImageView>
+                        <Image url="@imagenes/exit.png"/>
+                    </ImageView>
+                </graphic>
+            </Button>
+        </HBox>
+
+    </VBox>
+</AnchorPane>
