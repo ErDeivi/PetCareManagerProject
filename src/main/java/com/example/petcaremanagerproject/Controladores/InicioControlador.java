@@ -5,12 +5,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.text.Text;
+import org.mindrot.jbcrypt.BCrypt;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class InicioControlador {
@@ -21,26 +17,16 @@ public class InicioControlador {
     @FXML
     private Text textoUsuario,textoContrasena,errorInicio;
 
+    // Aquí almacenaremos el hash de la contraseña del administrador
+    // DEBES REEMPLAZAR ESTO CON EL HASH REAL GENERADO POR TI
+    private static final String ADMIN_PASSWORD_HASH = "$2a$10$HAhys42b0nQjLSTB.rQ48u5kvMnw93tGhMl7Nt7PMN8hAqcTsJbK6"; // <<< REEMPLAZAR CON EL HASH BCrypt
+    private static final String ADMIN_USER = "admin";
+
     @FXML
     public void initialize() {
         textoUsuario.setVisible(false);
         textoContrasena.setVisible(false);
         errorInicio.setVisible(false);
-        try {
-            if (!credencialesExisten()) {
-                escribirCredenciales("admin", "12345");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private boolean credencialesExisten() {
-        try (DataInputStream dis = new DataInputStream(new FileInputStream("credenciales.bin"))) {
-            return dis.available() > 0;
-        } catch (IOException e) {
-            return false;
-        }
     }
 
     @FXML
@@ -65,38 +51,24 @@ public class InicioControlador {
             return;
         }
 
-        try {
-            if (validarCredenciales(usuarioText, contrasenaText)) {
-                App.setRoot("menuAdmin");
-            } else {
-                errorInicio.setVisible(true);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            errorInicio.setText("Error del sistema: No se pudo verificar las credenciales");
+        // La lógica de validación se implementará aquí usando BCrypt
+        if (validarCredenciales(usuarioText, contrasenaText)) {
+            App.setRoot("menuAdmin"); // Asumimos que el admin va al menuAdmin
+        } else {
+            errorInicio.setText("Usuario o contraseña incorrectos");
             errorInicio.setVisible(true);
         }
     }
 
-    private boolean validarCredenciales(String usuario, String password) throws IOException {
-        try (DataInputStream dis = new DataInputStream(new FileInputStream("credenciales.bin"))) {
-            while (dis.available() > 0) {
-                String usuarioArchivo = dis.readUTF();
-                String passwordArchivo = dis.readUTF();
-                
-                if (usuarioArchivo.equals(usuario) && passwordArchivo.equals(password)) {
-                    return true;
-                }
-            }
-        } catch (EOFException e) {
+    private boolean validarCredenciales(String usuarioIngresado, String passwordIngresada) {
+        // Verificar si el usuario ingresado es el admin y si la contraseña coincide con el hash
+        if (ADMIN_USER.equals(usuarioIngresado)) {
+            // Usar BCrypt.checkpw para comparar la contraseña ingresada con el hash almacenado
+            // Esto es seguro porque maneja el 'salt' automáticamente desde el hash.
+            return BCrypt.checkpw(passwordIngresada, ADMIN_PASSWORD_HASH);
         }
+        // Si el usuario no es el admin, o si hubiera otros usuarios en BD (no aplica en este caso simplificado),
+        // se manejaría aquí. Para este caso, cualquier otro usuario o contraseña es inválido.
         return false;
-    }
-
-    private void escribirCredenciales(String usuario, String password) throws IOException {
-        try (DataOutputStream dos = new DataOutputStream(new FileOutputStream("credenciales.bin"))) {
-            dos.writeUTF(usuario);
-            dos.writeUTF(password);
-        }
     }
 } 
