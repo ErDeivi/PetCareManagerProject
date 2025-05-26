@@ -1,21 +1,19 @@
 package com.example.petcaremanagerproject.Controladores;
 
 import com.example.petcaremanagerproject.App;
+import com.example.petcaremanagerproject.Util.AdminConfigManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.text.Text;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class CambiarContrasenaControlador {
     @FXML
     private PasswordField contrasenaVieja, contrasenaNueva, contrasenaNueva2;
     @FXML
-    private Text contrasenaCoincidir,camposVacios,contrasenaAntigua;
+    private Text contrasenaCoincidir,camposVacios,contrasenaAntigua, mensajeExito;
     @FXML
     private Button enviar,volver;
     @FXML
@@ -23,57 +21,46 @@ public class CambiarContrasenaControlador {
         contrasenaCoincidir.setVisible(false);
         camposVacios.setVisible(false);
         contrasenaAntigua.setVisible(false);
+        mensajeExito.setVisible(false);
     }
 
     public void cambiarContrasenaOnAction(ActionEvent actionEvent) {
         contrasenaCoincidir.setVisible(false);
         camposVacios.setVisible(false);
         contrasenaAntigua.setVisible(false);
+        mensajeExito.setVisible(false);
 
-        if (contrasenaVieja.getText().isEmpty() || contrasenaNueva.getText().isEmpty() || contrasenaNueva2.getText().isEmpty()) {
+        String vieja = contrasenaVieja.getText();
+        String nueva = contrasenaNueva.getText();
+        String nueva2 = contrasenaNueva2.getText();
+
+        if (vieja.isEmpty() || nueva.isEmpty() || nueva2.isEmpty()) {
             camposVacios.setVisible(true);
             return;
         }
 
-        if (!contrasenaNueva.getText().equals(contrasenaNueva2.getText())) {
+        if (!nueva.equals(nueva2)) {
             contrasenaCoincidir.setVisible(true);
             return;
         }
 
-        if (actualizarContrasena(contrasenaVieja.getText(), contrasenaNueva.getText())) {
-            App.setRoot("menuAdmin");
+        String adminHashActual = AdminConfigManager.loadAdminHash();
+
+        if (adminHashActual != null && BCrypt.checkpw(vieja, adminHashActual)) {
+            String nuevoHash = BCrypt.hashpw(nueva, BCrypt.gensalt());
+
+            AdminConfigManager.saveAdminHash(nuevoHash);
+
+            mensajeExito.setText("Contraseña cambiada exitosamente.");
+            mensajeExito.setVisible(true);
+            
+            contrasenaVieja.clear();
+            contrasenaNueva.clear();
+            contrasenaNueva2.clear();
+
         } else {
             contrasenaAntigua.setVisible(true);
         }
-    }
-
-    private boolean actualizarContrasena(String contrasenaVieja, String contrasenaNueva) {
-        String usuarioGuardado = null;
-        String contrasenaGuardada = null;
-
-        // Leer las credenciales actuales
-        try (DataInputStream dis = new DataInputStream(new FileInputStream("credenciales.bin"))) {
-            usuarioGuardado = dis.readUTF();
-            contrasenaGuardada = dis.readUTF();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        // Verificar si la contraseña vieja coincide
-        if (contrasenaGuardada != null && contrasenaGuardada.equals(contrasenaVieja)) {
-            // Escribir las nuevas credenciales
-            try (DataOutputStream dos = new DataOutputStream(new FileOutputStream("credenciales.bin"))) {
-                dos.writeUTF(usuarioGuardado);
-                dos.writeUTF(contrasenaNueva);
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-
-        return false;
     }
 
     public void volverOnAction(ActionEvent actionEvent) {

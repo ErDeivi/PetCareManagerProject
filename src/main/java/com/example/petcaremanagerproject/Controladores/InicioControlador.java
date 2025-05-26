@@ -1,6 +1,7 @@
 package com.example.petcaremanagerproject.Controladores;
 
 import com.example.petcaremanagerproject.App;
+import com.example.petcaremanagerproject.Util.AdminConfigManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
@@ -17,9 +18,6 @@ public class InicioControlador {
     @FXML
     private Text textoUsuario,textoContrasena,errorInicio;
 
-    // Aquí almacenaremos el hash de la contraseña del administrador
-    // DEBES REEMPLAZAR ESTO CON EL HASH REAL GENERADO POR TI
-    private static final String ADMIN_PASSWORD_HASH = "$2a$10$HAhys42b0nQjLSTB.rQ48u5kvMnw93tGhMl7Nt7PMN8hAqcTsJbK6"; // <<< REEMPLAZAR CON EL HASH BCrypt
     private static final String ADMIN_USER = "admin";
 
     @FXML
@@ -27,6 +25,7 @@ public class InicioControlador {
         textoUsuario.setVisible(false);
         textoContrasena.setVisible(false);
         errorInicio.setVisible(false);
+        AdminConfigManager.loadAdminHash();
     }
 
     @FXML
@@ -51,9 +50,8 @@ public class InicioControlador {
             return;
         }
 
-        // La lógica de validación se implementará aquí usando BCrypt
         if (validarCredenciales(usuarioText, contrasenaText)) {
-            App.setRoot("menuAdmin"); // Asumimos que el admin va al menuAdmin
+            App.setRoot("menuAdmin");
         } else {
             errorInicio.setText("Usuario o contraseña incorrectos");
             errorInicio.setVisible(true);
@@ -61,14 +59,12 @@ public class InicioControlador {
     }
 
     private boolean validarCredenciales(String usuarioIngresado, String passwordIngresada) {
-        // Verificar si el usuario ingresado es el admin y si la contraseña coincide con el hash
         if (ADMIN_USER.equals(usuarioIngresado)) {
-            // Usar BCrypt.checkpw para comparar la contraseña ingresada con el hash almacenado
-            // Esto es seguro porque maneja el 'salt' automáticamente desde el hash.
-            return BCrypt.checkpw(passwordIngresada, ADMIN_PASSWORD_HASH);
+            String adminHash = AdminConfigManager.loadAdminHash();
+            if (adminHash != null) {
+                return BCrypt.checkpw(passwordIngresada, adminHash);
+            }
         }
-        // Si el usuario no es el admin, o si hubiera otros usuarios en BD (no aplica en este caso simplificado),
-        // se manejaría aquí. Para este caso, cualquier otro usuario o contraseña es inválido.
         return false;
     }
 } 

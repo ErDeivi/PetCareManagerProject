@@ -74,6 +74,11 @@
                   <Insets top="15.0" />
                </VBox.margin>
             </Button>
+            <Text fx:id="mensajeExito" fill="GREEN" strokeType="OUTSIDE" strokeWidth="0.0" text="Mensaje de éxito (temporal)">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </Text>
          </children>
       </VBox>
       <VBox prefHeight="200.0" prefWidth="100.0">
