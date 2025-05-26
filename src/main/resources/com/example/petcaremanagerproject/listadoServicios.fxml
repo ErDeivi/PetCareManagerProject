@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.petcaremanagerproject.Controladores.ListadoServiciosControlador" spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+    <Label text="Listado de Servicios" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    <HBox spacing="10">
+        <ComboBox fx:id="comboBox" prefWidth="200"/>
+        <Button text="Filtrar" onAction="#ejecutarConsultaOnAction"/>
+    </HBox>
+    <TableView fx:id="tablaServicios" prefHeight="400" prefWidth="900">
+        <columns>
+            <TableColumn fx:id="colIdServicio" text="ID Servicio" prefWidth="80"/>
+            <TableColumn fx:id="colIdCategoria" text="ID Categoría" prefWidth="90"/>
+            <TableColumn fx:id="colEstado" text="Estado" prefWidth="100"/>
+            <TableColumn fx:id="colObservaciones" text="Observaciones" prefWidth="150"/>
+            <TableColumn fx:id="colIdMascota" text="ID Mascota" prefWidth="90"/>
+            <TableColumn fx:id="colIdCuidador" text="ID Cuidador" prefWidth="90"/>
+            <TableColumn fx:id="colIdDueno" text="ID Dueño" prefWidth="90"/>
+            <TableColumn fx:id="colFechaSolicitud" text="Fecha Solicitud" prefWidth="120"/>
+            <TableColumn fx:id="colFechaProgramada" text="Fecha Programada" prefWidth="120"/>
+            <TableColumn fx:id="colFechaRealizacion" text="Fecha Realización" prefWidth="120"/>
+        </columns>
+    </TableView>
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Modificar" onAction="#modificarOnAction"/>
+        <Button text="Borrar" onAction="#borrarServicioOnAction"/>
+        <Button text="Atrás" onAction="#atras"/>
+    </HBox>
+</VBox> 

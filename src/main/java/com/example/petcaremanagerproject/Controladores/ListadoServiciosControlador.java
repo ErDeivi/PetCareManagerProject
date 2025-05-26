@@ -27,9 +27,25 @@ import javafx.scene.control.cell.PropertyValueFactory;
 public class ListadoServiciosControlador implements Initializable {
 
     @FXML
+    private TableColumn<Servicio, Integer> colIdServicio;
+    @FXML
+    private TableColumn<Servicio, Integer> colIdCategoria;
+    @FXML
     private TableColumn<Servicio, String> colEstado;
     @FXML
     private TableColumn<Servicio, String> colObservaciones;
+    @FXML
+    private TableColumn<Servicio, Integer> colIdMascota;
+    @FXML
+    private TableColumn<Servicio, Integer> colIdCuidador;
+    @FXML
+    private TableColumn<Servicio, Integer> colIdDueno;
+    @FXML
+    private TableColumn<Servicio, Object> colFechaSolicitud;
+    @FXML
+    private TableColumn<Servicio, Object> colFechaProgramada;
+    @FXML
+    private TableColumn<Servicio, Object> colFechaRealizacion;
     @FXML
     private ComboBox<String> comboBox;
     @FXML
@@ -43,8 +59,16 @@ public class ListadoServiciosControlador implements Initializable {
     }
 
     private void configurarColumnas() {
+        colIdServicio.setCellValueFactory(new PropertyValueFactory<>("idServicio"));
+        colIdCategoria.setCellValueFactory(new PropertyValueFactory<>("idCategoria"));
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
         colObservaciones.setCellValueFactory(new PropertyValueFactory<>("observaciones"));
+        colIdMascota.setCellValueFactory(new PropertyValueFactory<>("idMascota"));
+        colIdCuidador.setCellValueFactory(new PropertyValueFactory<>("idCuidador"));
+        colIdDueno.setCellValueFactory(new PropertyValueFactory<>("idDueno"));
+        colFechaSolicitud.setCellValueFactory(new PropertyValueFactory<>("fechaSolicitud"));
+        colFechaProgramada.setCellValueFactory(new PropertyValueFactory<>("fechaProgramada"));
+        colFechaRealizacion.setCellValueFactory(new PropertyValueFactory<>("fechaRealizacion"));
     }
 
     private void cargarDatos() {
@@ -60,9 +84,17 @@ public class ListadoServiciosControlador implements Initializable {
 
             while (rs.next()) {
                 Servicio servicio = new Servicio(
-                        rs.getInt("ID"),
-                        rs.getString("Estado"),
-                        rs.getString("Observaciones"));
+                        rs.getInt("id_servicio"),
+                        rs.getInt("id_categoria"),
+                        rs.getTimestamp("fecha_solicitud").toLocalDateTime(),
+                        rs.getTimestamp("fecha_programada") != null ? rs.getTimestamp("fecha_programada").toLocalDateTime() : null,
+                        rs.getTimestamp("fecha_realizacion") != null ? rs.getTimestamp("fecha_realizacion").toLocalDateTime() : null,
+                        rs.getString("estado"),
+                        rs.getString("observaciones"),
+                        rs.getInt("id_mascota"),
+                        rs.getInt("id_cuidador"),
+                        rs.getInt("id_dueño")
+                );
                 servicios.add(servicio);
             }
 
@@ -86,9 +118,10 @@ public class ListadoServiciosControlador implements Initializable {
 
     private void configurarComboBox() {
         ObservableList<String> opciones = FXCollections.observableArrayList(
-                "Todas las bandas sonoras",
-                "Bandas sonoras por compositor",
-                "Bandas sonoras por orden alfabético");
+                "Todos los servicios",
+                "Servicios por estado",
+                "Servicios por cuidador"
+        );
         comboBox.setItems(opciones);
     }
 
@@ -107,22 +140,16 @@ public class ListadoServiciosControlador implements Initializable {
             String query = "";
 
             switch (seleccion) {
-                case "Todas las bandas sonoras":
+                case "Todos los servicios":
                     query = "SELECT * FROM servicio";
                     pst = conn.prepareStatement(query);
                     break;
-
-                case "Banda sonora por compositor":
-                    query = "SELECT bs.*, COUNT(*) as cantidad " +
-                            "FROM servicio bs " +
-                            "GROUP BY Compositor " +
-                            "ORDER BY Compositor";
+                case "Servicios por estado":
+                    query = "SELECT * FROM servicio ORDER BY estado";
                     pst = conn.prepareStatement(query);
                     break;
-
-                case "Bandas sonoras por orden alfabético":
-                    query = "SELECT * FROM servicio " +
-                            "ORDER BY Nombre";
+                case "Servicios por cuidador":
+                    query = "SELECT * FROM servicio ORDER BY id_cuidador";
                     pst = conn.prepareStatement(query);
                     break;
             }
@@ -131,9 +158,17 @@ public class ListadoServiciosControlador implements Initializable {
 
             while (rs.next()) {
                 Servicio servicio = new Servicio(
-                        rs.getInt("ID"),
-                        rs.getString("Estado"),
-                        rs.getString("Observaciones"));
+                        rs.getInt("id_servicio"),
+                        rs.getInt("id_categoria"),
+                        rs.getTimestamp("fecha_solicitud").toLocalDateTime(),
+                        rs.getTimestamp("fecha_programada") != null ? rs.getTimestamp("fecha_programada").toLocalDateTime() : null,
+                        rs.getTimestamp("fecha_realizacion") != null ? rs.getTimestamp("fecha_realizacion").toLocalDateTime() : null,
+                        rs.getString("estado"),
+                        rs.getString("observaciones"),
+                        rs.getInt("id_mascota"),
+                        rs.getInt("id_cuidador"),
+                        rs.getInt("id_dueño")
+                );
                 servicios.add(servicio);
             }
 
@@ -163,14 +198,14 @@ public class ListadoServiciosControlador implements Initializable {
         App.setRoot("crearBandaSonora");
     }
 
-    public void borrarBandaSonoraOnAction(ActionEvent actionEvent) {
+    public void borrarServicioOnAction(ActionEvent actionEvent) {
         Servicio servicioSeleccionado = tablaServicios.getSelectionModel().getSelectedItem();
 
         if (servicioSeleccionado == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Ninguna banda sonora seleccionada");
+            alert.setTitle("Ningún servicio seleccionado");
             alert.setHeaderText(null);
-            alert.setContentText("Por favor, seleccione una banda sonora para borrar.");
+            alert.setContentText("Por favor, seleccione un servicio para borrar.");
             alert.showAndWait();
             return;
         }
@@ -178,53 +213,40 @@ public class ListadoServiciosControlador implements Initializable {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacion.setTitle("Confirmar borrado");
         confirmacion.setHeaderText(null);
-        confirmacion.setContentText("¿Está seguro que desea borrar la banda sonora " +
-                servicioSeleccionado.getEstado() + "?");
+        confirmacion.setContentText("¿Está seguro que desea borrar el servicio con ID " +
+                servicioSeleccionado.getIdServicio() + "?");
 
         if (confirmacion.showAndWait().get() == ButtonType.OK) {
             Connection conn = null;
-            PreparedStatement pstDeleteBandaSonora = null;
+            PreparedStatement pstDeleteServicio = null;
 
             try {
                 conn = DatabaseConnection.getConnection();
                 conn.setAutoCommit(false);
 
-                String queryBandaSonora = "DELETE FROM servicio WHERE ID = ?";
-                pstDeleteBandaSonora = conn.prepareStatement(queryBandaSonora);
-                pstDeleteBandaSonora.setInt(1, servicioSeleccionado.getId());
-                int filasAfectadas = pstDeleteBandaSonora.executeUpdate();
+                String queryServicio = "DELETE FROM servicio WHERE id_servicio = ?";
+                pstDeleteServicio = conn.prepareStatement(queryServicio);
+                pstDeleteServicio.setInt(1, servicioSeleccionado.getIdServicio());
+                int filasAfectadas = pstDeleteServicio.executeUpdate();
 
                 conn.commit(); // Confirmamos la transacción
 
                 if (filasAfectadas > 0) {
                     cargarDatos();
-                    Alert exito = new Alert(Alert.AlertType.INFORMATION);
-                    exito.setTitle("Banda sonora borrada");
-                    exito.setHeaderText(null);
-                    exito.setContentText("La banda sonora ha sido borrada correctamente.");
-                    exito.showAndWait();
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Servicio eliminado");
+                    alert.setHeaderText(null);
+                    alert.setContentText("El servicio ha sido eliminado correctamente.");
+                    alert.showAndWait();
                 }
-
             } catch (SQLException e) {
-                try {
-                    if (conn != null)
-                        conn.rollback(); // Si hay error, deshacemos los cambios
-                } catch (SQLException ex) {
-                    System.out.println("Error al hacer rollback: " + ex.getMessage());
-                }
-                Alert error = new Alert(Alert.AlertType.ERROR);
-                error.setTitle("Error");
-                error.setHeaderText(null);
-                error.setContentText("Error al borrar la banda sonora: " + e.getMessage());
-                error.showAndWait();
+                System.out.println("Error al borrar el servicio: " + e.getMessage());
             } finally {
                 try {
-                    if (pstDeleteBandaSonora != null)
-                        pstDeleteBandaSonora.close();
-                    if (conn != null) {
-                        conn.setAutoCommit(true); // Restauramos el autocommit
+                    if (pstDeleteServicio != null)
+                        pstDeleteServicio.close();
+                    if (conn != null)
                         conn.close();
-                    }
                 } catch (SQLException e) {
                     System.out.println("Error al cerrar las conexiones: " + e.getMessage());
                 }
@@ -236,15 +258,15 @@ public class ListadoServiciosControlador implements Initializable {
         Servicio servicioSeleccionado = tablaServicios.getSelectionModel().getSelectedItem();
         if (servicioSeleccionado == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Ninguna banda sonora seleccionada");
+            alert.setTitle("Ningún servicio seleccionado");
             alert.setHeaderText(null);
-            alert.setContentText("Por favor, seleccione una banda sonora para modificarla.");
+            alert.setContentText("Por favor, seleccione un servicio para modificarlo.");
             alert.showAndWait();
             return;
         }
 
-        App.setBandaSonoraModificar(servicioSeleccionado);
-        App.setRoot("modificarBandaSonora");
+        App.setServicioModificar(servicioSeleccionado);
+        App.setRoot("modificarServicio");
     }
 
     public void atras(ActionEvent actionEvent) {

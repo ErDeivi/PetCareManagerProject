@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="604.0" prefWidth="1037.0" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.ListadoBandasSonorasControlador">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="604.0" prefWidth="1037.0" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.ListadoUsuariosControlador">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -33,22 +33,22 @@
    <children>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="4">
          <children>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#nuevoServicioOnAction" styleClass="opciones" text="Nuevo servicio">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#nuevoUsuarioOnAction" styleClass="opciones" text="Nuevo usuario">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
             </Button>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#borrarServicioOnAction" styleClass="opciones" text="Borrar servicio">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#borrarUsuarioOnAction" styleClass="opciones" text="Borrar usuario">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
             </Button>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarServicioOnAction" styleClass="opciones" text="Modificar">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarUsuarioOnAction" styleClass="opciones" text="Modificar">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
             </Button>
-            <ComboBox fx:id="comboBox" maxWidth="1.7976931348623157E308" onAction="#ejecutarConsultaOnAction" prefHeight="26.0" prefWidth="183.0" promptText="Consultas" styleClass="opciones">
+            <ComboBox fx:id="comboBox" maxWidth="1.7976931348623157E308" onAction="#ejecutarConsultaOnAction" prefHeight="26.0" prefWidth="183.0" promptText="Filtrar usuarios" styleClass="opciones">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
@@ -76,17 +76,19 @@
       </VBox>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnSpan="5" GridPane.rowIndex="1" GridPane.rowSpan="3">
          <children>
-            <TableView fx:id="tablaServicios" prefHeight="233.0" prefWidth="1037.0">
+            <TableView fx:id="tablaUsuarios" prefHeight="233.0" prefWidth="1037.0">
                <columns>
-                  <TableColumn fx:id="colEstado" text="Estado" />
-                  <TableColumn fx:id="colObservaciones" text="Observaciones" />
+                  <TableColumn fx:id="colIdUsuario" prefWidth="100.0" text="ID Usuario" />
+                  <TableColumn fx:id="colNombre" prefWidth="150.0" text="Nombre" />
+                  <TableColumn fx:id="colCorreo" prefWidth="150.0" text="Correo" />
+                  <TableColumn fx:id="colTelefono" prefWidth="150.0" text="Teléfono" />
                </columns>
             </TableView>
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="3">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Listado de servicios">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Listado de usuarios">
                <font>
                   <Font size="36.0" />
                </font>
@@ -94,4 +96,4 @@
          </children>
       </VBox>
    </children>
-</GridPane>
+</GridPane> 

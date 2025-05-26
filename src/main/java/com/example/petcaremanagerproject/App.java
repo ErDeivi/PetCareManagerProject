@@ -6,20 +6,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import com.example.petcaremanagerproject.Modelo.Videojuego;
-
-import java.io.IOException;
-
-import com.example.petcaremanagerproject.Modelo.Programador;
 import com.example.petcaremanagerproject.Modelo.Mascota;
 import com.example.petcaremanagerproject.Modelo.Usuario;
 import com.example.petcaremanagerproject.Modelo.Servicio;
 
+import java.io.IOException;
+
 public class App extends Application {
 
     private static Stage primaryStage; // Almacenar el escenario principal
-    private static Videojuego videojuegoModificar;
-    private static Programador programadorModificar;
     private static Mascota mascotaModificar;
     private static Usuario usuarioModificar;
     private static Servicio servicioModificar;
@@ -46,18 +41,6 @@ public class App extends Application {
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();
-    }
-    public static void setVideojuegoModificar(Videojuego videojuego) {
-        videojuegoModificar = videojuego;
-    }
-    public static Videojuego getVideojuegoModificar() {
-        return videojuegoModificar;
-    }
-    public static void setProgramadorModificar(Programador programador) {
-        programadorModificar = programador;
-    }
-    public static Programador getProgramadorModificar() {
-        return programadorModificar;
     }
     public static void setMascotaModificar(Mascota mascota) {
         mascotaModificar = mascota;

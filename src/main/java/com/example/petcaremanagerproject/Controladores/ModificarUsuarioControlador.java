@@ -36,7 +36,7 @@ public class ModificarUsuarioControlador implements Initializable {
     }
 
     private void cargarDatosUsuario() {
-        nombreUsuario.setText(usuario.getNombreUsuario());
+        nombreUsuario.setText(usuario.getNombre());
         correoUsuario.setText(usuario.getCorreo());
         telefonoUsuario.setText(usuario.getTelefono());
         // contrasenaUsuario.setText(usuario.getContrasena()); // Si tienes el campo en el modelo
@@ -57,7 +57,7 @@ public class ModificarUsuarioControlador implements Initializable {
                 pst.setString(2, correoUsuario.getText());
                 pst.setString(3, contrasenaUsuario.getText());
                 pst.setString(4, telefonoUsuario.getText());
-                pst.setInt(5, usuario.getId());
+                pst.setInt(5, usuario.getIdUsuario());
 
                 int filasAfectadas = pst.executeUpdate();
 

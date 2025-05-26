@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="604.0" prefWidth="1037.0" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.ListadoProgramadoresControlador">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="604.0" prefWidth="1037.0" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.ListadoMascotasControlador">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -33,22 +33,17 @@
    <children>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="4">
          <children>
-         <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#asignarVideojuegoOnAction" styleClass="opciones" text="Asignar Videojuego">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#nuevaMascotaOnAction" styleClass="opciones" text="Nueva mascota">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
             </Button>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#nuevoUsuarioOnAction" styleClass="opciones" text="Nuevo usuario">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#borrarMascotaOnAction" styleClass="opciones" text="Borrar mascota">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
             </Button>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#borrarUsuarioOnAction" styleClass="opciones" text="Borrar usuario">
-               <HBox.margin>
-                  <Insets right="15.0" />
-               </HBox.margin>
-            </Button>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarUsuarioOnAction" styleClass="opciones" text="Modificar">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarMascotaOnAction" styleClass="opciones" text="Modificar">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
@@ -81,18 +76,22 @@
       </VBox>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnSpan="5" GridPane.rowIndex="1" GridPane.rowSpan="3">
          <children>
-            <TableView fx:id="tablaUsuarios" prefHeight="233.0" prefWidth="1037.0">
+            <TableView fx:id="tablaMascotas" prefHeight="233.0" prefWidth="1037.0">
                <columns>
-                  <TableColumn fx:id="colNombreUsuario" prefWidth="100.0" text="Nombre" />
-                  <TableColumn fx:id="colCorreo" prefWidth="100.0" text="Correo" />
-                  <TableColumn fx:id="colTelefono" prefWidth="100.0" text="Teléfono" />
+                   <TableColumn fx:id="colIdMascota" prefWidth="80.0" text="ID Mascota" />
+                   <TableColumn fx:id="colNombreMascota" prefWidth="150.0" text="Nombre" />
+                   <TableColumn fx:id="colEspecie" prefWidth="100.0" text="Especie" />
+                   <TableColumn fx:id="colRaza" prefWidth="100.0" text="Raza" />
+                   <TableColumn fx:id="colEdad" prefWidth="80.0" text="Edad" />
+                   <TableColumn fx:id="colPeso" prefWidth="80.0" text="Peso" />
+                   <TableColumn fx:id="colIdDueno" prefWidth="100.0" text="ID Dueño" />
                </columns>
             </TableView>
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="3">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Listado de usuarios">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Listado de mascotas">
                <font>
                   <Font size="36.0" />
                </font>
@@ -100,4 +99,4 @@
          </children>
       </VBox>
    </children>
-</GridPane>
+</GridPane> 

@@ -29,7 +29,7 @@ public class ModificarServicioControlador {
     private void cargarDatosServicio() {
         servicio = App.getServicioModificar();
         if (servicio != null) {
-            idServicio.setText(String.valueOf(servicio.getId()));
+            idServicio.setText(String.valueOf(servicio.getIdServicio()));
             estadoServicio.setText(servicio.getEstado());
             observacionesServicio.setText(servicio.getObservaciones());
         }
