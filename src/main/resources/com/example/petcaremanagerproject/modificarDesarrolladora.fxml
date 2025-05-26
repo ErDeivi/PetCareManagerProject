@@ -31,7 +31,7 @@
    <children>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modificar desarrolladora">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modificar Categoría">
                <font>
                   <Font size="44.0" />
                </font>
@@ -41,24 +41,24 @@
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="ID" />
-            <TextField fx:id="id" />
+            <TextField fx:id="idCategoria" />
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Nombre" />
-            <TextField fx:id="nombre" maxWidth="1.7976931348623157E308" />
+            <TextField fx:id="tipoCategoria" maxWidth="1.7976931348623157E308" />
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Cantidad de trabajadores" />
-            <TextField fx:id="cantidadTrabajador" maxWidth="1.7976931348623157E308" />
+            <TextField fx:id="descripcionCategoria" maxWidth="1.7976931348623157E308" />
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="3">
          <children>
-            <Button fx:id="crear" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#crearOnAction" text="Crear">
+            <Button fx:id="crearCategoria" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#crearCategoriaOnAction" text="Crear">
                <styleClass>
                   <String fx:value="editionButton" />
                   <String fx:value="edit" />

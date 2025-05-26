@@ -33,7 +33,7 @@
    <children>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Crear videojuego">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Crear Mascota">
                <font>
                   <Font size="44.0" />
                </font>
@@ -45,7 +45,7 @@
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                <children>
                   <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Nombre" />
-                  <TextField fx:id="nombre" maxWidth="1.7976931348623157E308" />
+                  <TextField fx:id="nombreMascota" maxWidth="1.7976931348623157E308" />
                </children>
             </VBox>
          </children>
@@ -106,6 +106,62 @@
          <children>
             <Label text="Banda sonora" />
             <ComboBox fx:id="bandaSonora" prefWidth="150.0" />
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5">
+         <children>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Especie" />
+                  <TextField fx:id="especieMascota" maxWidth="1.7976931348623157E308" />
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="6">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Raza" />
+            <TextField fx:id="razaMascota" maxWidth="1.7976931348623157E308" />
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="6">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Edad" />
+            <DatePicker fx:id="edadMascota" />
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.rowSpan="3">
+         <children>
+            <Button fx:id="crearMascota" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#crearMascotaOnAction" text="Crear">
+               <styleClass>
+                  <String fx:value="editionButton" />
+                  <String fx:value="edit" />
+               </styleClass>
+            </Button>
+            <Button fx:id="volverMascota" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#volverOnAction" text="Volver">
+               <styleClass>
+                  <String fx:value="editionButton" />
+                  <String fx:value="exit" />
+               </styleClass>
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="7">
+         <padding>
+            <Insets bottom="10.0" left="10.0" />
+         </padding>
+         <children>
+            <Label text="Peso" />
+            <TextField fx:id="pesoMascota" />
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="7">
+         <children>
+            <Label text="ID Dueno" />
+            <TextField fx:id="idDuenoMascota" />
          </children>
       </VBox>
    </children>

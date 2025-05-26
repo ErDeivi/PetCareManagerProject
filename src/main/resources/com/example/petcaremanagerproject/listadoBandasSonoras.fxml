@@ -33,17 +33,17 @@
    <children>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="4">
          <children>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#nuevaBandaSonoraOnAction" styleClass="opciones" text="Nueva banda sonora">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#nuevoServicioOnAction" styleClass="opciones" text="Nuevo servicio">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
             </Button>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#borrarBandaSonoraOnAction" styleClass="opciones" text="Borrar banda sonora">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#borrarServicioOnAction" styleClass="opciones" text="Borrar servicio">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
             </Button>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarOnAction" styleClass="opciones" text="Modificar">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarServicioOnAction" styleClass="opciones" text="Modificar">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
@@ -76,18 +76,17 @@
       </VBox>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnSpan="5" GridPane.rowIndex="1" GridPane.rowSpan="3">
          <children>
-            <TableView fx:id="tablaArticulos" prefHeight="233.0" prefWidth="1037.0">
+            <TableView fx:id="tablaServicios" prefHeight="233.0" prefWidth="1037.0">
                <columns>
-                  <TableColumn fx:id="colNombre" prefWidth="442.0" text="Nombre" />
-                  <TableColumn fx:id="colCompositor" prefWidth="229.0" text="Compositor" />
-                  <TableColumn fx:id="colUrl" minWidth="0.0" prefWidth="364.0" text="Enlace" />
+                  <TableColumn fx:id="colEstado" text="Estado" />
+                  <TableColumn fx:id="colObservaciones" text="Observaciones" />
                </columns>
             </TableView>
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="3">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Listado de bandas sonoras">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Listado de servicios">
                <font>
                   <Font size="36.0" />
                </font>

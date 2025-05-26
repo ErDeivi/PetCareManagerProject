@@ -20,8 +20,6 @@ public class LoginControlador {
     private void iniciarSesion() {
         String user = usuario.getText();
         String pass = contrasena.getText();
-        
-        // Por ahora hardcodeamos las credenciales
         if (user.equals("admin") && pass.equals("admin")) {
             error.setVisible(false);
             App.setRoot("menuAdmin");

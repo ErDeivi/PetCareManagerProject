@@ -33,7 +33,7 @@
    <children>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modificar Programador">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modificar Usuario">
                <font>
                   <Font size="44.0" />
                </font>
@@ -43,36 +43,30 @@
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Nombre" />
-            <TextField fx:id="nombre" maxWidth="1.7976931348623157E308" />
+            <TextField fx:id="nombreUsuario" maxWidth="1.7976931348623157E308" />
          </children>
       </VBox>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Apellido" />
-            <TextField fx:id="apellido" maxWidth="1.7976931348623157E308" />
+            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Correo" />
+            <TextField fx:id="correoUsuario" maxWidth="1.7976931348623157E308" />
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Contraseña" />
+            <TextField fx:id="contrasenaUsuario" maxWidth="1.7976931348623157E308" />
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Localidad" />
-            <TextField fx:id="localidad" />
-         </children>
-      </VBox>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3">
-         <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Salario" />
-            <TextField fx:id="salario" />
-         </children>
-      </VBox>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
-         <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="DNI" />
-            <TextField fx:id="dni" />
+            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Teléfono" />
+            <TextField fx:id="telefonoUsuario" maxWidth="1.7976931348623157E308" />
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="3">
          <children>
-            <Button fx:id="editar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarOnAction" text="Modificar">
+            <Button fx:id="modificarUsuario" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarUsuarioOnAction" text="Modificar">
                <styleClass>
                   <String fx:value="editionButton" />
                   <String fx:value="edit" />

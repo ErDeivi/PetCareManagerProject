@@ -33,17 +33,17 @@
    <children>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="4">
          <children>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#nuevoVideojuegoOnAction" styleClass="opciones" text="Nuevo videojuego">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#nuevoMascotaOnAction" styleClass="opciones" text="Nueva mascota">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
             </Button>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#borrarVideojuegoOnAction" styleClass="opciones" text="Borrar videojuego">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#borrarMascotaOnAction" styleClass="opciones" text="Borrar mascota">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
             </Button>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarOnAction" styleClass="opciones" text="Modificar">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarMascotaOnAction" styleClass="opciones" text="Modificar">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
@@ -76,22 +76,21 @@
       </VBox>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnSpan="5" GridPane.rowIndex="1" GridPane.rowSpan="3">
          <children>
-            <TableView fx:id="tablaArticulos" prefHeight="233.0" prefWidth="1037.0">
+            <TableView fx:id="tablaMascotas" prefHeight="233.0" prefWidth="1037.0">
                <columns>
-                  <TableColumn fx:id="colNombre" prefWidth="150.0" text="Nombre" />
-                  <TableColumn fx:id="colPlataforma" prefWidth="100.0" text="Plataforma" />
-                  <TableColumn fx:id="colGenero" prefWidth="100.0" text="Género" />
-                  <TableColumn fx:id="colPublicado" prefWidth="100.0" text="Publicado" />
-                  <TableColumn fx:id="colPrecio" prefWidth="100.0" text="Precio" />
-                  <TableColumn fx:id="colVentas" prefWidth="100.0" text="Ventas" />
-                  <TableColumn fx:id="colBandaSonora" prefWidth="150.0" text="Banda Sonora" />
+                  <TableColumn fx:id="colNombreMascota" prefWidth="150.0" text="Nombre" />
+                  <TableColumn fx:id="colEspecie" prefWidth="100.0" text="Especie" />
+                  <TableColumn fx:id="colRaza" prefWidth="100.0" text="Raza" />
+                  <TableColumn fx:id="colEdad" prefWidth="100.0" text="Edad" />
+                  <TableColumn fx:id="colPeso" prefWidth="100.0" text="Peso" />
+                  <TableColumn fx:id="colIdDueno" prefWidth="100.0" text="ID Dueño" />
                </columns>
             </TableView>
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="3">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Listado de videojuegos">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Listado de mascotas">
                <font>
                   <Font size="36.0" />
                </font>

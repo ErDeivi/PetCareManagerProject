@@ -38,17 +38,17 @@
                   <Insets right="15.0" />
                </HBox.margin>
             </Button>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#nuevoProgramadorOnAction" styleClass="opciones" text="Nuevo Programador">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#nuevoUsuarioOnAction" styleClass="opciones" text="Nuevo usuario">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
             </Button>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#borrarProgramadorOnAction" styleClass="opciones" text="Borrar Programador">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#borrarUsuarioOnAction" styleClass="opciones" text="Borrar usuario">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
             </Button>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarOnAction" styleClass="opciones" text="Modificar">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarUsuarioOnAction" styleClass="opciones" text="Modificar">
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
@@ -81,20 +81,18 @@
       </VBox>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnSpan="5" GridPane.rowIndex="1" GridPane.rowSpan="3">
          <children>
-            <TableView fx:id="tablaProgramadores" prefHeight="233.0" prefWidth="1037.0">
+            <TableView fx:id="tablaUsuarios" prefHeight="233.0" prefWidth="1037.0">
                <columns>
-                  <TableColumn fx:id="colNombre" prefWidth="100.0" text="Nombre" />
-                  <TableColumn fx:id="colApellido" prefWidth="100.0" text="Apellido" />
-                  <TableColumn fx:id="colLocalidad" prefWidth="100.0" text="Localidad" />
-                  <TableColumn fx:id="colSalario" prefWidth="100.0" text="Salario" />
-                  <TableColumn fx:id="colDni" prefWidth="100.0" text="Dni" />
+                  <TableColumn fx:id="colNombreUsuario" prefWidth="100.0" text="Nombre" />
+                  <TableColumn fx:id="colCorreo" prefWidth="100.0" text="Correo" />
+                  <TableColumn fx:id="colTelefono" prefWidth="100.0" text="Teléfono" />
                </columns>
             </TableView>
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="3">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Listado de programadores">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Listado de usuarios">
                <font>
                   <Font size="36.0" />
                </font>

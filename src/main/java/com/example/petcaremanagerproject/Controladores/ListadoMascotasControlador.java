@@ -1,7 +1,7 @@
 package com.example.petcaremanagerproject.Controladores;
 
 import com.example.petcaremanagerproject.App;
-import com.example.petcaremanagerproject.Modelo.Videojuego;
+import com.example.petcaremanagerproject.Modelo.Mascota;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,17 +21,15 @@ import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 
-public class ListadoVideojuegosControlador implements Initializable {
+public class ListadoMascotasControlador implements Initializable {
     @FXML
-    private TableView<Videojuego> tablaArticulos;
+    private TableView<Mascota> tablaMascotas;
     @FXML
-    private TableColumn<Videojuego, String> colNombre, colPlataforma, colGenero, colBandaSonora;
+    private TableColumn<Mascota, String> colNombreMascota, colEspecie, colRaza;
     @FXML
-    private TableColumn<Videojuego, Date> colPublicado;
+    private TableColumn<Mascota, Integer> colEdad, colIdDueno;
     @FXML
-    private TableColumn<Videojuego, Double> colPrecio;
-    @FXML
-    private TableColumn<Videojuego, Integer> colVentas;
+    private TableColumn<Mascota, Double> colPeso;
     @FXML
     private ComboBox<String> comboBox;
 
@@ -43,36 +41,33 @@ public class ListadoVideojuegosControlador implements Initializable {
     }
 
     private void configurarColumnas() {
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colPlataforma.setCellValueFactory(new PropertyValueFactory<>("plataforma"));
-        colGenero.setCellValueFactory(new PropertyValueFactory<>("genero"));
-        colPublicado.setCellValueFactory(new PropertyValueFactory<>("publicado"));
-        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
-        colVentas.setCellValueFactory(new PropertyValueFactory<>("ventas"));
+        colNombreMascota.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colEspecie.setCellValueFactory(new PropertyValueFactory<>("especie"));
+        colRaza.setCellValueFactory(new PropertyValueFactory<>("raza"));
+        colEdad.setCellValueFactory(new PropertyValueFactory<>("edad"));
+        colIdDueno.setCellValueFactory(new PropertyValueFactory<>("idDueno"));
+        colPeso.setCellValueFactory(new PropertyValueFactory<>("peso"));
 
         // Para la banda sonora necesitamos una consulta JOIN
-        colBandaSonora.setCellValueFactory(cellData -> {
-            try (Connection conn = DatabaseConnection.getConnection()) {
-                String query = "SELECT b.Nombre FROM BandaSonora b " +
-                        "JOIN Videojuego v ON v.BandaSonoraID = b.ID " +
-                        "WHERE v.ID = ?";
-                PreparedStatement pst = conn.prepareStatement(query);
-                pst.setInt(1, cellData.getValue().getId());
-                ResultSet rs = pst.executeQuery();
-                if (rs.next()) {
-                    return new SimpleStringProperty(rs.getString("Nombre"));
+        colEspecie.setCellFactory(column -> {
+            return new TableCell<Mascota, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) {
+                        setText(null);
+                    } else {
+                        setText(item.toString());
+                    }
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return new SimpleStringProperty("");
+            };
         });
 
         // Formato para la fecha
-        colPublicado.setCellFactory(column -> {
-            return new TableCell<Videojuego, Date>() {
+        colEdad.setCellFactory(column -> {
+            return new TableCell<Mascota, Integer>() {
                 @Override
-                protected void updateItem(Date item, boolean empty) {
+                protected void updateItem(Integer item, boolean empty) {
                     super.updateItem(item, empty);
                     if (item == null || empty) {
                         setText(null);
@@ -84,15 +79,15 @@ public class ListadoVideojuegosControlador implements Initializable {
         });
 
         // Formato para el precio
-        colPrecio.setCellFactory(column -> {
-            return new TableCell<Videojuego, Double>() {
+        colPeso.setCellFactory(column -> {
+            return new TableCell<Mascota, Double>() {
                 @Override
                 protected void updateItem(Double item, boolean empty) {
                     super.updateItem(item, empty);
                     if (item == null || empty) {
                         setText(null);
                     } else {
-                        setText(String.format("%.2f €", item));
+                        setText(String.format("%.2f kg", item));
                     }
                 }
             };
@@ -100,7 +95,7 @@ public class ListadoVideojuegosControlador implements Initializable {
     }
 
     private void cargarDatos() {
-        ObservableList<Videojuego> videojuegos = FXCollections.observableArrayList();
+        ObservableList<Mascota> mascotas = FXCollections.observableArrayList();
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -108,21 +103,21 @@ public class ListadoVideojuegosControlador implements Initializable {
         try {
             conn = DatabaseConnection.getConnection();
             stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM Videojuego");
+            rs = stmt.executeQuery("SELECT * FROM Mascota");
 
             while (rs.next()) {
-                Videojuego videojuego = new Videojuego(
+                Mascota mascota = new Mascota(
                         rs.getInt("ID"),
                         rs.getString("Nombre"),
-                        rs.getString("Plataforma"),
-                        rs.getString("Género"),
-                        rs.getDate("Publicado"),
-                        rs.getDouble("Precio"),
-                        rs.getInt("Ventas"));
-                videojuegos.add(videojuego);
+                        rs.getString("Especie"),
+                        rs.getString("Raza"),
+                        rs.getInt("Edad"),
+                        rs.getInt("IDDueno"),
+                        rs.getDouble("Peso"));
+                mascotas.add(mascota);
             }
 
-            tablaArticulos.setItems(videojuegos);
+            tablaMascotas.setItems(mascotas);
 
         } catch (SQLException e) {
             System.out.println("Error al cargar los datos: " + e.getMessage());
@@ -142,12 +137,12 @@ public class ListadoVideojuegosControlador implements Initializable {
 
     private void configurarComboBox() {
         ObservableList<String> opciones = FXCollections.observableArrayList(
-                "Todos los videojuegos",
-                "Videojuegos por plataforma",
-                "Videojuegos más caros",
-                "Videojuegos más vendidos",
-                "Videojuegos más recientes",
-                "Videojuegos con banda sonora");
+                "Todas las mascotas",
+                "Mascotas por especie",
+                "Mascotas más pesadas",
+                "Mascotas más jóvenes",
+                "Mascotas más recientes",
+                "Mascotas con raza");
         comboBox.setItems(opciones);
     }
 
@@ -156,7 +151,7 @@ public class ListadoVideojuegosControlador implements Initializable {
         if (seleccion == null)
             return;
 
-        ObservableList<Videojuego> videojuegos = FXCollections.observableArrayList();
+        ObservableList<Mascota> mascotas = FXCollections.observableArrayList();
         Connection conn = null;
         PreparedStatement pst = null;
         ResultSet rs = null;
@@ -166,45 +161,45 @@ public class ListadoVideojuegosControlador implements Initializable {
             String query = "";
 
             switch (seleccion) {
-                case "Todos los videojuegos":
-                    query = "SELECT * FROM Videojuego";
+                case "Todas las mascotas":
+                    query = "SELECT * FROM Mascota";
                     pst = conn.prepareStatement(query);
                     break;
 
-                case "Videojuegos por plataforma":
+                case "Mascotas por especie":
                     query = "SELECT v.*, COUNT(*) as cantidad " +
-                            "FROM Videojuego v " +
-                            "GROUP BY Plataforma " +
-                            "ORDER BY Plataforma";
+                            "FROM Mascota v " +
+                            "GROUP BY Especie " +
+                            "ORDER BY Especie";
                     pst = conn.prepareStatement(query);
                     break;
 
-                case "Videojuegos más caros":
-                    query = "SELECT * FROM Videojuego " +
-                            "ORDER BY Precio DESC " +
+                case "Mascotas más pesadas":
+                    query = "SELECT * FROM Mascota " +
+                            "ORDER BY Peso DESC " +
                             "LIMIT 5";
                     pst = conn.prepareStatement(query);
                     break;
 
-                case "Videojuegos más vendidos":
-                    query = "SELECT * FROM Videojuego " +
-                            "ORDER BY Ventas DESC " +
+                case "Mascotas más jóvenes":
+                    query = "SELECT * FROM Mascota " +
+                            "ORDER BY Edad DESC " +
                             "LIMIT 5";
                     pst = conn.prepareStatement(query);
                     break;
 
-                case "Videojuegos más recientes":
-                    query = "SELECT * FROM Videojuego " +
-                            "WHERE Publicado IS NOT NULL " +
-                            "ORDER BY Publicado DESC " +
+                case "Mascotas más recientes":
+                    query = "SELECT * FROM Mascota " +
+                            "WHERE Edad IS NOT NULL " +
+                            "ORDER BY Edad DESC " +
                             "LIMIT 5";
                     pst = conn.prepareStatement(query);
                     break;
 
-                case "Videojuegos con banda sonora":
-                    query = "SELECT v.*, b.Nombre as NombreBandaSonora " +
-                            "FROM Videojuego v " +
-                            "INNER JOIN BandaSonora b ON v.BandaSonoraID = b.ID " +
+                case "Mascotas con raza":
+                    query = "SELECT v.*, b.Nombre as NombreRaza " +
+                            "FROM Mascota v " +
+                            "INNER JOIN Raza b ON v.RazaID = b.ID " +
                             "ORDER BY v.Nombre";
                     pst = conn.prepareStatement(query);
                     break;
@@ -213,18 +208,18 @@ public class ListadoVideojuegosControlador implements Initializable {
             rs = pst.executeQuery();
 
             while (rs.next()) {
-                Videojuego videojuego = new Videojuego(
+                Mascota mascota = new Mascota(
                         rs.getInt("ID"),
                         rs.getString("Nombre"),
-                        rs.getString("Plataforma"),
-                        rs.getString("Género"),
-                        rs.getDate("Publicado"),
-                        rs.getDouble("Precio"),
-                        rs.getInt("Ventas"));
-                videojuegos.add(videojuego);
+                        rs.getString("Especie"),
+                        rs.getString("Raza"),
+                        rs.getInt("Edad"),
+                        rs.getInt("IDDueno"),
+                        rs.getDouble("Peso"));
+                mascotas.add(mascota);
             }
 
-            tablaArticulos.setItems(videojuegos);
+            tablaMascotas.setItems(mascotas);
 
         } catch (SQLException e) {
             Alert error = new Alert(Alert.AlertType.ERROR);
@@ -246,18 +241,18 @@ public class ListadoVideojuegosControlador implements Initializable {
         }
     }
 
-    public void nuevoVideojuegoOnAction(ActionEvent actionEvent) {
-        App.setRoot("crearVideojuego");
+    public void nuevaMascotaOnAction(ActionEvent actionEvent) {
+        App.setRoot("crearMascota");
     }
 
-    public void borrarVideojuegoOnAction(ActionEvent actionEvent) {
-        Videojuego videojuegoSeleccionado = tablaArticulos.getSelectionModel().getSelectedItem();
+    public void borrarMascotaOnAction(ActionEvent actionEvent) {
+        Mascota mascotaSeleccionada = tablaMascotas.getSelectionModel().getSelectedItem();
 
-        if (videojuegoSeleccionado == null) {
+        if (mascotaSeleccionada == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Ningún videojuego seleccionado");
+            alert.setTitle("Ningún mascota seleccionada");
             alert.setHeaderText(null);
-            alert.setContentText("Por favor, seleccione un videojuego para borrar.");
+            alert.setContentText("Por favor, seleccione una mascota para borrar.");
             alert.showAndWait();
             return;
         }
@@ -265,38 +260,38 @@ public class ListadoVideojuegosControlador implements Initializable {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacion.setTitle("Confirmar borrado");
         confirmacion.setHeaderText(null);
-        confirmacion.setContentText("¿Está seguro que desea borrar el videojuego " +
-                videojuegoSeleccionado.getNombre() + "?");
+        confirmacion.setContentText("¿Está seguro que desea borrar la mascota " +
+                mascotaSeleccionada.getNombre() + "?");
 
         if (confirmacion.showAndWait().get() == ButtonType.OK) {
             Connection conn = null;
             PreparedStatement pstDeleteRelaciones = null;
-            PreparedStatement pstDeleteVideojuego = null;
+            PreparedStatement pstDeleteMascota = null;
 
             try {
                 conn = DatabaseConnection.getConnection();
                 conn.setAutoCommit(false); // Iniciamos una transacción
 
-                // Primero eliminamos las relaciones en Videojuego-Programador
-                String queryRelaciones = "DELETE FROM `Videojuego-Programador` WHERE VideojuegoID = ?";
+                // Primero eliminamos las relaciones en Mascota-Dueno
+                String queryRelaciones = "DELETE FROM `Mascota-Dueno` WHERE MascotaID = ?";
                 pstDeleteRelaciones = conn.prepareStatement(queryRelaciones);
-                pstDeleteRelaciones.setInt(1, videojuegoSeleccionado.getId());
+                pstDeleteRelaciones.setInt(1, mascotaSeleccionada.getId());
                 pstDeleteRelaciones.executeUpdate();
 
-                // Luego eliminamos el videojuego
-                String queryVideojuego = "DELETE FROM Videojuego WHERE ID = ?";
-                pstDeleteVideojuego = conn.prepareStatement(queryVideojuego);
-                pstDeleteVideojuego.setInt(1, videojuegoSeleccionado.getId());
-                int filasAfectadas = pstDeleteVideojuego.executeUpdate();
+                // Luego eliminamos la mascota
+                String queryMascota = "DELETE FROM Mascota WHERE ID = ?";
+                pstDeleteMascota = conn.prepareStatement(queryMascota);
+                pstDeleteMascota.setInt(1, mascotaSeleccionada.getId());
+                int filasAfectadas = pstDeleteMascota.executeUpdate();
 
                 conn.commit(); // Confirmamos la transacción
 
                 if (filasAfectadas > 0) {
                     cargarDatos();
                     Alert exito = new Alert(Alert.AlertType.INFORMATION);
-                    exito.setTitle("Videojuego borrado");
+                    exito.setTitle("Mascota borrada");
                     exito.setHeaderText(null);
-                    exito.setContentText("El videojuego ha sido borrado correctamente.");
+                    exito.setContentText("La mascota ha sido borrada correctamente.");
                     exito.showAndWait();
                 }
 
@@ -310,14 +305,14 @@ public class ListadoVideojuegosControlador implements Initializable {
                 Alert error = new Alert(Alert.AlertType.ERROR);
                 error.setTitle("Error");
                 error.setHeaderText(null);
-                error.setContentText("Error al borrar el videojuego: " + e.getMessage());
+                error.setContentText("Error al borrar la mascota: " + e.getMessage());
                 error.showAndWait();
             } finally {
                 try {
                     if (pstDeleteRelaciones != null)
                         pstDeleteRelaciones.close();
-                    if (pstDeleteVideojuego != null)
-                        pstDeleteVideojuego.close();
+                    if (pstDeleteMascota != null)
+                        pstDeleteMascota.close();
                     if (conn != null) {
                         conn.setAutoCommit(true); // Restauramos el autocommit
                         conn.close();
@@ -330,19 +325,19 @@ public class ListadoVideojuegosControlador implements Initializable {
     }
 
     public void modificarOnAction(ActionEvent actionEvent) {
-        Videojuego videojuegoSeleccionado = tablaArticulos.getSelectionModel().getSelectedItem();
+        Mascota mascotaSeleccionada = tablaMascotas.getSelectionModel().getSelectedItem();
 
-        if (videojuegoSeleccionado == null) {
+        if (mascotaSeleccionada == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Ningún videojuego seleccionado");
+            alert.setTitle("Ningún mascota seleccionada");
             alert.setHeaderText(null);
-            alert.setContentText("Por favor, seleccione un videojuego para modificar.");
+            alert.setContentText("Por favor, seleccione una mascota para modificar.");
             alert.showAndWait();
             return;
         }
 
-        App.setVideojuegoModificar(videojuegoSeleccionado);
-        App.setRoot("modificarVideojuego");
+        App.setMascotaModificar(mascotaSeleccionada);
+        App.setRoot("modificarMascota");
     }
 
     public void atras(ActionEvent actionEvent) {

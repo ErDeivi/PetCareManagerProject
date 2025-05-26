@@ -31,7 +31,7 @@
    <children>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modificar banda sonora">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modificar Servicio">
                <font>
                   <Font size="44.0" />
                </font>
@@ -44,47 +44,27 @@
                <VBox.margin>
                   <Insets bottom="4.0" />
                </VBox.margin></Label>
-            <TextField fx:id="id">
+            <TextField fx:id="idServicio">
                <VBox.margin>
                   <Insets left="4.0" right="4.0" />
                </VBox.margin></TextField>
          </children>
       </VBox>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Nombre">
-               <VBox.margin>
-                  <Insets bottom="4.0" />
-               </VBox.margin></Label>
-            <TextField fx:id="nombre" maxWidth="1.7976931348623157E308">
-               <VBox.margin>
-                  <Insets bottom="12.0" left="8.0" right="8.0" />
-               </VBox.margin></TextField>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Compositor">
-               <VBox.margin>
-                  <Insets bottom="4.0" />
-               </VBox.margin>
-            </Label>
-            <TextField fx:id="compositor" maxWidth="1.7976931348623157E308">
-               <VBox.margin>
-                  <Insets bottom="12.0" left="8.0" right="8.0" />
-               </VBox.margin>
-            </TextField>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Enlace">
-               <VBox.margin>
-                  <Insets bottom="4.0" />
-               </VBox.margin>
-            </Label>
-            <TextField fx:id="enlace" maxWidth="1.7976931348623157E308">
-               <VBox.margin>
-                  <Insets left="8.0" right="8.0" />
-               </VBox.margin>
-            </TextField>
+            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Estado" />
+            <TextField fx:id="estadoServicio" maxWidth="1.7976931348623157E308" />
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Observaciones" />
+            <TextField fx:id="observacionesServicio" maxWidth="1.7976931348623157E308" />
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="3">
          <children>
-            <Button fx:id="modificar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarOnAction" text="Modificar">
+            <Button fx:id="modificarServicio" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarServicioOnAction" text="Modificar">
                <styleClass>
                   <String fx:value="editionButton" />
                   <String fx:value="edit" />

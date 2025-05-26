@@ -33,7 +33,7 @@
    <children>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modificar videojuego">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modificar Mascota">
                <font>
                   <Font size="44.0" />
                </font>
@@ -43,42 +43,30 @@
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="ID" />
-            <TextField fx:id="id" editable="false" />
+            <TextField fx:id="idMascota" editable="false" />
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Nombre" />
-            <TextField fx:id="nombre" maxWidth="1.7976931348623157E308" />
+            <TextField fx:id="nombreMascota" maxWidth="1.7976931348623157E308" />
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Consola" />
-            <TextField fx:id="consola" maxWidth="1.7976931348623157E308" />
+            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Fecha de publicación" />
+            <DatePicker fx:id="edadMascota" />
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Genero" />
-            <TextField fx:id="genero" />
-         </children>
-      </VBox>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3">
-         <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Fecha de publicación" />
-            <DatePicker fx:id="fechaPublicacion" />
-         </children>
-      </VBox>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
-         <children>
             <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Precio" />
-            <TextField fx:id="precio" />
+            <TextField fx:id="pesoMascota" />
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="3">
          <children>
-            <Button fx:id="editar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#editarOnAction" text="Modificar">
+            <Button fx:id="modificarMascota" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modificarMascotaOnAction" text="Modificar">
                <styleClass>
                   <String fx:value="editionButton" />
                   <String fx:value="edit" />
@@ -100,14 +88,20 @@
             <Insets bottom="10.0" left="10.0" />
          </padding>
          <children>
-            <Label text="Ventas" />
-            <TextField fx:id="ventas" />
+            <Label text="Especie" />
+            <TextField fx:id="especieMascota" maxWidth="1.7976931348623157E308" />
          </children>
       </VBox>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
          <children>
-            <Label text="Banda sonora" />
-            <ComboBox fx:id="bandaSonora" prefWidth="150.0" />
+            <Label text="Raza" />
+            <TextField fx:id="razaMascota" maxWidth="1.7976931348623157E308" />
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="ID Dueno" />
+            <TextField fx:id="idDuenoMascota" maxWidth="1.7976931348623157E308" />
          </children>
       </VBox>
    </children>

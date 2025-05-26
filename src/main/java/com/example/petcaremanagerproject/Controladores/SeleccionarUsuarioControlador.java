@@ -9,10 +9,8 @@ public class SeleccionarUsuarioControlador {
     
     @FXML
     private Button usuario;
-    
     @FXML
     private Button administrador;
-    
     @FXML
     private Button cerrarAplicacion;
 

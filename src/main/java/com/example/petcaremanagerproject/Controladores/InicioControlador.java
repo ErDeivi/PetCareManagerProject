@@ -16,21 +16,16 @@ import java.io.IOException;
 public class InicioControlador {
     @FXML
     private TextField usuario;
-    
     @FXML
     private PasswordField contrasena;
-    
     @FXML
     private Text textoUsuario,textoContrasena,errorInicio;
 
     @FXML
     public void initialize() {
-        // Ocultar los mensajes de error al inicio
         textoUsuario.setVisible(false);
         textoContrasena.setVisible(false);
         errorInicio.setVisible(false);
-        
-        // Crear credenciales por defecto si no existen
         try {
             if (!credencialesExisten()) {
                 escribirCredenciales("admin", "12345");
@@ -50,7 +45,6 @@ public class InicioControlador {
 
     @FXML
     public void iniciarSesion() {
-        // Reiniciar mensajes de error
         textoUsuario.setVisible(false);
         textoContrasena.setVisible(false);
         errorInicio.setVisible(false);
@@ -58,7 +52,6 @@ public class InicioControlador {
         String usuarioText = usuario.getText();
         String contrasenaText = contrasena.getText();
 
-        // Validar campos vacíos
         boolean hayError = false;
         if (usuarioText.isEmpty()) {
             textoUsuario.setVisible(true);
@@ -68,7 +61,6 @@ public class InicioControlador {
             textoContrasena.setVisible(true);
             hayError = true;
         }
-
         if (hayError) {
             return;
         }
@@ -97,7 +89,6 @@ public class InicioControlador {
                 }
             }
         } catch (EOFException e) {
-            // Fin del archivo alcanzado
         }
         return false;
     }

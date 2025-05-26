@@ -1,7 +1,6 @@
 package com.example.petcaremanagerproject.Controladores;
 
 import com.example.petcaremanagerproject.App;
-import com.example.petcaremanagerproject.Modelo.Programador;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,48 +11,44 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class CrearProgramadorControlador {
+public class CrearUsuarioControlador {
 
     @FXML
-    private TextField dni;
+    private TextField nombreUsuario;
     @FXML
-    private TextField nombre;
+    private TextField correoUsuario;
     @FXML
-    private TextField apellido;
+    private TextField contrasenaUsuario;
     @FXML
-    private TextField localidad;
-    @FXML
-    private TextField salario;
+    private TextField telefonoUsuario;
 
     @FXML
-    private void crearOnAction(ActionEvent event) {
+    private void crearUsuarioOnAction(ActionEvent event) {
         if (validarCampos()) {
             Connection conn = null;
             PreparedStatement pst = null;
 
             try {
                 conn = DatabaseConnection.getConnection();
-                String query = "INSERT INTO Programador (Nombre, Apellido, Localidad, Salario,DNI) VALUES (?, ?, ?, ?, ?)";
+                String query = "INSERT INTO Usuario (nombre, correo, contrasena, telefono) VALUES (?, ?, ?, ?)";
                 pst = conn.prepareStatement(query);
 
-                
-                pst.setString(1,nombre.getText());
-                pst.setString(2, apellido.getText());
-                pst.setString(3, localidad.getText());
-                pst.setInt(4, Integer.parseInt(salario.getText()));
-                pst.setString(5, dni.getText());
+                pst.setString(1, nombreUsuario.getText());
+                pst.setString(2, correoUsuario.getText());
+                pst.setString(3, contrasenaUsuario.getText());
+                pst.setString(4, telefonoUsuario.getText());
 
                 int filasAfectadas = pst.executeUpdate();
 
                 if (filasAfectadas > 0) {
-                    mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Programador creado correctamente");
+                    mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Usuario creado correctamente");
                     volverAListado();
                 } else {
-                    mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo crear el programador");
+                    mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo crear el usuario");
                 }
 
             } catch (SQLException e) {
-                mostrarAlerta(Alert.AlertType.ERROR, "Error", "Error al crear el programador: " + e.getMessage());
+                mostrarAlerta(Alert.AlertType.ERROR, "Error", "Error al crear el usuario: " + e.getMessage());
             } finally {
                 try {
                     if (pst != null) pst.close();
@@ -66,22 +61,12 @@ public class CrearProgramadorControlador {
     }
 
     private boolean validarCampos() {
-        if (dni.getText().isEmpty() || nombre.getText().isEmpty() || 
-            apellido.getText().isEmpty() || localidad.getText().isEmpty() || 
-            salario.getText().isEmpty()) {
+        if (nombreUsuario.getText().isEmpty() || correoUsuario.getText().isEmpty() || 
+            contrasenaUsuario.getText().isEmpty() || telefonoUsuario.getText().isEmpty()) {
             mostrarAlerta(Alert.AlertType.WARNING, "Campos incompletos", 
                          "Por favor, rellene todos los campos");
             return false;
         }
-
-        try {
-            Integer.parseInt(salario.getText());
-        } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Salario inválido", 
-                         "El salario debe ser un número");
-            return false;
-        }
-
         return true;
     }
 
@@ -99,6 +84,6 @@ public class CrearProgramadorControlador {
     }
 
     private void volverAListado() {
-        App.setRoot("listadoProgramadores");
+        App.setRoot("listadoUsuarios");
     }
-}
+} 

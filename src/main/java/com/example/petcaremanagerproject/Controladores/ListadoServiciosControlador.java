@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.ResourceBundle;
 
 import com.example.petcaremanagerproject.App;
-import com.example.petcaremanagerproject.Modelo.BandaSonora;
+import com.example.petcaremanagerproject.Modelo.Servicio;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
 
 import javafx.collections.FXCollections;
@@ -24,22 +24,16 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-public class ListadoBandasSonorasControlador implements Initializable {
+public class ListadoServiciosControlador implements Initializable {
 
     @FXML
-    private TableColumn<BandaSonora, String> colCompositor;
-
+    private TableColumn<Servicio, String> colEstado;
     @FXML
-    private TableColumn<BandaSonora, String> colNombre;
-
-    @FXML
-    private TableColumn<BandaSonora, String> colUrl;
-
+    private TableColumn<Servicio, String> colObservaciones;
     @FXML
     private ComboBox<String> comboBox;
-
     @FXML
-    private TableView<BandaSonora> tablaArticulos;
+    private TableView<Servicio> tablaServicios;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -49,13 +43,12 @@ public class ListadoBandasSonorasControlador implements Initializable {
     }
 
     private void configurarColumnas() {
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colCompositor.setCellValueFactory(new PropertyValueFactory<>("compositor"));
-        colUrl.setCellValueFactory(new PropertyValueFactory<>("url"));
+        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
+        colObservaciones.setCellValueFactory(new PropertyValueFactory<>("observaciones"));
     }
 
     private void cargarDatos() {
-        ObservableList<BandaSonora> bandasSonoras = FXCollections.observableArrayList();
+        ObservableList<Servicio> servicios = FXCollections.observableArrayList();
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -63,18 +56,17 @@ public class ListadoBandasSonorasControlador implements Initializable {
         try {
             conn = DatabaseConnection.getConnection();
             stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM bandasonora");
+            rs = stmt.executeQuery("SELECT * FROM servicio");
 
             while (rs.next()) {
-                BandaSonora bandaSonora = new BandaSonora(
+                Servicio servicio = new Servicio(
                         rs.getInt("ID"),
-                        rs.getString("Nombre"),
-                        rs.getString("Compositor"),
-                        rs.getString("URL"));
-                bandasSonoras.add(bandaSonora);
+                        rs.getString("Estado"),
+                        rs.getString("Observaciones"));
+                servicios.add(servicio);
             }
 
-            tablaArticulos.setItems(bandasSonoras);
+            tablaServicios.setItems(servicios);
 
         } catch (SQLException e) {
             System.out.println("Error al cargar los datos: " + e.getMessage());
@@ -105,7 +97,7 @@ public class ListadoBandasSonorasControlador implements Initializable {
         if (seleccion == null)
             return;
 
-        ObservableList<BandaSonora> bandasSonoras = FXCollections.observableArrayList();
+        ObservableList<Servicio> servicios = FXCollections.observableArrayList();
         Connection conn = null;
         PreparedStatement pst = null;
         ResultSet rs = null;
@@ -116,20 +108,20 @@ public class ListadoBandasSonorasControlador implements Initializable {
 
             switch (seleccion) {
                 case "Todas las bandas sonoras":
-                    query = "SELECT * FROM bandasonora";
+                    query = "SELECT * FROM servicio";
                     pst = conn.prepareStatement(query);
                     break;
 
                 case "Banda sonora por compositor":
                     query = "SELECT bs.*, COUNT(*) as cantidad " +
-                            "FROM bandasonora bs " +
+                            "FROM servicio bs " +
                             "GROUP BY Compositor " +
                             "ORDER BY Compositor";
                     pst = conn.prepareStatement(query);
                     break;
 
                 case "Bandas sonoras por orden alfabético":
-                    query = "SELECT * FROM bandasonora " +
+                    query = "SELECT * FROM servicio " +
                             "ORDER BY Nombre";
                     pst = conn.prepareStatement(query);
                     break;
@@ -138,15 +130,14 @@ public class ListadoBandasSonorasControlador implements Initializable {
             rs = pst.executeQuery();
 
             while (rs.next()) {
-                BandaSonora bandaSonora = new BandaSonora(
+                Servicio servicio = new Servicio(
                         rs.getInt("ID"),
-                        rs.getString("Nombre"),
-                        rs.getString("Compositor"),
-                        rs.getString("URL"));
-                bandasSonoras.add(bandaSonora);
+                        rs.getString("Estado"),
+                        rs.getString("Observaciones"));
+                servicios.add(servicio);
             }
 
-            tablaArticulos.setItems(bandasSonoras);
+            tablaServicios.setItems(servicios);
 
         } catch (SQLException e) {
             Alert error = new Alert(Alert.AlertType.ERROR);
@@ -173,9 +164,9 @@ public class ListadoBandasSonorasControlador implements Initializable {
     }
 
     public void borrarBandaSonoraOnAction(ActionEvent actionEvent) {
-        BandaSonora bandaSonoraSeleccionada = tablaArticulos.getSelectionModel().getSelectedItem();
+        Servicio servicioSeleccionado = tablaServicios.getSelectionModel().getSelectedItem();
 
-        if (bandaSonoraSeleccionada == null) {
+        if (servicioSeleccionado == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Ninguna banda sonora seleccionada");
             alert.setHeaderText(null);
@@ -188,7 +179,7 @@ public class ListadoBandasSonorasControlador implements Initializable {
         confirmacion.setTitle("Confirmar borrado");
         confirmacion.setHeaderText(null);
         confirmacion.setContentText("¿Está seguro que desea borrar la banda sonora " +
-                bandaSonoraSeleccionada.getNombre() + "?");
+                servicioSeleccionado.getEstado() + "?");
 
         if (confirmacion.showAndWait().get() == ButtonType.OK) {
             Connection conn = null;
@@ -196,12 +187,11 @@ public class ListadoBandasSonorasControlador implements Initializable {
 
             try {
                 conn = DatabaseConnection.getConnection();
-                conn.setAutoCommit(false); // Iniciamos una transacción
+                conn.setAutoCommit(false);
 
-                // Luego eliminamos la banda sonora
-                String queryBandaSonora = "DELETE FROM bandasonora WHERE ID = ?";
+                String queryBandaSonora = "DELETE FROM servicio WHERE ID = ?";
                 pstDeleteBandaSonora = conn.prepareStatement(queryBandaSonora);
-                pstDeleteBandaSonora.setInt(1, bandaSonoraSeleccionada.getId());
+                pstDeleteBandaSonora.setInt(1, servicioSeleccionado.getId());
                 int filasAfectadas = pstDeleteBandaSonora.executeUpdate();
 
                 conn.commit(); // Confirmamos la transacción
@@ -243,9 +233,8 @@ public class ListadoBandasSonorasControlador implements Initializable {
     }
 
     public void modificarOnAction(ActionEvent actionEvent) {
-        BandaSonora bandaSonoraSeleccionada = tablaArticulos.getSelectionModel().getSelectedItem();
-
-        if (bandaSonoraSeleccionada == null) {
+        Servicio servicioSeleccionado = tablaServicios.getSelectionModel().getSelectedItem();
+        if (servicioSeleccionado == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Ninguna banda sonora seleccionada");
             alert.setHeaderText(null);
@@ -254,7 +243,7 @@ public class ListadoBandasSonorasControlador implements Initializable {
             return;
         }
 
-        App.setBandaSonoraModificar(bandaSonoraSeleccionada);
+        App.setBandaSonoraModificar(servicioSeleccionado);
         App.setRoot("modificarBandaSonora");
     }
 
