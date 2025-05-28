@@ -5,6 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
+import java.io.IOException;
+
 public class SeleccionarUsuarioControlador {
     
     @FXML
@@ -14,11 +16,11 @@ public class SeleccionarUsuarioControlador {
     @FXML
     private Button cerrarAplicacion;
 
-    public void usuarioOnAction(ActionEvent actionEvent) {
+    public void usuarioOnAction(ActionEvent actionEvent) throws IOException {
         App.setRoot("inicio");
     }
 
-    public void administradorOnAction(ActionEvent actionEvent) {
+    public void administradorOnAction(ActionEvent actionEvent) throws IOException {
         App.setRoot("menuAdmin");
     }
 

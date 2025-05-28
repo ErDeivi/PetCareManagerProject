@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.petcaremanagerproject.Controladores.GestionarCuidadoresControlador"
+      spacing="10">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button text="Atrás" onAction="#atras"/>
+        <Label text="Gestión de Cuidadores" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    </HBox>
+    
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button text="Nuevo Cuidador" onAction="#nuevoCuidadorOnAction"/>
+        <Button text="Modificar Cuidador" onAction="#modificarCuidadorOnAction"/>
+        <Button text="Borrar Cuidador" onAction="#borrarCuidadorOnAction"/>
+    </HBox>
+    
+    <TableView fx:id="tablaCuidadores" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="colNombre" text="Nombre" prefWidth="150"/>
+            <TableColumn fx:id="colCorreo" text="Correo" prefWidth="200"/>
+            <TableColumn fx:id="colTelefono" text="Teléfono" prefWidth="100"/>
+            <TableColumn fx:id="colEspecialidad" text="Especialidad" prefWidth="100"/>
+            <TableColumn fx:id="colDisponibilidad" text="Disponibilidad" prefWidth="100"/>
+        </columns>
+    </TableView>
+</VBox> 

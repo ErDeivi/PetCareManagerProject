@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,7 +38,7 @@ public class ModificarMascotaControlador implements Initializable {
             razaMascota.setText(mascota.getRaza());
             edadMascota.getEditor().setText(String.valueOf(mascota.getEdad()));
             pesoMascota.setText(String.valueOf(mascota.getPeso()));
-            idDuenoMascota.setText(String.valueOf(mascota.getIdDueno()));
+            idDuenoMascota.setText(String.valueOf(mascota.getId()));
         }
     }
 
@@ -60,6 +61,8 @@ public class ModificarMascotaControlador implements Initializable {
                 }
             } catch (SQLException e) {
                 mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al modificar la mascota: " + e.getMessage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -98,7 +101,7 @@ public class ModificarMascotaControlador implements Initializable {
         alert.showAndWait();
     }
 
-    public void volverMascotaOnAction(ActionEvent actionEvent) {
+    public void volverMascotaOnAction(ActionEvent actionEvent) throws IOException {
         App.setRoot("listadoMascotas");
     }
 } 

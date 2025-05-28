@@ -29,7 +29,7 @@ public class InicioControlador {
     }
 
     @FXML
-    public void iniciarSesion() {
+    public void iniciarSesion() throws IOException {
         textoUsuario.setVisible(false);
         textoContrasena.setVisible(false);
         errorInicio.setVisible(false);

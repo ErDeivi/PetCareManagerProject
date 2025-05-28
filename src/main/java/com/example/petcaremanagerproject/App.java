@@ -7,8 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import com.example.petcaremanagerproject.Modelo.Mascota;
-import com.example.petcaremanagerproject.Modelo.Usuario;
 import com.example.petcaremanagerproject.Modelo.Servicio;
+import com.example.petcaremanagerproject.Util.DatabaseConnection;
 
 import java.io.IOException;
 
@@ -16,47 +16,50 @@ public class App extends Application {
 
     private static Stage primaryStage; // Almacenar el escenario principal
     private static Mascota mascotaModificar;
-    private static Usuario usuarioModificar;
     private static Servicio servicioModificar;
-    private static Scene scene;
-    private static Stage stage;
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("inicio"));
-        stage.setTitle("PirriStation");
+        // Guardar el escenario principal
+        primaryStage = stage;
+        
+        // Inicializar la base de datos
+        DatabaseConnection.inicializarBaseDatos();
+        
+        // Cargar la vista inicial
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("login.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setTitle("PetCare Manager");
         stage.setScene(scene);
         stage.show();
     }
+
     public static void main(String[] args) {
         launch();
     }
-    public static void setRoot(String fxml) {
-        try {
-            scene.setRoot(loadFXML(fxml));
-        } catch (IOException e) {
-            e.printStackTrace();
+
+    public static void setRoot(String fxml) throws IOException {
+        if (primaryStage == null) {
+            throw new IllegalStateException("El Stage principal no está inicializado");
         }
-    }
-    private static Parent loadFXML(String fxml) throws IOException {
+        
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-        return fxmlLoader.load();
+        Scene scene = new Scene(fxmlLoader.load());
+        primaryStage.setScene(scene);
     }
+
     public static void setMascotaModificar(Mascota mascota) {
         mascotaModificar = mascota;
     }
+
     public static Mascota getMascotaModificar() {
         return mascotaModificar;
     }
-    public static void setUsuarioModificar(Usuario usuario) {
-        usuarioModificar = usuario;
-    }
-    public static Usuario getUsuarioModificar() {
-        return usuarioModificar;
-    }
+
     public static void setServicioModificar(Servicio servicio) {
         servicioModificar = servicio;
     }
+
     public static Servicio getServicioModificar() {
         return servicioModificar;
     }

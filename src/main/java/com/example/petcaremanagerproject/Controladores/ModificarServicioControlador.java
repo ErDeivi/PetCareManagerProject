@@ -9,6 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -49,7 +50,7 @@ public class ModificarServicioControlador {
                     mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Servicio modificado correctamente");
                     volverServicioOnAction(null);
                 }
-            } catch (SQLException e) {
+            } catch (SQLException | IOException e) {
                 mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al modificar el servicio: " + e.getMessage());
             }
         }
@@ -72,7 +73,7 @@ public class ModificarServicioControlador {
     }
 
     @FXML
-    void volverServicioOnAction(ActionEvent event) {
+    void volverServicioOnAction(ActionEvent event) throws IOException {
         App.setRoot("listadoServicios");
     }
 } 

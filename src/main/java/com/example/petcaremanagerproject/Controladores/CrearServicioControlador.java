@@ -8,6 +8,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -54,7 +55,7 @@ public class CrearServicioControlador {
     }
 
     @FXML
-    void volverServicioOnAction(ActionEvent event) {
+    void volverServicioOnAction(ActionEvent event) throws IOException {
         App.setRoot("listadoServicios");
     }
 

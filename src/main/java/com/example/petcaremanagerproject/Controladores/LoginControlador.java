@@ -6,6 +6,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
+import java.io.IOException;
+
 public class LoginControlador {
     @FXML
     private TextField usuario;
@@ -17,7 +19,7 @@ public class LoginControlador {
     private Text error;
     
     @FXML
-    private void iniciarSesion() {
+    private void iniciarSesion() throws IOException {
         String user = usuario.getText();
         String pass = contrasena.getText();
         if (user.equals("admin") && pass.equals("admin")) {

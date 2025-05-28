@@ -1,5 +1,6 @@
 package com.example.petcaremanagerproject.Controladores;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -194,7 +195,7 @@ public class ListadoServiciosControlador implements Initializable {
         }
     }
 
-    public void nuevaBandaSonoraOnAction(ActionEvent actionEvent) {
+    public void nuevaBandaSonoraOnAction(ActionEvent actionEvent) throws IOException {
         App.setRoot("crearBandaSonora");
     }
 
@@ -254,7 +255,7 @@ public class ListadoServiciosControlador implements Initializable {
         }
     }
 
-    public void modificarOnAction(ActionEvent actionEvent) {
+    public void modificarOnAction(ActionEvent actionEvent) throws IOException {
         Servicio servicioSeleccionado = tablaServicios.getSelectionModel().getSelectedItem();
         if (servicioSeleccionado == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -269,7 +270,7 @@ public class ListadoServiciosControlador implements Initializable {
         App.setRoot("modificarServicio");
     }
 
-    public void atras(ActionEvent actionEvent) {
+    public void atras(ActionEvent actionEvent) throws IOException {
         App.setRoot("menuAdmin");
     }
 

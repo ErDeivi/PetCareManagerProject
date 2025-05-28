@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.petcaremanagerproject.Controladores.ModificarCuidadorControlador"
+      spacing="10" padding="10">
+    
+    <Label text="Modificar Cuidador" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    
+    <GridPane vgap="10" hgap="10">
+        <Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="txtNombre" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        
+        <Label text="Apellidos:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextField fx:id="txtApellidos" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        
+        <Label text="Correo:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="txtCorreo" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        
+        <Label text="Teléfono:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <TextField fx:id="txtTelefono" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        
+        <Label text="Especialidad:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <ComboBox fx:id="comboBoxEspecialidad" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        
+        <Label text="Disponibilidad:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <ComboBox fx:id="comboBoxDisponibilidad" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+    </GridPane>
+    
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Guardar" onAction="#guardarOnAction"/>
+        <Button text="Cancelar" onAction="#cancelarOnAction"/>
+    </HBox>
+</VBox> 

@@ -9,6 +9,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.text.Text;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.io.IOException;
+
 public class CambiarContrasenaControlador {
     @FXML
     private PasswordField contrasenaVieja, contrasenaNueva, contrasenaNueva2;
@@ -63,7 +65,7 @@ public class CambiarContrasenaControlador {
         }
     }
 
-    public void volverOnAction(ActionEvent actionEvent) {
+    public void volverOnAction(ActionEvent actionEvent) throws IOException {
         App.setRoot("menuAdmin");
     }
 }

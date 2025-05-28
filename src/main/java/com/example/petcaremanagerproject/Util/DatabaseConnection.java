@@ -10,20 +10,18 @@ public class DatabaseConnection {
     private static final String USER = "root";
     private static final String PASSWORD = "";
     private static final String DB_NAME = "pirristation";
+    private static final String DB_URL = "jdbc:sqlite:petcare.db";
     
-    public static Connection getConnection() {
-        Connection conn = null;
+    static {
         try {
-            Class.forName(DRIVER);
-            conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
-            System.err.println("Error al cargar el driver: " + e.getMessage());
-            e.printStackTrace();
-        } catch (SQLException e) {
-            System.err.println("Error al conectar a la base de datos: " + e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException("Error al cargar el driver de SQLite", e);
         }
-        return conn;
+    }
+    
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(DB_URL);
     }
 
     private static String escapeString(String str) {
@@ -157,6 +155,65 @@ public class DatabaseConnection {
             e.printStackTrace();
             System.err.println("Error detallado: " + e.getMessage());
             return false;
+        }
+    }
+
+    public static void inicializarBaseDatos() {
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement()) {
+            
+            // Crear tabla de clientes
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS clientes (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nombre TEXT NOT NULL,
+                    apellidos TEXT NOT NULL,
+                    telefono TEXT NOT NULL,
+                    email TEXT NOT NULL
+                )
+            """);
+            
+            // Crear tabla de cuidadores
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS cuidadores (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nombre TEXT NOT NULL,
+                    apellidos TEXT NOT NULL,
+                    telefono TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    especialidad TEXT NOT NULL,
+                    disponibilidad TEXT NOT NULL
+                )
+            """);
+            
+            // Crear tabla de dueños
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS duenos (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nombre TEXT NOT NULL,
+                    apellidos TEXT NOT NULL,
+                    telefono TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    direccion TEXT NOT NULL
+                )
+            """);
+            
+            // Crear tabla de mascotas
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS mascotas (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nombre TEXT NOT NULL,
+                    especie TEXT NOT NULL,
+                    raza TEXT NOT NULL,
+                    edad INTEGER NOT NULL,
+                    peso REAL NOT NULL,
+                    id_cliente INTEGER NOT NULL,
+                    FOREIGN KEY (id_cliente) REFERENCES clientes(id)
+                )
+            """);
+            
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al inicializar la base de datos", e);
         }
     }
 }
