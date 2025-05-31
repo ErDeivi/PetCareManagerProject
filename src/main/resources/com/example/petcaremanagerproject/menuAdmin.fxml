@@ -7,7 +7,6 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
 
 <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.MenuAdminControlador">
   <columnConstraints>
@@ -49,16 +48,6 @@
                </VBox.margin>
             </Button>
             <Button fx:id="gestionarServicios" mnemonicParsing="false" onAction="#gestionarServiciosOnAction" prefHeight="37.0" prefWidth="224.0" text="Gestionar Servicios">
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </Button>
-            <Button fx:id="exportarBD" mnemonicParsing="false" onAction="#exportarBD" prefHeight="37.0" prefWidth="224.0" text="Exportar base de datos">
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </Button>
-            <Button fx:id="importarBD" mnemonicParsing="false" onAction="#importarBD" prefHeight="37.0" prefWidth="224.0" text="Importar base de datos">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>

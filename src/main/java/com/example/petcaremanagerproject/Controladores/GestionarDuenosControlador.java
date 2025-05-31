@@ -22,10 +22,8 @@ public class GestionarDuenosControlador {
     @FXML private TableView<Dueno> tablaDuenos;
     @FXML private TableColumn<Dueno, Integer> colId;
     @FXML private TableColumn<Dueno, String> colNombre;
-    @FXML private TableColumn<Dueno, String> colApellidos;
+    @FXML private TableColumn<Dueno, String> colCorreo;
     @FXML private TableColumn<Dueno, String> colTelefono;
-    @FXML private TableColumn<Dueno, String> colEmail;
-    @FXML private TableColumn<Dueno, String> colDireccion;
 
     private ObservableList<Dueno> duenos = FXCollections.observableArrayList();
 
@@ -38,13 +36,10 @@ public class GestionarDuenosControlador {
     private void configurarTabla() {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colApellidos.setCellValueFactory(new PropertyValueFactory<>("apellidos"));
+        colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
-        colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        colDireccion.setCellValueFactory(new PropertyValueFactory<>("direccion"));
 
-        // Permitir ordenamiento
-        tablaDuenos.getSortOrder().add(colApellidos);
+        tablaDuenos.getSortOrder().add(colNombre);
     }
 
     private void cargarDuenos() {
@@ -56,7 +51,12 @@ public class GestionarDuenosControlador {
 
     private List<Dueno> obtenerTodos() {
         List<Dueno> duenos = new ArrayList<>();
-        String sql = "SELECT * FROM duenos ORDER BY apellidos, nombre";
+        String sql = """
+            SELECT u.id_usuario, u.nombre, u.correo, u.telefono
+            FROM dueño d
+            JOIN usuario u ON d.id_usuario = u.id_usuario
+            ORDER BY u.nombre
+        """;
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -65,18 +65,56 @@ public class GestionarDuenosControlador {
                 
                 while (rs.next()) {
                     duenos.add(new Dueno(
-                        rs.getInt("id"),
+                        rs.getInt("id_usuario"),
                         rs.getString("nombre"),
-                        rs.getString("apellidos"),
-                        rs.getString("telefono"),
-                        rs.getString("email"),
-                        rs.getString("direccion")
+                        rs.getString("correo"),
+                        rs.getString("telefono")
                     ));
                 }
                 conn.commit();
             } catch (SQLException e) {
                 conn.rollback();
                 throw new RuntimeException("Error al cargar dueños", e);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error en la conexión a la base de datos", e);
+        }
+        return duenos;
+    }
+
+    private List<Dueno> buscar(String busqueda) {
+        List<Dueno> duenos = new ArrayList<>();
+        String sql = """
+            SELECT u.id_usuario, u.nombre, u.correo, u.telefono
+            FROM dueño d
+            JOIN usuario u ON d.id_usuario = u.id_usuario
+            WHERE u.nombre LIKE ?
+            OR u.correo LIKE ?
+            OR u.telefono LIKE ?
+            ORDER BY u.nombre
+        """;
+        
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                String busquedaPattern = "%" + busqueda + "%";
+                pstmt.setString(1, busquedaPattern);
+                pstmt.setString(2, busquedaPattern);
+                pstmt.setString(3, busquedaPattern);
+                
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    duenos.add(new Dueno(
+                        rs.getInt("id_usuario"),
+                        rs.getString("nombre"),
+                        rs.getString("correo"),
+                        rs.getString("telefono")
+                    ));
+                }
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw new RuntimeException("Error al buscar dueños", e);
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error en la conexión a la base de datos", e);
@@ -107,10 +145,10 @@ public class GestionarDuenosControlador {
     private void modificarDuenoOnAction() throws IOException {
         Dueno duenoSeleccionado = tablaDuenos.getSelectionModel().getSelectedItem();
         if (duenoSeleccionado != null) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/modificarDueno.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearDueno.fxml"));
             Scene scene = new Scene(loader.load());
             
-            ModificarDuenoControlador controlador = loader.getController();
+            CrearDuenoControlador controlador = loader.getController();
             controlador.setDuenoAModificar(duenoSeleccionado);
             
             Stage stage = new Stage();
@@ -136,8 +174,13 @@ public class GestionarDuenosControlador {
                     tablaDuenos.refresh();
                     mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Dueño eliminado correctamente");
                 } catch (SQLException e) {
-                    mostrarMensaje(Alert.AlertType.ERROR, "Error", 
-                        "Error al eliminar el dueño: " + e.getMessage());
+                    if (e.getMessage().contains("FOREIGN KEY constraint failed")) {
+                        mostrarMensaje(Alert.AlertType.ERROR, "Error", 
+                            "No se puede eliminar el dueño porque tiene mascotas asociadas. Elimine primero las mascotas.");
+                    } else {
+                        mostrarMensaje(Alert.AlertType.ERROR, "Error", 
+                            "Error al eliminar el dueño: " + e.getMessage());
+                    }
                 }
             }
         } else {
@@ -146,7 +189,7 @@ public class GestionarDuenosControlador {
     }
 
     private void eliminar(int id) throws SQLException {
-        String sql = "DELETE FROM duenos WHERE id = ?";
+        String sql = "DELETE FROM dueño WHERE id_usuario = ?";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -170,7 +213,7 @@ public class GestionarDuenosControlador {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar eliminación");
         alert.setHeaderText("¿Está seguro de que desea eliminar este dueño?");
-        alert.setContentText("Esta acción no se puede deshacer.");
+        alert.setContentText("Esta acción no se puede deshacer.\n\nNota: Si este dueño tiene mascotas asociadas, no podrá eliminarlo hasta que elimine las mascotas.");
         return alert.showAndWait().get() == ButtonType.OK;
     }
 

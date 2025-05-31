@@ -84,17 +84,20 @@ public class GestionarMascotasControlador {
 
     private void cargarMascotas() {
         List<Mascota> listaMascotas = obtenerTodas();
+        System.out.println("Cargadas " + listaMascotas.size() + " mascotas."); // Debugging line
         mascotas.clear();
         mascotas.addAll(listaMascotas);
         tablaMascotas.setItems(mascotas);
+        tablaMascotas.refresh();
     }
 
     private List<Mascota> obtenerTodas() {
         List<Mascota> mascotas = new ArrayList<>();
         String sql = """
-            SELECT m.*, c.nombre || ' ' || c.apellidos as nombre_cliente 
-            FROM mascotas m 
-            JOIN clientes c ON m.id_cliente = c.id
+            SELECT m.id_mascota, m.nombre AS mascota_nombre, m.especie, m.raza, m.edad, m.peso, u.nombre AS dueno_nombre, m.id_dueño 
+            FROM mascota m 
+            JOIN dueño d ON m.id_dueño = d.id_usuario
+            JOIN usuario u ON d.id_usuario = u.id_usuario
             ORDER BY m.nombre
         """;
         
@@ -104,15 +107,18 @@ public class GestionarMascotasControlador {
                  ResultSet rs = stmt.executeQuery(sql)) {
                 
                 while (rs.next()) {
+                    // Usar el alias 'dueno_nombre' para obtener el nombre del dueño
+                    String nombreDueno = rs.getString("dueno_nombre");
+
                     mascotas.add(new Mascota(
-                        rs.getInt("id"),
-                        rs.getString("nombre"),
+                        rs.getInt("id_mascota"),
+                        rs.getString("mascota_nombre"), // Usar el alias 'mascota_nombre' para el nombre de la mascota
                         rs.getString("especie"),
                         rs.getString("raza"),
                         rs.getInt("edad"),
                         rs.getDouble("peso"),
-                        rs.getString("nombre_cliente"),
-                        rs.getInt("id_cliente")
+                        nombreDueno, // Asignar el nombre del dueño a la propiedad 'cliente'
+                        rs.getInt("id_dueño")
                     ));
                 }
                 conn.commit();
@@ -133,14 +139,23 @@ public class GestionarMascotasControlador {
 
     @FXML
     private void anadirMascotaOnAction() throws IOException {
-        App.setRoot("crearMascota");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearMascota.fxml"));
+        Scene scene = new Scene(loader.load());
+
+        Stage stage = new Stage();
+        stage.setTitle("Nueva Mascota");
+        stage.setScene(scene);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
+
+        cargarMascotas(); // Recargar la tabla después de cerrar la ventana de creación
     }
 
     @FXML
     private void modificarMascotaOnAction() throws IOException {
         Mascota mascotaSeleccionada = tablaMascotas.getSelectionModel().getSelectedItem();
         if (mascotaSeleccionada != null) {
-            FXMLLoader loader = new FXMLLoader(App.class.getResource("crearMascota.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearMascota.fxml"));
             Scene scene = new Scene(loader.load());
             
             CrearMascotaControlador controlador = loader.getController();
@@ -152,7 +167,7 @@ public class GestionarMascotasControlador {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
             
-            cargarMascotas();
+            cargarMascotas(); // Recargar la tabla después de cerrar la ventana de modificación
         } else {
             mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Por favor, seleccione una mascota para modificar.");
         }
@@ -166,11 +181,12 @@ public class GestionarMascotasControlador {
                 try {
                     eliminar(mascotaSeleccionada.getId());
                     mascotas.remove(mascotaSeleccionada);
+                    tablaMascotas.refresh(); // Asegurar que la tabla se actualice visualmente
                     mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Mascota eliminada correctamente");
                 } catch (SQLException e) {
                     if (e.getMessage().contains("FOREIGN KEY constraint failed")) {
                         mostrarMensaje(Alert.AlertType.ERROR, "Error", 
-                            "No se puede eliminar la mascota porque tiene servicios asociados.");
+                            "No se puede eliminar la mascota porque tiene servicios asociados. Elimine primero los servicios.");
                     } else {
                         mostrarMensaje(Alert.AlertType.ERROR, "Error", 
                             "Error al eliminar la mascota: " + e.getMessage());
@@ -184,7 +200,7 @@ public class GestionarMascotasControlador {
 
     private boolean validarEliminacion(Mascota mascota) {
         // Verificar si la mascota tiene servicios asociados
-        String sql = "SELECT COUNT(*) FROM servicios WHERE id_mascota = ?";
+        String sql = "SELECT COUNT(*) FROM servicio WHERE id_mascota = ?"; // Table name is 'servicio'
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
@@ -204,17 +220,22 @@ public class GestionarMascotasControlador {
     }
 
     private void eliminar(int id) throws SQLException {
-        String sql = "DELETE FROM mascotas WHERE id = ?";
+        String sql = "DELETE FROM mascota WHERE id_mascota = ?";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, id);
-                pstmt.executeUpdate();
-                conn.commit();
+                int filasAfectadas = pstmt.executeUpdate();
+                if (filasAfectadas > 0) {
+                    conn.commit();
+                } else {
+                     conn.rollback();
+                    throw new SQLException("No se encontró la mascota para eliminar");
+                }
             } catch (SQLException e) {
                 conn.rollback();
-                throw new RuntimeException("Error al eliminar mascota", e);
+                throw new SQLException("Error al eliminar mascota: " + e.getMessage());
             }
         }
     }
@@ -234,13 +255,14 @@ public class GestionarMascotasControlador {
     private List<Mascota> buscar(String busqueda) {
         List<Mascota> mascotas = new ArrayList<>();
         String sql = """
-            SELECT m.*, c.nombre || ' ' || c.apellidos as nombre_cliente 
-            FROM mascotas m 
-            JOIN clientes c ON m.id_cliente = c.id
+            SELECT m.id_mascota, m.nombre AS mascota_nombre, m.especie, m.raza, m.edad, m.peso, u.nombre AS dueno_nombre, m.id_dueño 
+            FROM mascota m 
+            JOIN dueño d ON m.id_dueño = d.id_usuario
+            JOIN usuario u ON d.id_usuario = u.id_usuario
             WHERE m.nombre LIKE ? 
             OR m.especie LIKE ? 
             OR m.raza LIKE ? 
-            OR c.nombre || ' ' || c.apellidos LIKE ?
+            OR u.nombre LIKE ?
             ORDER BY m.nombre
         """;
         
@@ -255,15 +277,17 @@ public class GestionarMascotasControlador {
                 
                 ResultSet rs = pstmt.executeQuery();
                 while (rs.next()) {
+                    // Usar el alias 'dueno_nombre' para obtener el nombre del dueño
+                    String nombreDueno = rs.getString("dueno_nombre");
                     mascotas.add(new Mascota(
-                        rs.getInt("id"),
-                        rs.getString("nombre"),
+                        rs.getInt("id_mascota"),
+                        rs.getString("mascota_nombre"), // Usar el alias 'mascota_nombre' para el nombre de la mascota
                         rs.getString("especie"),
                         rs.getString("raza"),
                         rs.getInt("edad"),
                         rs.getDouble("peso"),
-                        rs.getString("nombre_cliente"),
-                        rs.getInt("id_cliente")
+                        nombreDueno, // Asignar el nombre del dueño a la propiedad 'cliente'
+                        rs.getInt("id_dueño")
                     ));
                 }
                 conn.commit();

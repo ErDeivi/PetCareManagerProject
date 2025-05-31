@@ -23,9 +23,6 @@ public class App extends Application {
         // Guardar el escenario principal
         primaryStage = stage;
         
-        // Inicializar la base de datos
-        DatabaseConnection.inicializarBaseDatos();
-        
         // Cargar la vista inicial
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());

@@ -5,90 +5,25 @@ import java.sql.*;
 import java.util.*;
 
 public class DatabaseConnection {
-    private static final String DRIVER = "com.mysql.jdbc.Driver";
-    private static final String URL = "jdbc:mysql://localhost/petcaredb?useSSL=false";
+    // MySQL connection details
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver"; // Corrected driver class name for modern MySQL Connector/J
+    private static final String URL = "jdbc:mysql://localhost:3306/petcaredb?useSSL=false&serverTimezone=UTC"; // Added timezone
     private static final String USER = "root";
-    private static final String PASSWORD = "";
-    private static final String DB_NAME = "petcaredb";
-    private static final String DB_URL = "jdbc:sqlite:petcare.db";
-    
+    private static final String PASSWORD = ""; // Assume empty password for XAMPP default
+
     static {
         try {
-            Class.forName("org.sqlite.JDBC");
+            // Load MySQL driver
+            Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Error al cargar el driver de SQLite", e);
+            // Updated error message
+            throw new RuntimeException("Error al cargar el driver de MySQL", e);
         }
     }
     
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL);
+        // Use MySQL connection details
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    private static String escapeString(String str) {
-        if (str == null) return "NULL";
-        return "'" + str.replace("\\", "\\\\")
-                      .replace("'", "\\'")
-                      .replace("\r", "\\r")
-                      .replace("\n", "\\n")
-                      .replace("\t", "\\t") + "'";
-    }
-
-    public static void inicializarBaseDatos() {
-        try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement()) {
-            
-            // Crear tabla de clientes
-            stmt.execute("""
-                CREATE TABLE IF NOT EXISTS clientes (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    nombre TEXT NOT NULL,
-                    apellidos TEXT NOT NULL,
-                    telefono TEXT NOT NULL,
-                    email TEXT NOT NULL
-                )
-            """);
-            
-            // Crear tabla de cuidadores
-            stmt.execute("""
-                CREATE TABLE IF NOT EXISTS cuidadores (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    nombre TEXT NOT NULL,
-                    apellidos TEXT NOT NULL,
-                    telefono TEXT NOT NULL,
-                    email TEXT NOT NULL,
-                    especialidad TEXT NOT NULL,
-                    disponibilidad TEXT NOT NULL
-                )
-            """);
-            
-            // Crear tabla de dueños
-            stmt.execute("""
-                CREATE TABLE IF NOT EXISTS duenos (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    nombre TEXT NOT NULL,
-                    apellidos TEXT NOT NULL,
-                    telefono TEXT NOT NULL,
-                    email TEXT NOT NULL,
-                    direccion TEXT NOT NULL
-                )
-            """);
-            
-            // Crear tabla de mascotas
-            stmt.execute("""
-                CREATE TABLE IF NOT EXISTS mascotas (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    nombre TEXT NOT NULL,
-                    especie TEXT NOT NULL,
-                    raza TEXT NOT NULL,
-                    edad INTEGER NOT NULL,
-                    peso REAL NOT NULL,
-                    id_cliente INTEGER NOT NULL,
-                    FOREIGN KEY (id_cliente) REFERENCES clientes(id)
-                )
-            """);
-            
-        } catch (SQLException e) {
-            throw new RuntimeException("Error al inicializar la base de datos", e);
-        }
-    }
 }

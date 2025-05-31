@@ -7,6 +7,7 @@ import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.*;
@@ -57,7 +58,7 @@ public class CrearMascotaControlador {
                 if (empty || cliente == null) {
                     setText(null);
                 } else {
-                    setText(cliente.getNombre() + " " + cliente.getApellidos());
+                    setText(cliente.getNombre());
                 }
             }
         });
@@ -69,7 +70,7 @@ public class CrearMascotaControlador {
                 if (empty || cliente == null) {
                     setText(null);
                 } else {
-                    setText(cliente.getNombre() + " " + cliente.getApellidos());
+                    setText(cliente.getNombre());
                 }
             }
         });
@@ -77,7 +78,7 @@ public class CrearMascotaControlador {
 
     private List<Cliente> obtenerClientes() {
         List<Cliente> clientes = new ArrayList<>();
-        String sql = "SELECT * FROM clientes ORDER BY apellidos, nombre";
+        String sql = "SELECT u.id_usuario, u.nombre, u.correo, u.telefono FROM dueño d JOIN usuario u ON d.id_usuario = u.id_usuario ORDER BY u.nombre";
         
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -85,15 +86,14 @@ public class CrearMascotaControlador {
             
             while (rs.next()) {
                 clientes.add(new Cliente(
-                    rs.getInt("id"),
+                    rs.getInt("id_usuario"),
                     rs.getString("nombre"),
-                    rs.getString("apellidos"),
-                    rs.getString("telefono"),
-                    rs.getString("email")
+                    rs.getString("correo"),
+                    rs.getString("telefono")
                 ));
             }
         } catch (SQLException e) {
-            mostrarMensaje(AlertType.ERROR, "Error", "Error al cargar clientes: " + e.getMessage());
+            mostrarMensaje(AlertType.ERROR, "Error", "Error al cargar dueños: " + e.getMessage());
         }
         return clientes;
     }
@@ -108,9 +108,8 @@ public class CrearMascotaControlador {
             txtEdad.setText(String.valueOf(mascota.getEdad()));
             txtPeso.setText(String.valueOf(mascota.getPeso()));
             
-            // Seleccionar el cliente correspondiente
             for (Cliente cliente : cmbCliente.getItems()) {
-                if ((cliente.getNombre() + " " + cliente.getApellidos()).equals(mascota.getCliente())) {
+                if (cliente.getNombre().equals(mascota.getCliente())) {
                     cmbCliente.setValue(cliente);
                     break;
                 }
@@ -123,7 +122,7 @@ public class CrearMascotaControlador {
         if (validarCampos()) {
             try {
                 int idCliente = cmbCliente.getValue().getId();
-                String nombreCliente = cmbCliente.getValue().getNombre() + " " + cmbCliente.getValue().getApellidos();
+                String nombreCliente = cmbCliente.getValue().getNombre();
                 
                 Mascota mascota = new Mascota(
                     mascotaAModificar != null ? mascotaAModificar.getId() : 0,
@@ -152,7 +151,7 @@ public class CrearMascotaControlador {
     }
 
     private void insertar(Mascota mascota) {
-        String sql = "INSERT INTO mascotas (nombre, especie, raza, edad, peso, id_cliente) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO mascota (nombre, especie, raza, edad, peso, id_dueño) VALUES (?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -176,7 +175,7 @@ public class CrearMascotaControlador {
     }
 
     private void actualizar(Mascota mascota) {
-        String sql = "UPDATE mascotas SET nombre = ?, especie = ?, raza = ?, edad = ?, peso = ?, id_cliente = ? WHERE id = ?";
+        String sql = "UPDATE mascota SET nombre = ?, especie = ?, raza = ?, edad = ?, peso = ?, id_dueño = ? WHERE id_mascota = ?";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -205,7 +204,12 @@ public class CrearMascotaControlador {
             mostrarMensaje(AlertType.WARNING, "Advertencia", "El nombre es obligatorio");
             return false;
         }
-        if (cmbEspecie.getValue() == null) {
+        if (!txtNombre.getText().trim().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]{2,50}$")) {
+            mostrarMensaje(AlertType.WARNING, "Advertencia", "El nombre solo debe contener letras y espacios");
+            return false;
+        }
+
+        if (cmbEspecie.getValue() == null || cmbEspecie.getValue().trim().isEmpty()) {
             mostrarMensaje(AlertType.WARNING, "Advertencia", "Debe seleccionar una especie");
             return false;
         }
@@ -217,10 +221,32 @@ public class CrearMascotaControlador {
             mostrarMensaje(AlertType.WARNING, "Advertencia", "La edad es obligatoria");
             return false;
         }
+        try {
+            int edad = Integer.parseInt(txtEdad.getText().trim());
+            if (edad < 0) {
+                 mostrarMensaje(AlertType.WARNING, "Advertencia", "La edad no puede ser negativa");
+                 return false;
+            }
+        } catch (NumberFormatException e) {
+            mostrarMensaje(AlertType.WARNING, "Advertencia", "La edad debe ser un número entero válido");
+            return false;
+        }
+
         if (txtPeso.getText().trim().isEmpty()) {
             mostrarMensaje(AlertType.WARNING, "Advertencia", "El peso es obligatorio");
             return false;
         }
+        try {
+            double peso = Double.parseDouble(txtPeso.getText().trim());
+            if (peso < 0) {
+                mostrarMensaje(AlertType.WARNING, "Advertencia", "El peso no puede ser negativo");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            mostrarMensaje(AlertType.WARNING, "Advertencia", "El peso debe ser un número válido");
+            return false;
+        }
+
         if (cmbCliente.getValue() == null) {
             mostrarMensaje(AlertType.WARNING, "Advertencia", "Debe seleccionar un dueño");
             return false;
@@ -235,7 +261,8 @@ public class CrearMascotaControlador {
 
     @FXML
     private void volverOnAction() throws IOException {
-        App.setRoot("gestionarMascotas");
+        Stage stage = (Stage) txtNombre.getScene().getWindow();
+        stage.close();
     }
 
     private void mostrarMensaje(AlertType tipo, String titulo, String contenido) {

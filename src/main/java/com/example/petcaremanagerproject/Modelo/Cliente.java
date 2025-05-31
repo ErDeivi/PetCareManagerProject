@@ -3,16 +3,14 @@ package com.example.petcaremanagerproject.Modelo;
 public class Cliente {
     private int id;
     private String nombre;
-    private String apellidos;
+    private String correo;
     private String telefono;
-    private String email;
 
-    public Cliente(int id, String nombre, String apellidos, String telefono, String email) {
+    public Cliente(int id, String nombre, String correo, String telefono) {
         this.id = id;
         this.nombre = nombre;
-        this.apellidos = apellidos;
+        this.correo = correo;
         this.telefono = telefono;
-        this.email = email;
     }
 
     public int getId() {
@@ -31,12 +29,12 @@ public class Cliente {
         this.nombre = nombre;
     }
 
-    public String getApellidos() {
-        return apellidos;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     public String getTelefono() {
@@ -47,16 +45,8 @@ public class Cliente {
         this.telefono = telefono;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     @Override
     public String toString() {
-        return nombre + " " + apellidos;
+        return nombre;
     }
 } 

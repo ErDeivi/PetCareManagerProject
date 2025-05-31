@@ -27,10 +27,9 @@
         <columns>
             <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
             <TableColumn fx:id="colNombre" text="Nombre" prefWidth="100"/>
-            <TableColumn fx:id="colApellidos" text="Apellidos" prefWidth="150"/>
+            
             <TableColumn fx:id="colTelefono" text="Teléfono" prefWidth="100"/>
-            <TableColumn fx:id="colEmail" text="Correo" prefWidth="150"/>
-            <TableColumn fx:id="colDireccion" text="Dirección" prefWidth="200"/>
+            <TableColumn fx:id="colCorreo" text="Correo" prefWidth="150"/>
         </columns>
     </TableView>
 </VBox> 

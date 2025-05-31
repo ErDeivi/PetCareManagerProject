@@ -13,14 +13,19 @@
     </padding>
     
     <HBox spacing="10" alignment="CENTER_LEFT">
-        <Button text="Atrás" onAction="#atras"/>
+        <Button text="Atrás" onAction="#volverOnAction"/>
         <Label text="Gestión de Cuidadores" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
     </HBox>
     
+    <HBox alignment="CENTER" spacing="10.0">
+        <TextField fx:id="txtBuscar" promptText="Buscar cuidador..." HBox.hgrow="ALWAYS" />
+        <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#buscarCuidadorOnAction" text="Buscar" />
+    </HBox>
+
     <HBox spacing="10" alignment="CENTER_LEFT">
         <Button text="Nuevo Cuidador" onAction="#nuevoCuidadorOnAction"/>
         <Button text="Modificar Cuidador" onAction="#modificarCuidadorOnAction"/>
-        <Button text="Borrar Cuidador" onAction="#borrarCuidadorOnAction"/>
+        <Button text="Borrar Cuidador" onAction="#eliminarCuidadorOnAction"/>
     </HBox>
     
     <TableView fx:id="tablaCuidadores" VBox.vgrow="ALWAYS">
@@ -29,8 +34,6 @@
             <TableColumn fx:id="colNombre" text="Nombre" prefWidth="150"/>
             <TableColumn fx:id="colCorreo" text="Correo" prefWidth="200"/>
             <TableColumn fx:id="colTelefono" text="Teléfono" prefWidth="100"/>
-            <TableColumn fx:id="colEspecialidad" text="Especialidad" prefWidth="100"/>
-            <TableColumn fx:id="colDisponibilidad" text="Disponibilidad" prefWidth="100"/>
         </columns>
     </TableView>
 </VBox> 
