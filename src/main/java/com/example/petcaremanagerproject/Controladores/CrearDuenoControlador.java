@@ -1,11 +1,9 @@
 package com.example.petcaremanagerproject.Controladores;
 
-import com.example.petcaremanagerproject.Modelo.Cuidador;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -13,45 +11,24 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class ModificarCuidadorControlador {
+public class CrearDuenoControlador {
     @FXML private TextField txtNombre;
     @FXML private TextField txtApellidos;
     @FXML private TextField txtCorreo;
     @FXML private TextField txtTelefono;
-    @FXML private ComboBox<String> comboBoxEspecialidad;
-    @FXML private ComboBox<String> comboBoxDisponibilidad;
+    @FXML private TextField txtDireccion;
     @FXML private Button btnGuardar;
     @FXML private Button btnCancelar;
-
-    private Cuidador cuidadorAModificar;
-
-    @FXML
-    public void initialize() {
-        comboBoxEspecialidad.getItems().addAll("Perros", "Gatos", "Aves", "Reptiles", "Todos");
-        comboBoxDisponibilidad.getItems().addAll("Mañana", "Tarde", "Noche", "Completo");
-    }
-
-    public void setCuidadorAModificar(Cuidador cuidador) {
-        this.cuidadorAModificar = cuidador;
-        if (cuidador != null) {
-            txtNombre.setText(cuidador.getNombre());
-            txtApellidos.setText(cuidador.getApellidos());
-            txtCorreo.setText(cuidador.getEmail());
-            txtTelefono.setText(cuidador.getTelefono());
-            comboBoxEspecialidad.setValue(cuidador.getEspecialidad());
-            comboBoxDisponibilidad.setValue(cuidador.getDisponibilidad());
-        }
-    }
 
     @FXML
     private void guardarOnAction() {
         if (validarCampos()) {
             try {
-                modificar();
+                crear();
                 cerrarVentana();
             } catch (SQLException e) {
                 mostrarMensaje(Alert.AlertType.ERROR, "Error", 
-                    "Error al guardar el cuidador: " + e.getMessage());
+                    "Error al crear el dueño: " + e.getMessage());
             }
         }
     }
@@ -102,23 +79,17 @@ public class ModificarCuidadorControlador {
             return false;
         }
 
-        // Validar especialidad
-        if (comboBoxEspecialidad.getValue() == null) {
-            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "La especialidad es obligatoria");
-            return false;
-        }
-
-        // Validar disponibilidad
-        if (comboBoxDisponibilidad.getValue() == null) {
-            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "La disponibilidad es obligatoria");
+        // Validar dirección
+        if (txtDireccion.getText().trim().isEmpty()) {
+            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "La dirección es obligatoria");
             return false;
         }
 
         return true;
     }
 
-    private void modificar() throws SQLException {
-        String sql = "UPDATE cuidadores SET nombre = ?, apellidos = ?, telefono = ?, email = ?, especialidad = ?, disponibilidad = ? WHERE id = ?";
+    private void crear() throws SQLException {
+        String sql = "INSERT INTO duenos (nombre, apellidos, telefono, email, direccion) VALUES (?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -127,15 +98,13 @@ public class ModificarCuidadorControlador {
                 pstmt.setString(2, txtApellidos.getText().trim());
                 pstmt.setString(3, txtTelefono.getText().trim());
                 pstmt.setString(4, txtCorreo.getText().trim());
-                pstmt.setString(5, comboBoxEspecialidad.getValue());
-                pstmt.setString(6, comboBoxDisponibilidad.getValue());
-                pstmt.setInt(7, cuidadorAModificar.getId());
+                pstmt.setString(5, txtDireccion.getText().trim());
                 pstmt.executeUpdate();
                 conn.commit();
-                mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Cuidador modificado correctamente");
+                mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Dueño creado correctamente");
             } catch (SQLException e) {
                 conn.rollback();
-                throw new RuntimeException("Error al modificar cuidador", e);
+                throw new RuntimeException("Error al crear dueño", e);
             }
         }
     }

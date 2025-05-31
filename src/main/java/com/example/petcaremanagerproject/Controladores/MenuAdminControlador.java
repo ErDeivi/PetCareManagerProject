@@ -17,8 +17,8 @@ public class MenuAdminControlador {
     }
 
     @FXML
-    private void gestionarClientesOnAction() throws IOException {
-        App.setRoot("gestionarClientes");
+    private void gestionarDuenosOnAction() throws IOException {
+        App.setRoot("gestionarDuenos");
     }
 
     @FXML

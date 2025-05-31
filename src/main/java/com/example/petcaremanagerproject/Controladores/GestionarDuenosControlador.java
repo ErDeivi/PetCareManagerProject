@@ -1,7 +1,7 @@
 package com.example.petcaremanagerproject.Controladores;
 
 import com.example.petcaremanagerproject.App;
-import com.example.petcaremanagerproject.Modelo.Cuidador;
+import com.example.petcaremanagerproject.Modelo.Dueno;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,45 +18,45 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GestionarCuidadoresControlador {
-    @FXML private TableView<Cuidador> tablaCuidadores;
-    @FXML private TableColumn<Cuidador, Integer> colId;
-    @FXML private TableColumn<Cuidador, String> colNombre;
-    @FXML private TableColumn<Cuidador, String> colCorreo;
-    @FXML private TableColumn<Cuidador, String> colTelefono;
-    @FXML private TableColumn<Cuidador, String> colEspecialidad;
-    @FXML private TableColumn<Cuidador, String> colDisponibilidad;
+public class GestionarDuenosControlador {
+    @FXML private TableView<Dueno> tablaDuenos;
+    @FXML private TableColumn<Dueno, Integer> colId;
+    @FXML private TableColumn<Dueno, String> colNombre;
+    @FXML private TableColumn<Dueno, String> colApellidos;
+    @FXML private TableColumn<Dueno, String> colTelefono;
+    @FXML private TableColumn<Dueno, String> colEmail;
+    @FXML private TableColumn<Dueno, String> colDireccion;
 
-    private ObservableList<Cuidador> cuidadores = FXCollections.observableArrayList();
+    private ObservableList<Dueno> duenos = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
         configurarTabla();
-        cargarCuidadores();
+        cargarDuenos();
     }
 
     private void configurarTabla() {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colCorreo.setCellValueFactory(new PropertyValueFactory<>("email"));
+        colApellidos.setCellValueFactory(new PropertyValueFactory<>("apellidos"));
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
-        colEspecialidad.setCellValueFactory(new PropertyValueFactory<>("especialidad"));
-        colDisponibilidad.setCellValueFactory(new PropertyValueFactory<>("disponibilidad"));
+        colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        colDireccion.setCellValueFactory(new PropertyValueFactory<>("direccion"));
 
-        // Permitir ordenamiento en todas las columnas
-        tablaCuidadores.getSortOrder().add(colNombre);
+        // Permitir ordenamiento
+        tablaDuenos.getSortOrder().add(colApellidos);
     }
 
-    private void cargarCuidadores() {
-        List<Cuidador> listaCuidadores = obtenerTodos();
-        cuidadores.clear();
-        cuidadores.addAll(listaCuidadores);
-        tablaCuidadores.setItems(cuidadores);
+    private void cargarDuenos() {
+        List<Dueno> listaDuenos = obtenerTodos();
+        duenos.clear();
+        duenos.addAll(listaDuenos);
+        tablaDuenos.setItems(duenos);
     }
 
-    private List<Cuidador> obtenerTodos() {
-        List<Cuidador> cuidadores = new ArrayList<>();
-        String sql = "SELECT * FROM cuidadores ORDER BY apellidos, nombre";
+    private List<Dueno> obtenerTodos() {
+        List<Dueno> duenos = new ArrayList<>();
+        String sql = "SELECT * FROM duenos ORDER BY apellidos, nombre";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -64,25 +64,24 @@ public class GestionarCuidadoresControlador {
                  ResultSet rs = stmt.executeQuery(sql)) {
                 
                 while (rs.next()) {
-                    cuidadores.add(new Cuidador(
+                    duenos.add(new Dueno(
                         rs.getInt("id"),
                         rs.getString("nombre"),
                         rs.getString("apellidos"),
                         rs.getString("telefono"),
                         rs.getString("email"),
-                        rs.getString("especialidad"),
-                        rs.getString("disponibilidad")
+                        rs.getString("direccion")
                     ));
                 }
                 conn.commit();
             } catch (SQLException e) {
                 conn.rollback();
-                throw new RuntimeException("Error al cargar cuidadores", e);
+                throw new RuntimeException("Error al cargar dueños", e);
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error en la conexión a la base de datos", e);
         }
-        return cuidadores;
+        return duenos;
     }
 
     @FXML
@@ -91,78 +90,78 @@ public class GestionarCuidadoresControlador {
     }
 
     @FXML
-    private void nuevoCuidadorOnAction() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearCuidador.fxml"));
+    private void nuevoDuenoOnAction() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearDueno.fxml"));
         Scene scene = new Scene(loader.load());
         
         Stage stage = new Stage();
-        stage.setTitle("Nuevo Cuidador");
+        stage.setTitle("Nuevo Dueño");
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.showAndWait();
         
-        cargarCuidadores();
+        cargarDuenos();
     }
 
     @FXML
-    private void modificarCuidadorOnAction() throws IOException {
-        Cuidador cuidadorSeleccionado = tablaCuidadores.getSelectionModel().getSelectedItem();
-        if (cuidadorSeleccionado != null) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/modificarCuidador.fxml"));
+    private void modificarDuenoOnAction() throws IOException {
+        Dueno duenoSeleccionado = tablaDuenos.getSelectionModel().getSelectedItem();
+        if (duenoSeleccionado != null) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/modificarDueno.fxml"));
             Scene scene = new Scene(loader.load());
             
-            ModificarCuidadorControlador controlador = loader.getController();
-            controlador.setCuidadorAModificar(cuidadorSeleccionado);
+            ModificarDuenoControlador controlador = loader.getController();
+            controlador.setDuenoAModificar(duenoSeleccionado);
             
             Stage stage = new Stage();
-            stage.setTitle("Modificar Cuidador");
+            stage.setTitle("Modificar Dueño");
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
             
-            cargarCuidadores();
+            cargarDuenos();
         } else {
-            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Por favor, seleccione un cuidador para modificar.");
+            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Por favor, seleccione un dueño para modificar.");
         }
     }
 
     @FXML
-    private void borrarCuidadorOnAction() {
-        Cuidador cuidadorSeleccionado = tablaCuidadores.getSelectionModel().getSelectedItem();
-        if (cuidadorSeleccionado != null) {
+    private void borrarDuenoOnAction() {
+        Dueno duenoSeleccionado = tablaDuenos.getSelectionModel().getSelectedItem();
+        if (duenoSeleccionado != null) {
             if (confirmarEliminacion()) {
                 try {
-                    eliminar(cuidadorSeleccionado.getId());
-                    cuidadores.remove(cuidadorSeleccionado);
-                    tablaCuidadores.refresh();
-                    mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Cuidador eliminado correctamente");
+                    eliminar(duenoSeleccionado.getId());
+                    duenos.remove(duenoSeleccionado);
+                    tablaDuenos.refresh();
+                    mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Dueño eliminado correctamente");
                 } catch (SQLException e) {
                     mostrarMensaje(Alert.AlertType.ERROR, "Error", 
-                        "Error al eliminar el cuidador: " + e.getMessage());
+                        "Error al eliminar el dueño: " + e.getMessage());
                 }
             }
         } else {
-            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Por favor, seleccione un cuidador para eliminar.");
+            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Por favor, seleccione un dueño para eliminar.");
         }
     }
 
     private void eliminar(int id) throws SQLException {
-        String sql = "DELETE FROM cuidadores WHERE id = ?";
+        String sql = "DELETE FROM duenos WHERE id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, id);
                 int filasAfectadas = pstmt.executeUpdate();
-                if (filasAfectadas > 0) {
+                 if (filasAfectadas > 0) {
                     conn.commit();
                 } else {
                     conn.rollback();
-                    throw new SQLException("No se encontró el cuidador para eliminar");
+                    throw new SQLException("No se encontró el dueño para eliminar");
                 }
             } catch (SQLException e) {
                 conn.rollback();
-                throw new SQLException("Error al eliminar el cuidador: " + e.getMessage());
+                throw new SQLException("Error al eliminar el dueño: " + e.getMessage());
             }
         }
     }
@@ -170,7 +169,7 @@ public class GestionarCuidadoresControlador {
     private boolean confirmarEliminacion() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar eliminación");
-        alert.setHeaderText("¿Está seguro de que desea eliminar este cuidador?");
+        alert.setHeaderText("¿Está seguro de que desea eliminar este dueño?");
         alert.setContentText("Esta acción no se puede deshacer.");
         return alert.showAndWait().get() == ButtonType.OK;
     }

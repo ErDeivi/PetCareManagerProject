@@ -1,11 +1,10 @@
 package com.example.petcaremanagerproject.Controladores;
 
-import com.example.petcaremanagerproject.Modelo.Cuidador;
+import com.example.petcaremanagerproject.Modelo.Dueno;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -13,33 +12,25 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class ModificarCuidadorControlador {
+public class ModificarDuenoControlador {
     @FXML private TextField txtNombre;
     @FXML private TextField txtApellidos;
     @FXML private TextField txtCorreo;
     @FXML private TextField txtTelefono;
-    @FXML private ComboBox<String> comboBoxEspecialidad;
-    @FXML private ComboBox<String> comboBoxDisponibilidad;
+    @FXML private TextField txtDireccion;
     @FXML private Button btnGuardar;
     @FXML private Button btnCancelar;
 
-    private Cuidador cuidadorAModificar;
+    private Dueno duenoAModificar;
 
-    @FXML
-    public void initialize() {
-        comboBoxEspecialidad.getItems().addAll("Perros", "Gatos", "Aves", "Reptiles", "Todos");
-        comboBoxDisponibilidad.getItems().addAll("Mañana", "Tarde", "Noche", "Completo");
-    }
-
-    public void setCuidadorAModificar(Cuidador cuidador) {
-        this.cuidadorAModificar = cuidador;
-        if (cuidador != null) {
-            txtNombre.setText(cuidador.getNombre());
-            txtApellidos.setText(cuidador.getApellidos());
-            txtCorreo.setText(cuidador.getEmail());
-            txtTelefono.setText(cuidador.getTelefono());
-            comboBoxEspecialidad.setValue(cuidador.getEspecialidad());
-            comboBoxDisponibilidad.setValue(cuidador.getDisponibilidad());
+    public void setDuenoAModificar(Dueno dueno) {
+        this.duenoAModificar = dueno;
+        if (dueno != null) {
+            txtNombre.setText(dueno.getNombre());
+            txtApellidos.setText(dueno.getApellidos());
+            txtCorreo.setText(dueno.getEmail());
+            txtTelefono.setText(dueno.getTelefono());
+            txtDireccion.setText(dueno.getDireccion());
         }
     }
 
@@ -51,7 +42,7 @@ public class ModificarCuidadorControlador {
                 cerrarVentana();
             } catch (SQLException e) {
                 mostrarMensaje(Alert.AlertType.ERROR, "Error", 
-                    "Error al guardar el cuidador: " + e.getMessage());
+                    "Error al guardar el dueño: " + e.getMessage());
             }
         }
     }
@@ -102,15 +93,9 @@ public class ModificarCuidadorControlador {
             return false;
         }
 
-        // Validar especialidad
-        if (comboBoxEspecialidad.getValue() == null) {
-            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "La especialidad es obligatoria");
-            return false;
-        }
-
-        // Validar disponibilidad
-        if (comboBoxDisponibilidad.getValue() == null) {
-            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "La disponibilidad es obligatoria");
+        // Validar dirección
+        if (txtDireccion.getText().trim().isEmpty()) {
+            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "La dirección es obligatoria");
             return false;
         }
 
@@ -118,7 +103,7 @@ public class ModificarCuidadorControlador {
     }
 
     private void modificar() throws SQLException {
-        String sql = "UPDATE cuidadores SET nombre = ?, apellidos = ?, telefono = ?, email = ?, especialidad = ?, disponibilidad = ? WHERE id = ?";
+        String sql = "UPDATE duenos SET nombre = ?, apellidos = ?, telefono = ?, email = ?, direccion = ? WHERE id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -127,15 +112,14 @@ public class ModificarCuidadorControlador {
                 pstmt.setString(2, txtApellidos.getText().trim());
                 pstmt.setString(3, txtTelefono.getText().trim());
                 pstmt.setString(4, txtCorreo.getText().trim());
-                pstmt.setString(5, comboBoxEspecialidad.getValue());
-                pstmt.setString(6, comboBoxDisponibilidad.getValue());
-                pstmt.setInt(7, cuidadorAModificar.getId());
+                pstmt.setString(5, txtDireccion.getText().trim());
+                pstmt.setInt(6, duenoAModificar.getId());
                 pstmt.executeUpdate();
                 conn.commit();
-                mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Cuidador modificado correctamente");
+                mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Dueño modificado correctamente");
             } catch (SQLException e) {
                 conn.rollback();
-                throw new RuntimeException("Error al modificar cuidador", e);
+                throw new RuntimeException("Error al modificar dueño", e);
             }
         }
     }

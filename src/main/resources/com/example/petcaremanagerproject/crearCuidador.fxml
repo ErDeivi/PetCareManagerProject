@@ -35,7 +35,7 @@
     </GridPane>
     
     <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button text="Guardar" onAction="#guardarOnAction"/>
-        <Button text="Cancelar" onAction="#cancelarOnAction"/>
+        <Button fx:id="btnGuardar" text="Guardar" onAction="#guardarOnAction"/>
+        <Button fx:id="btnCancelar" text="Cancelar" onAction="#cancelarOnAction"/>
     </HBox>
 </VBox> 

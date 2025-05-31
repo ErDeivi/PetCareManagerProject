@@ -4,15 +4,15 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.petcaremanagerproject.Controladores.ModificarCuidadorControlador"
+<VBox xmlns="http://javafx.com/javafx" 
+      xmlns:fx="http://javafx.com/fxml" 
+      fx:controller="com.example.petcaremanagerproject.Controladores.ModificarDuenoControlador"
       spacing="10">
     <padding>
         <Insets top="10" right="10" bottom="10" left="10"/>
     </padding>
     
-    <Label text="Modificar Cuidador" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    <Label text="Modificar Dueño" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
     
     <GridPane vgap="10" hgap="10">
         <Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
@@ -26,12 +26,10 @@
         
         <Label text="Teléfono:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
         <TextField fx:id="txtTelefono" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-        
-        <Label text="Especialidad:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-        <ComboBox fx:id="comboBoxEspecialidad" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-        
-        <Label text="Disponibilidad:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-        <ComboBox fx:id="comboBoxDisponibilidad" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+        <Label text="Dirección:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <TextField fx:id="txtDireccion" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
     </GridPane>
     
     <HBox spacing="10" alignment="CENTER_RIGHT">
