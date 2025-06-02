@@ -8,10 +8,8 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.MenuAdminControlador">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.MenuAdminControlador">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -24,42 +22,42 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="3">
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="3">
          <children>
-            <Label fx:id="title" alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="35.0" prefWidth="276.0" text="Menú Administrador" />
-            <Button fx:id="gestionarMascotas" mnemonicParsing="false" onAction="#gestionarMascotasOnAction" prefHeight="36.0" prefWidth="200.0" text="Gestionar Mascotas">
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </Button>
-            <Button fx:id="gestionarDuenos" mnemonicParsing="false" onAction="#gestionarDuenosOnAction" prefHeight="36.0" prefWidth="200.0" text="Gestionar Dueños">
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </Button>
-            <Button fx:id="gestionarCuidadores" mnemonicParsing="false" onAction="#gestionarCuidadoresOnAction" prefHeight="36.0" prefWidth="200.0" text="Gestionar Cuidadores">
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </Button>
-            <Button fx:id="gestionarCitas" mnemonicParsing="false" onAction="#gestionarCitasOnAction" prefHeight="37.0" prefWidth="224.0" text="Gestionar Citas">
+            <Label fx:id="title" alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="35.0" prefWidth="276.0" text="Menú Administrador" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+            <Button fx:id="gestionarMascotas" mnemonicParsing="false" onAction="#gestionarMascotasOnAction" prefHeight="40.0" prefWidth="250.0" text="Gestionar Mascotas" style="-fx-font-size: 14px;">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="gestionarServicios" mnemonicParsing="false" onAction="#gestionarServiciosOnAction" prefHeight="37.0" prefWidth="224.0" text="Gestionar Servicios">
+            <Button fx:id="gestionarDuenos" mnemonicParsing="false" onAction="#gestionarDuenosOnAction" prefHeight="40.0" prefWidth="250.0" text="Gestionar Dueños" style="-fx-font-size: 14px;">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="cambiarContrasena" mnemonicParsing="false" onAction="#cambiarContrasenaOnAction" prefHeight="36.0" prefWidth="200.0" text="Cambiar contraseña">
+            <Button fx:id="gestionarCuidadores" mnemonicParsing="false" onAction="#gestionarCuidadoresOnAction" prefHeight="40.0" prefWidth="250.0" text="Gestionar Cuidadores" style="-fx-font-size: 14px;">
                <VBox.margin>
-                  <Insets top="10.0" />
+                  <Insets top="15.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="cerrarSesion" mnemonicParsing="false" onAction="#cerrarSesionOnAction" prefHeight="42.0" prefWidth="143.0" text="Cerrar sesión">
+            <Button fx:id="gestionarServicios" mnemonicParsing="false" onAction="#gestionarServiciosOnAction" prefHeight="40.0" prefWidth="250.0" text="Gestionar Servicios" style="-fx-font-size: 14px;">
                <VBox.margin>
-                  <Insets top="10.0" />
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="gestionarCategorias" mnemonicParsing="false" onAction="#gestionarCategoriasOnAction" prefHeight="40.0" prefWidth="250.0" text="Gestionar Categorías" style="-fx-font-size: 14px;">
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="cambiarContrasena" mnemonicParsing="false" onAction="#cambiarContrasenaOnAction" prefHeight="40.0" prefWidth="250.0" text="Cambiar contraseña" style="-fx-font-size: 14px;">
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="cerrarSesion" mnemonicParsing="false" onAction="#cerrarSesionOnAction" prefHeight="40.0" prefWidth="250.0" text="Cerrar sesión" style="-fx-font-size: 14px;">
+               <VBox.margin>
+                  <Insets top="15.0" />
                </VBox.margin>
             </Button>
          </children>

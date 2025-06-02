@@ -146,6 +146,7 @@ public class GestionarMascotasControlador {
         stage.setTitle("Nueva Mascota");
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
+        App.configurarVentanaModal(stage);
         stage.showAndWait();
 
         cargarMascotas(); // Recargar la tabla después de cerrar la ventana de creación
@@ -165,6 +166,7 @@ public class GestionarMascotasControlador {
             stage.setTitle("Modificar Mascota");
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
+            App.configurarVentanaModal(stage);
             stage.showAndWait();
             
             cargarMascotas(); // Recargar la tabla después de cerrar la ventana de modificación

@@ -1,65 +1,49 @@
 package com.example.petcaremanagerproject.Controladores;
 
-import java.io.IOException;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ResourceBundle;
-
 import com.example.petcaremanagerproject.App;
 import com.example.petcaremanagerproject.Modelo.Servicio;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
-public class ListadoServiciosControlador implements Initializable {
+import java.io.IOException;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ListadoServiciosControlador {
+    @FXML private TableView<Servicio> tablaServicios;
+    @FXML private TableColumn<Servicio, Integer> colIdServicio;
+    @FXML private TableColumn<Servicio, Integer> colIdCategoria;
+    @FXML private TableColumn<Servicio, String> colEstado;
+    @FXML private TableColumn<Servicio, String> colObservaciones;
+    @FXML private TableColumn<Servicio, Integer> colIdMascota;
+    @FXML private TableColumn<Servicio, Integer> colIdCuidador;
+    @FXML private TableColumn<Servicio, Integer> colIdDueno;
+    @FXML private TableColumn<Servicio, LocalDateTime> colFechaSolicitud;
+    @FXML private TableColumn<Servicio, LocalDateTime> colFechaProgramada;
+    @FXML private TableColumn<Servicio, LocalDateTime> colFechaRealizacion;
+    @FXML private TextField txtBuscar;
+    @FXML private Button btnBuscar;
+
+    private ObservableList<Servicio> servicios = FXCollections.observableArrayList();
 
     @FXML
-    private TableColumn<Servicio, Integer> colIdServicio;
-    @FXML
-    private TableColumn<Servicio, Integer> colIdCategoria;
-    @FXML
-    private TableColumn<Servicio, String> colEstado;
-    @FXML
-    private TableColumn<Servicio, String> colObservaciones;
-    @FXML
-    private TableColumn<Servicio, Integer> colIdMascota;
-    @FXML
-    private TableColumn<Servicio, Integer> colIdCuidador;
-    @FXML
-    private TableColumn<Servicio, Integer> colIdDueno;
-    @FXML
-    private TableColumn<Servicio, Object> colFechaSolicitud;
-    @FXML
-    private TableColumn<Servicio, Object> colFechaProgramada;
-    @FXML
-    private TableColumn<Servicio, Object> colFechaRealizacion;
-    @FXML
-    private ComboBox<String> comboBox;
-    @FXML
-    private TableView<Servicio> tablaServicios;
-
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        configurarColumnas();
-        cargarDatos();
-        configurarComboBox();
+    public void initialize() {
+        configurarTabla();
+        cargarServicios();
+        configurarBusqueda();
     }
 
-    private void configurarColumnas() {
+    private void configurarTabla() {
         colIdServicio.setCellValueFactory(new PropertyValueFactory<>("idServicio"));
         colIdCategoria.setCellValueFactory(new PropertyValueFactory<>("idCategoria"));
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
@@ -70,208 +54,186 @@ public class ListadoServiciosControlador implements Initializable {
         colFechaSolicitud.setCellValueFactory(new PropertyValueFactory<>("fechaSolicitud"));
         colFechaProgramada.setCellValueFactory(new PropertyValueFactory<>("fechaProgramada"));
         colFechaRealizacion.setCellValueFactory(new PropertyValueFactory<>("fechaRealizacion"));
+
+        tablaServicios.getSortOrder().add(colIdServicio);
     }
 
-    private void cargarDatos() {
-        ObservableList<Servicio> servicios = FXCollections.observableArrayList();
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
+    private void cargarServicios() {
+        List<Servicio> listaServicios = obtenerTodos();
+        servicios.clear();
+        servicios.addAll(listaServicios);
+        tablaServicios.setItems(servicios);
+        tablaServicios.refresh();
+    }
 
-        try {
-            conn = DatabaseConnection.getConnection();
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM servicio");
-
+    private List<Servicio> obtenerTodos() {
+        List<Servicio> servicios = new ArrayList<>();
+        String sql = "SELECT * FROM servicio ORDER BY id_servicio";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
             while (rs.next()) {
-                Servicio servicio = new Servicio(
-                        rs.getInt("id_servicio"),
-                        rs.getInt("id_categoria"),
-                        rs.getTimestamp("fecha_solicitud").toLocalDateTime(),
-                        rs.getTimestamp("fecha_programada") != null ? rs.getTimestamp("fecha_programada").toLocalDateTime() : null,
-                        rs.getTimestamp("fecha_realizacion") != null ? rs.getTimestamp("fecha_realizacion").toLocalDateTime() : null,
-                        rs.getString("estado"),
-                        rs.getString("observaciones"),
-                        rs.getInt("id_mascota"),
-                        rs.getInt("id_cuidador"),
-                        rs.getInt("id_dueño")
-                );
-                servicios.add(servicio);
+                servicios.add(new Servicio(
+                    rs.getInt("id_servicio"),
+                    rs.getInt("id_categoria"),
+                    rs.getTimestamp("fecha_solicitud").toLocalDateTime(),
+                    rs.getTimestamp("fecha_programada").toLocalDateTime(),
+                    rs.getTimestamp("fecha_realizacion") != null ? 
+                        rs.getTimestamp("fecha_realizacion").toLocalDateTime() : null,
+                    rs.getString("estado"),
+                    rs.getString("observaciones"),
+                    rs.getInt("id_mascota"),
+                    rs.getInt("id_cuidador"),
+                    rs.getInt("id_dueño")
+                ));
             }
-
-            tablaServicios.setItems(servicios);
-
         } catch (SQLException e) {
-            System.out.println("Error al cargar los datos: " + e.getMessage());
-        } finally {
-            try {
-                if (rs != null)
-                    rs.close();
-                if (stmt != null)
-                    stmt.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException e) {
-                System.out.println("Error al cerrar las conexiones: " + e.getMessage());
-            }
+            mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al cargar servicios: " + e.getMessage());
         }
+        return servicios;
     }
 
-    private void configurarComboBox() {
-        ObservableList<String> opciones = FXCollections.observableArrayList(
-                "Todos los servicios",
-                "Servicios por estado",
-                "Servicios por cuidador"
-        );
-        comboBox.setItems(opciones);
+    private void configurarBusqueda() {
+        txtBuscar.setOnAction(event -> buscarServicioOnAction());
+        btnBuscar.setOnAction(event -> buscarServicioOnAction());
     }
 
-    public void ejecutarConsultaOnAction(ActionEvent actionEvent) {
-        String seleccion = comboBox.getValue();
-        if (seleccion == null)
-            return;
-
-        ObservableList<Servicio> servicios = FXCollections.observableArrayList();
-        Connection conn = null;
-        PreparedStatement pst = null;
-        ResultSet rs = null;
-
-        try {
-            conn = DatabaseConnection.getConnection();
-            String query = "";
-
-            switch (seleccion) {
-                case "Todos los servicios":
-                    query = "SELECT * FROM servicio";
-                    pst = conn.prepareStatement(query);
-                    break;
-                case "Servicios por estado":
-                    query = "SELECT * FROM servicio ORDER BY estado";
-                    pst = conn.prepareStatement(query);
-                    break;
-                case "Servicios por cuidador":
-                    query = "SELECT * FROM servicio ORDER BY id_cuidador";
-                    pst = conn.prepareStatement(query);
-                    break;
-            }
-
-            rs = pst.executeQuery();
-
-            while (rs.next()) {
-                Servicio servicio = new Servicio(
-                        rs.getInt("id_servicio"),
-                        rs.getInt("id_categoria"),
-                        rs.getTimestamp("fecha_solicitud").toLocalDateTime(),
-                        rs.getTimestamp("fecha_programada") != null ? rs.getTimestamp("fecha_programada").toLocalDateTime() : null,
-                        rs.getTimestamp("fecha_realizacion") != null ? rs.getTimestamp("fecha_realizacion").toLocalDateTime() : null,
-                        rs.getString("estado"),
-                        rs.getString("observaciones"),
-                        rs.getInt("id_mascota"),
-                        rs.getInt("id_cuidador"),
-                        rs.getInt("id_dueño")
-                );
-                servicios.add(servicio);
-            }
-
-            tablaServicios.setItems(servicios);
-
-        } catch (SQLException e) {
-            Alert error = new Alert(Alert.AlertType.ERROR);
-            error.setTitle("Error");
-            error.setHeaderText(null);
-            error.setContentText("Error al ejecutar la consulta: " + e.getMessage());
-            error.showAndWait();
-        } finally {
-            try {
-                if (rs != null)
-                    rs.close();
-                if (pst != null)
-                    pst.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException e) {
-                System.out.println("Error al cerrar las conexiones: " + e.getMessage());
-            }
-        }
-    }
-
-    public void nuevaBandaSonoraOnAction(ActionEvent actionEvent) throws IOException {
-        App.setRoot("crearBandaSonora");
-    }
-
-    public void borrarServicioOnAction(ActionEvent actionEvent) {
-        Servicio servicioSeleccionado = tablaServicios.getSelectionModel().getSelectedItem();
-
-        if (servicioSeleccionado == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Ningún servicio seleccionado");
-            alert.setHeaderText(null);
-            alert.setContentText("Por favor, seleccione un servicio para borrar.");
-            alert.showAndWait();
-            return;
-        }
-
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Confirmar borrado");
-        confirmacion.setHeaderText(null);
-        confirmacion.setContentText("¿Está seguro que desea borrar el servicio con ID " +
-                servicioSeleccionado.getIdServicio() + "?");
-
-        if (confirmacion.showAndWait().get() == ButtonType.OK) {
-            Connection conn = null;
-            PreparedStatement pstDeleteServicio = null;
-
-            try {
-                conn = DatabaseConnection.getConnection();
-                conn.setAutoCommit(false);
-
-                String queryServicio = "DELETE FROM servicio WHERE id_servicio = ?";
-                pstDeleteServicio = conn.prepareStatement(queryServicio);
-                pstDeleteServicio.setInt(1, servicioSeleccionado.getIdServicio());
-                int filasAfectadas = pstDeleteServicio.executeUpdate();
-
-                conn.commit(); // Confirmamos la transacción
-
-                if (filasAfectadas > 0) {
-                    cargarDatos();
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Servicio eliminado");
-                    alert.setHeaderText(null);
-                    alert.setContentText("El servicio ha sido eliminado correctamente.");
-                    alert.showAndWait();
-                }
-            } catch (SQLException e) {
-                System.out.println("Error al borrar el servicio: " + e.getMessage());
-            } finally {
-                try {
-                    if (pstDeleteServicio != null)
-                        pstDeleteServicio.close();
-                    if (conn != null)
-                        conn.close();
-                } catch (SQLException e) {
-                    System.out.println("Error al cerrar las conexiones: " + e.getMessage());
-                }
-            }
-        }
-    }
-
-    public void modificarOnAction(ActionEvent actionEvent) throws IOException {
-        Servicio servicioSeleccionado = tablaServicios.getSelectionModel().getSelectedItem();
-        if (servicioSeleccionado == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Ningún servicio seleccionado");
-            alert.setHeaderText(null);
-            alert.setContentText("Por favor, seleccione un servicio para modificarlo.");
-            alert.showAndWait();
-            return;
-        }
-
-        App.setServicioModificar(servicioSeleccionado);
-        App.setRoot("modificarServicio");
-    }
-
-    public void atras(ActionEvent actionEvent) throws IOException {
+    @FXML
+    private void volverOnAction() throws IOException {
         App.setRoot("menuAdmin");
     }
 
-}
+    @FXML
+    private void anadirServicioOnAction() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearServicio.fxml"));
+        Scene scene = new Scene(loader.load());
+
+        Stage stage = new Stage();
+        stage.setTitle("Nuevo Servicio");
+        stage.setScene(scene);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
+
+        cargarServicios();
+    }
+
+    @FXML
+    private void modificarServicioOnAction() throws IOException {
+        Servicio servicioSeleccionado = tablaServicios.getSelectionModel().getSelectedItem();
+        if (servicioSeleccionado != null) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearServicio.fxml"));
+            Scene scene = new Scene(loader.load());
+            
+            CrearServicioControlador controlador = loader.getController();
+            controlador.setServicioAModificar(servicioSeleccionado);
+            
+            Stage stage = new Stage();
+            stage.setTitle("Modificar Servicio");
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+            
+            cargarServicios();
+        } else {
+            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Por favor, seleccione un servicio para modificar.");
+        }
+    }
+
+    @FXML
+    private void eliminarServicioOnAction() {
+        Servicio servicioSeleccionado = tablaServicios.getSelectionModel().getSelectedItem();
+        if (servicioSeleccionado != null) {
+            if (confirmarEliminacion()) {
+                try {
+                    eliminar(servicioSeleccionado.getIdServicio());
+                    servicios.remove(servicioSeleccionado);
+                    tablaServicios.refresh();
+                    mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Servicio eliminado correctamente");
+                } catch (SQLException e) {
+                    mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al eliminar el servicio: " + e.getMessage());
+                }
+            }
+        } else {
+            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Por favor, seleccione un servicio para eliminar.");
+        }
+    }
+
+    private void eliminar(int id) throws SQLException {
+        String sql = "DELETE FROM servicio WHERE id_servicio = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+        }
+    }
+
+    @FXML
+    private void buscarServicioOnAction() {
+        String busqueda = txtBuscar.getText().trim();
+        if (!busqueda.isEmpty()) {
+            List<Servicio> serviciosEncontrados = buscar(busqueda);
+            servicios.clear();
+            servicios.addAll(serviciosEncontrados);
+        } else {
+            cargarServicios();
+        }
+    }
+
+    private List<Servicio> buscar(String busqueda) {
+        List<Servicio> servicios = new ArrayList<>();
+        String sql = """
+            SELECT * FROM servicio 
+            WHERE estado LIKE ? 
+            OR observaciones LIKE ?
+            ORDER BY id_servicio
+        """;
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            String busquedaPattern = "%" + busqueda + "%";
+            pstmt.setString(1, busquedaPattern);
+            pstmt.setString(2, busquedaPattern);
+            
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                servicios.add(new Servicio(
+                    rs.getInt("id_servicio"),
+                    rs.getInt("id_categoria"),
+                    rs.getTimestamp("fecha_solicitud").toLocalDateTime(),
+                    rs.getTimestamp("fecha_programada").toLocalDateTime(),
+                    rs.getTimestamp("fecha_realizacion") != null ? 
+                        rs.getTimestamp("fecha_realizacion").toLocalDateTime() : null,
+                    rs.getString("estado"),
+                    rs.getString("observaciones"),
+                    rs.getInt("id_mascota"),
+                    rs.getInt("id_cuidador"),
+                    rs.getInt("id_dueño")
+                ));
+            }
+        } catch (SQLException e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al buscar servicios: " + e.getMessage());
+        }
+        return servicios;
+    }
+
+    private boolean confirmarEliminacion() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmar eliminación");
+        alert.setHeaderText("¿Está seguro de que desea eliminar este servicio?");
+        alert.setContentText("Esta acción no se puede deshacer.");
+        return alert.showAndWait().get() == ButtonType.OK;
+    }
+
+    private void mostrarMensaje(Alert.AlertType tipo, String titulo, String contenido) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(contenido);
+        alert.showAndWait();
+    }
+} 

@@ -2,13 +2,11 @@ package com.example.petcaremanagerproject;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import com.example.petcaremanagerproject.Modelo.Mascota;
 import com.example.petcaremanagerproject.Modelo.Servicio;
-import com.example.petcaremanagerproject.Util.DatabaseConnection;
 
 import java.io.IOException;
 
@@ -28,6 +26,7 @@ public class App extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("PetCare Manager");
         stage.setScene(scene);
+        stage.setMaximized(true); // Establecer la ventana maximizada
         stage.show();
     }
 
@@ -43,6 +42,21 @@ public class App extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         primaryStage.setScene(scene);
+        primaryStage.show();
+        // Añadir un pequeño retraso antes de maximizar
+        javafx.application.Platform.runLater(() -> {
+            primaryStage.setMaximized(true);
+            primaryStage.centerOnScreen();
+        });
+    }
+
+    public static void configurarVentanaModal(Stage stage) {
+        stage.show();
+        // Añadir un pequeño retraso antes de maximizar
+        javafx.application.Platform.runLater(() -> {
+            stage.setMaximized(true);
+            stage.centerOnScreen();
+        });
     }
 
     public static void setMascotaModificar(Mascota mascota) {
@@ -69,11 +83,4 @@ public class App extends Application {
         alert.showAndWait();
     }
 
-    public static void mostrarError(String titulo, String header, String contenido) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText(header);
-        alert.setContentText(contenido);
-        alert.showAndWait();
-    }
 }

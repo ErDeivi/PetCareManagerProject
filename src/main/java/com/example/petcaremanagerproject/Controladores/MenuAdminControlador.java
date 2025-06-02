@@ -3,47 +3,80 @@ package com.example.petcaremanagerproject.Controladores;
 import com.example.petcaremanagerproject.App;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
 public class MenuAdminControlador {
+    @FXML private Button gestionarMascotas;
+    @FXML private Button gestionarDuenos;
+    @FXML private Button gestionarCuidadores;
+    @FXML private Button gestionarCitas;
+    @FXML private Button gestionarServicios;
+    @FXML private Button gestionarCategorias;
+    @FXML private Button gestionarUsuarios;
+    @FXML private Button cambiarContrasena;
+    @FXML private Button cerrarSesion;
+
     @FXML
     private void gestionarMascotasOnAction() throws IOException {
+        Stage stage = (Stage) gestionarMascotas.getScene().getWindow();
         App.setRoot("gestionarMascotas");
+        App.configurarVentanaModal(stage);
     }
 
     @FXML
     private void gestionarDuenosOnAction() throws IOException {
+        Stage stage = (Stage) gestionarDuenos.getScene().getWindow();
         App.setRoot("gestionarDuenos");
+        App.configurarVentanaModal(stage);
     }
 
     @FXML
     private void gestionarCuidadoresOnAction() throws IOException {
+        Stage stage = (Stage) gestionarCuidadores.getScene().getWindow();
         App.setRoot("gestionarCuidadores");
+        App.configurarVentanaModal(stage);
     }
 
     @FXML
     private void gestionarCitasOnAction() throws IOException {
+        Stage stage = (Stage) gestionarCitas.getScene().getWindow();
         App.setRoot("gestionarCitas");
+        App.configurarVentanaModal(stage);
     }
 
     @FXML
     private void gestionarServiciosOnAction() throws IOException {
+        Stage stage = (Stage) gestionarServicios.getScene().getWindow();
         App.setRoot("listadoServicios");
+        App.configurarVentanaModal(stage);
+    }
+
+    @FXML
+    private void gestionarCategoriasOnAction() throws IOException {
+        Stage stage = (Stage) gestionarCategorias.getScene().getWindow();
+        App.setRoot("gestionarCategorias");
+        App.configurarVentanaModal(stage);
     }
 
     @FXML
     private void gestionarUsuariosOnAction() throws IOException {
+        Stage stage = (Stage) gestionarUsuarios.getScene().getWindow();
         App.setRoot("gestionarUsuarios");
+        App.configurarVentanaModal(stage);
     }
 
     @FXML
     private void cambiarContrasenaOnAction() throws IOException {
+        Stage stage = (Stage) cambiarContrasena.getScene().getWindow();
         App.setRoot("cambiarContrasena");
+        App.configurarVentanaModal(stage);
     }
 
     @FXML
@@ -54,61 +87,8 @@ public class MenuAdminControlador {
         alert.setContentText("Se cerrará la sesión actual.");
 
         if (alert.showAndWait().get() == ButtonType.OK) {
+            Stage stage = (Stage) cerrarSesion.getScene().getWindow();
             App.setRoot("login");
-        }
-    }
-
-    @FXML
-    private void exportarBD() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Guardar Base de Datos");
-        fileChooser.getExtensionFilters().add(
-            new FileChooser.ExtensionFilter("SQL Files", "*.sql")
-        );
-        File file = fileChooser.showSaveDialog(null);
-        
-        if (file != null) {
-            try {
-                // TODO: Implementar la exportación de la base de datos
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Exportación");
-                alert.setHeaderText("Base de datos exportada");
-                alert.setContentText("La base de datos se ha exportado correctamente.");
-                alert.showAndWait();
-            } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("Error al exportar");
-                alert.setContentText("Ha ocurrido un error al exportar la base de datos: " + e.getMessage());
-                alert.showAndWait();
-            }
-        }
-    }
-
-    @FXML
-    private void importarBD() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Importar Base de Datos");
-        fileChooser.getExtensionFilters().add(
-            new FileChooser.ExtensionFilter("SQL Files", "*.sql")
-        );
-        File file = fileChooser.showOpenDialog(null);
-        
-        if (file != null) {
-            try {
-                // TODO: Implementar la importación de la base de datos
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Importación");
-                alert.setHeaderText("Base de datos importada");
-                alert.setContentText("La base de datos se ha importado correctamente.");
-                alert.showAndWait();
-            } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("Error al importar");
-                alert.setContentText("Ha ocurrido un error al importar la base de datos: " + e.getMessage());
-                alert.showAndWait();
-            }
         }
     }
 }
