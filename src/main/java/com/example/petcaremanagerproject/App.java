@@ -63,6 +63,10 @@ public class App extends Application {
         return servicioModificar;
     }
 
+    public static Stage getStage() {
+        return primaryStage;
+    }
+
     public static void mostrarMensaje(String titulo, String header, String contenido) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);

@@ -60,6 +60,16 @@
                   <Insets top="15.0" />
                </VBox.margin>
             </Button>
+            <Button fx:id="exportarDb" mnemonicParsing="false" onAction="#exportarDbOnAction" prefHeight="40.0" prefWidth="250.0" text="Exportar Base de Datos" style="-fx-font-size: 14px;">
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="importarDb" mnemonicParsing="false" onAction="#importarDbOnAction" prefHeight="40.0" prefWidth="250.0" text="Importar Base de Datos" style="-fx-font-size: 14px;">
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </Button>
          </children>
       </VBox>
    </children>
