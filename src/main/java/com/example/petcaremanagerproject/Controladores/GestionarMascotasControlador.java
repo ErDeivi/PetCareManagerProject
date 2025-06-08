@@ -20,13 +20,13 @@ import java.util.List;
 
 public class GestionarMascotasControlador {
     @FXML private TableView<Mascota> tablaMascotas;
-    @FXML private TableColumn<Mascota, Integer> colId;
     @FXML private TableColumn<Mascota, String> colNombre;
     @FXML private TableColumn<Mascota, String> colEspecie;
     @FXML private TableColumn<Mascota, String> colRaza;
     @FXML private TableColumn<Mascota, Integer> colEdad;
     @FXML private TableColumn<Mascota, Double> colPeso;
     @FXML private TableColumn<Mascota, String> colCliente;
+    @FXML private TableColumn<Mascota, String> colImagenUrl;
     @FXML private TextField txtBuscar;
     @FXML private Button btnBuscar;
 
@@ -40,13 +40,13 @@ public class GestionarMascotasControlador {
     }
 
     private void configurarTabla() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colEspecie.setCellValueFactory(new PropertyValueFactory<>("especie"));
         colRaza.setCellValueFactory(new PropertyValueFactory<>("raza"));
         colEdad.setCellValueFactory(new PropertyValueFactory<>("edad"));
         colPeso.setCellValueFactory(new PropertyValueFactory<>("peso"));
-        colCliente.setCellValueFactory(new PropertyValueFactory<>("cliente"));
+        colCliente.setCellValueFactory(new PropertyValueFactory<>("nombreDueno"));
+        colImagenUrl.setCellValueFactory(new PropertyValueFactory<>("imagenUrl"));
 
         // Permitir ordenamiento en todas las columnas
         tablaMascotas.getSortOrder().add(colNombre);
@@ -65,7 +65,7 @@ public class GestionarMascotasControlador {
                     } else if (column == colPeso) {
                         return Double.compare(o1.getPeso(), o2.getPeso());
                     } else if (column == colCliente) {
-                        return o1.getCliente().compareTo(o2.getCliente());
+                        return o1.getNombreDueno().compareTo(o2.getNombreDueno());
                     }
                 }
                 return 0;
@@ -94,7 +94,7 @@ public class GestionarMascotasControlador {
     private List<Mascota> obtenerTodas() {
         List<Mascota> mascotas = new ArrayList<>();
         String sql = """
-            SELECT m.id_mascota, m.nombre AS mascota_nombre, m.especie, m.raza, m.edad, m.peso, u.nombre AS dueno_nombre, m.id_dueño 
+            SELECT m.id_mascota, m.nombre AS mascota_nombre, m.especie, m.raza, m.edad, m.peso, u.nombre AS dueno_nombre, m.id_dueño, m.imagen_url
             FROM mascota m 
             JOIN dueño d ON m.id_dueño = d.id_usuario
             JOIN usuario u ON d.id_usuario = u.id_usuario
@@ -112,13 +112,14 @@ public class GestionarMascotasControlador {
 
                     mascotas.add(new Mascota(
                         rs.getInt("id_mascota"),
-                        rs.getString("mascota_nombre"), // Usar el alias 'mascota_nombre' para el nombre de la mascota
+                        rs.getString("mascota_nombre"),
                         rs.getString("especie"),
                         rs.getString("raza"),
                         rs.getInt("edad"),
                         rs.getDouble("peso"),
-                        nombreDueno, // Asignar el nombre del dueño a la propiedad 'cliente'
-                        rs.getInt("id_dueño")
+                        rs.getInt("id_dueño"),
+                        rs.getString("imagen_url"),
+                        nombreDueno
                     ));
                 }
                 conn.commit();
@@ -146,7 +147,6 @@ public class GestionarMascotasControlador {
         stage.setTitle("Nueva Mascota");
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
-        App.configurarVentanaModal(stage);
         stage.showAndWait();
 
         cargarMascotas(); // Recargar la tabla después de cerrar la ventana de creación
@@ -166,7 +166,6 @@ public class GestionarMascotasControlador {
             stage.setTitle("Modificar Mascota");
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
-            App.configurarVentanaModal(stage);
             stage.showAndWait();
             
             cargarMascotas(); // Recargar la tabla después de cerrar la ventana de modificación
@@ -181,7 +180,7 @@ public class GestionarMascotasControlador {
         if (mascotaSeleccionada != null) {
             if (validarEliminacion(mascotaSeleccionada) && confirmarEliminacion()) {
                 try {
-                    eliminar(mascotaSeleccionada.getId());
+                    eliminar(mascotaSeleccionada.getIdMascota());
                     mascotas.remove(mascotaSeleccionada);
                     tablaMascotas.refresh(); // Asegurar que la tabla se actualice visualmente
                     mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Mascota eliminada correctamente");
@@ -206,7 +205,7 @@ public class GestionarMascotasControlador {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setInt(1, mascota.getId());
+            pstmt.setInt(1, mascota.getIdMascota());
             ResultSet rs = pstmt.executeQuery();
             if (rs.next() && rs.getInt(1) > 0) {
                 mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", 
@@ -257,7 +256,7 @@ public class GestionarMascotasControlador {
     private List<Mascota> buscar(String busqueda) {
         List<Mascota> mascotas = new ArrayList<>();
         String sql = """
-            SELECT m.id_mascota, m.nombre AS mascota_nombre, m.especie, m.raza, m.edad, m.peso, u.nombre AS dueno_nombre, m.id_dueño 
+            SELECT m.id_mascota, m.nombre AS mascota_nombre, m.especie, m.raza, m.edad, m.peso, u.nombre AS dueno_nombre, m.id_dueño, m.imagen_url
             FROM mascota m 
             JOIN dueño d ON m.id_dueño = d.id_usuario
             JOIN usuario u ON d.id_usuario = u.id_usuario
@@ -283,13 +282,14 @@ public class GestionarMascotasControlador {
                     String nombreDueno = rs.getString("dueno_nombre");
                     mascotas.add(new Mascota(
                         rs.getInt("id_mascota"),
-                        rs.getString("mascota_nombre"), // Usar el alias 'mascota_nombre' para el nombre de la mascota
+                        rs.getString("mascota_nombre"),
                         rs.getString("especie"),
                         rs.getString("raza"),
                         rs.getInt("edad"),
                         rs.getDouble("peso"),
-                        nombreDueno, // Asignar el nombre del dueño a la propiedad 'cliente'
-                        rs.getInt("id_dueño")
+                        rs.getInt("id_dueño"),
+                        rs.getString("imagen_url"),
+                        nombreDueno
                     ));
                 }
                 conn.commit();

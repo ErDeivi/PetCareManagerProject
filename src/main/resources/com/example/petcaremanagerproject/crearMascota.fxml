@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.CrearMascotaControlador">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="20.0" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.CrearMascotaControlador">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
     <HBox alignment="CENTER_LEFT" spacing="10.0">
-        <Label fx:id="lblTitulo" text="Nueva Mascota" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+        <Label fx:id="lblTitulo" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Nueva Mascota" />
         <Region HBox.hgrow="ALWAYS" />
-        <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#volverOnAction" text="Volver" style="-fx-font-size: 14px;" />
+        <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#volverOnAction" style="-fx-font-size: 14px;" text="Volver" />
     </HBox>
 
     <GridPane hgap="10.0" vgap="10.0">
@@ -27,29 +35,33 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
 
-        <Label text="Nombre:" GridPane.rowIndex="0" style="-fx-font-size: 14px;" />
-        <TextField fx:id="txtNombre" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-size: 14px;" />
+        <Label style="-fx-font-size: 14px;" text="Nombre:" GridPane.rowIndex="0" />
+        <TextField fx:id="txtNombre" style="-fx-font-size: 14px;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-        <Label text="Especie:" GridPane.rowIndex="1" style="-fx-font-size: 14px;" />
-        <ComboBox fx:id="cmbEspecie" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-size: 14px;" />
+        <Label style="-fx-font-size: 14px;" text="Especie:" GridPane.rowIndex="1" />
+        <ComboBox fx:id="cmbEspecie" prefWidth="300.0" style="-fx-font-size: 14px;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-        <Label text="Raza:" GridPane.rowIndex="2" style="-fx-font-size: 14px;" />
-        <TextField fx:id="txtRaza" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-font-size: 14px;" />
+        <Label style="-fx-font-size: 14px;" text="Raza:" GridPane.rowIndex="2" />
+        <TextField fx:id="txtRaza" style="-fx-font-size: 14px;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-        <Label text="Edad:" GridPane.rowIndex="3" style="-fx-font-size: 14px;" />
-        <TextField fx:id="txtEdad" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-font-size: 14px;" />
+        <Label style="-fx-font-size: 14px;" text="Edad:" GridPane.rowIndex="3" />
+        <TextField fx:id="txtEdad" style="-fx-font-size: 14px;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-        <Label text="Peso (kg):" GridPane.rowIndex="4" style="-fx-font-size: 14px;" />
-        <TextField fx:id="txtPeso" GridPane.columnIndex="1" GridPane.rowIndex="4" style="-fx-font-size: 14px;" />
+        <Label style="-fx-font-size: 14px;" text="Peso (kg):" GridPane.rowIndex="4" />
+        <TextField fx:id="txtPeso" style="-fx-font-size: 14px;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-        <Label text="Dueño:" GridPane.rowIndex="5" style="-fx-font-size: 14px;" />
-        <ComboBox fx:id="cmbCliente" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="5" style="-fx-font-size: 14px;" />
+        <Label style="-fx-font-size: 14px;" text="Dueño:" GridPane.rowIndex="5" />
+        <ComboBox fx:id="cmbCliente" prefWidth="300.0" style="-fx-font-size: 14px;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+        <Label style="-fx-font-size: 14px;" text="URL Imagen:" GridPane.rowIndex="6" />
+        <TextField fx:id="txtImagenUrl" style="-fx-font-size: 14px;" GridPane.columnIndex="1" GridPane.rowIndex="6" />
     </GridPane>
 
     <HBox alignment="CENTER" spacing="20.0">
-        <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#guardarOnAction" text="Guardar" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;" />
-        <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#cancelarOnAction" text="Cancelar" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px;" />
+        <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#guardarOnAction" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;" text="Guardar" />
+        <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#cancelarOnAction" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px;" text="Cancelar" />
     </HBox>
-</VBox> 
+</VBox>

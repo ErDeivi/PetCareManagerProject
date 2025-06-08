@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.petcaremanagerproject.Controladores.GestionarCuidadoresControlador"
-      maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="600.0" prefWidth="800.0"
-      spacing="10">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="10" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.GestionarCuidadoresControlador">
     <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
+        <Insets bottom="10" left="10" right="10" top="10" />
     </padding>
     
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <Button text="Atrás" onAction="#volverOnAction"/>
-        <Label text="Gestión de Cuidadores" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Button onAction="#volverOnAction" text="Atrás" />
+        <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Gestión de Cuidadores" />
     </HBox>
     
     <HBox alignment="CENTER" spacing="10.0">
@@ -24,18 +24,18 @@
         <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#buscarCuidadorOnAction" text="Buscar" />
     </HBox>
 
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <Button text="Nuevo Cuidador" onAction="#nuevoCuidadorOnAction"/>
-        <Button text="Modificar Cuidador" onAction="#modificarCuidadorOnAction"/>
-        <Button text="Borrar Cuidador" onAction="#eliminarCuidadorOnAction"/>
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Button onAction="#anadirCuidadorOnAction" text="Nuevo Cuidador" />
+        <Button onAction="#modificarCuidadorOnAction" text="Modificar Cuidador" />
+        <Button onAction="#eliminarCuidadorOnAction" text="Borrar Cuidador" />
     </HBox>
     
     <TableView fx:id="tablaCuidadores" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
-            <TableColumn fx:id="colNombre" text="Nombre" prefWidth="150"/>
-            <TableColumn fx:id="colCorreo" text="Correo" prefWidth="200"/>
-            <TableColumn fx:id="colTelefono" text="Teléfono" prefWidth="100"/>
+            <TableColumn fx:id="colNombre" prefWidth="150.0" text="Nombre" />
+            <TableColumn fx:id="colCorreo" prefWidth="200.0" text="Correo" />
+            <TableColumn fx:id="colTelefono" prefWidth="100" text="Teléfono" />
+            <TableColumn fx:id="colImagenUrl" prefWidth="200" text="URL Imagen" />
         </columns>
     </TableView>
-</VBox> 
+</VBox>

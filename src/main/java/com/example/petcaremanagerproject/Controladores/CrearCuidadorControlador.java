@@ -24,6 +24,7 @@ public class CrearCuidadorControlador {
     @FXML private TextField txtNombre;
     @FXML private TextField txtCorreo;
     @FXML private TextField txtTelefono;
+    @FXML private TextField txtImagenUrl;
     @FXML private PasswordField pwdContrasena;
     @FXML private PasswordField pwdContrasenaActual;
     @FXML private PasswordField pwdNuevaContrasena;
@@ -44,7 +45,7 @@ public class CrearCuidadorControlador {
             txtNombre.setText(cuidador.getNombre());
             txtCorreo.setText(cuidador.getCorreo());
             txtTelefono.setText(cuidador.getTelefono());
-            // No hay especialidad ni disponibilidad que mostrar o editar.
+            txtImagenUrl.setText(cuidador.getImagenUrl());
             
             // Ocultar campo de contraseña simple y mostrar campos de modificación
             lblContrasena.setVisible(false);
@@ -162,7 +163,7 @@ public class CrearCuidadorControlador {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setInt(1, cuidadorAModificar.getId());
+            pstmt.setInt(1, cuidadorAModificar.getIdUsuario());
             ResultSet rs = pstmt.executeQuery();
             
             if (rs.next()) {
@@ -177,15 +178,16 @@ public class CrearCuidadorControlador {
     }
 
     private void crear() throws SQLException {
-        String sqlUsuario = "INSERT INTO usuario (nombre, correo, contraseña, telefono) VALUES (?, ?, ?, ?)";
+        String sqlUsuario = "INSERT INTO usuario (nombre, correo, contraseña, telefono, imagen_url) VALUES (?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
             try (PreparedStatement pstmtUsuario = conn.prepareStatement(sqlUsuario, Statement.RETURN_GENERATED_KEYS)) {
                 pstmtUsuario.setString(1, txtNombre.getText().trim());
                 pstmtUsuario.setString(2, txtCorreo.getText().trim());
-                pstmtUsuario.setString(3, pwdContrasena.getText().trim()); // Insertar contraseña
+                pstmtUsuario.setString(3, pwdContrasena.getText().trim());
                 pstmtUsuario.setString(4, txtTelefono.getText().trim());
+                pstmtUsuario.setString(5, txtImagenUrl.getText().trim());
                 pstmtUsuario.executeUpdate();
                 
                 ResultSet rs = pstmtUsuario.getGeneratedKeys();
@@ -220,7 +222,7 @@ public class CrearCuidadorControlador {
             conn.setAutoCommit(false);
 
             // Actualizar datos básicos en la tabla usuario
-            String sqlUsuario = "UPDATE usuario SET nombre = ?, correo = ?, telefono = ?";
+            String sqlUsuario = "UPDATE usuario SET nombre = ?, correo = ?, telefono = ?, imagen_url = ?";
             // Si se está cambiando la contraseña, añadirla a la actualización
             if (!pwdNuevaContrasena.getText().trim().isEmpty()) {
                 sqlUsuario += ", contraseña = ?";
@@ -232,12 +234,13 @@ public class CrearCuidadorControlador {
                 pstmtUsuario.setString(paramIndex++, txtNombre.getText().trim());
                 pstmtUsuario.setString(paramIndex++, txtCorreo.getText().trim());
                 pstmtUsuario.setString(paramIndex++, txtTelefono.getText().trim());
+                pstmtUsuario.setString(paramIndex++, txtImagenUrl.getText().trim());
 
                 if (!pwdNuevaContrasena.getText().trim().isEmpty()) {
-                    pstmtUsuario.setString(paramIndex++, pwdNuevaContrasena.getText().trim()); // Actualizar contraseña
+                    pstmtUsuario.setString(paramIndex++, pwdNuevaContrasena.getText().trim());
                 }
 
-                pstmtUsuario.setInt(paramIndex, cuidadorAModificar.getId());
+                pstmtUsuario.setInt(paramIndex, cuidadorAModificar.getIdUsuario());
                 pstmtUsuario.executeUpdate();
             }
 

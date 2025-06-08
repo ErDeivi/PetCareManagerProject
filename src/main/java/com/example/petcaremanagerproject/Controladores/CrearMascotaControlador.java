@@ -1,9 +1,10 @@
 package com.example.petcaremanagerproject.Controladores;
 
 import com.example.petcaremanagerproject.App;
-import com.example.petcaremanagerproject.Modelo.Cliente;
 import com.example.petcaremanagerproject.Modelo.Mascota;
+import com.example.petcaremanagerproject.Modelo.Usuario;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
@@ -21,7 +22,8 @@ public class CrearMascotaControlador {
     @FXML private TextField txtRaza;
     @FXML private TextField txtEdad;
     @FXML private TextField txtPeso;
-    @FXML private ComboBox<Cliente> cmbCliente;
+    @FXML private ComboBox<Usuario> cmbCliente;
+    @FXML private TextField txtImagenUrl;
 
     private Mascota mascotaAModificar;
 
@@ -48,54 +50,56 @@ public class CrearMascotaControlador {
     }
 
     private void cargarDatos() {
-        List<Cliente> clientes = obtenerClientes();
-        cmbCliente.getItems().addAll(clientes);
+        List<Usuario> duenos = obtenerDuenos();
+        cmbCliente.getItems().addAll(duenos);
         
         cmbCliente.setCellFactory(param -> new ListCell<>() {
             @Override
-            protected void updateItem(Cliente cliente, boolean empty) {
-                super.updateItem(cliente, empty);
-                if (empty || cliente == null) {
+            protected void updateItem(Usuario usuario, boolean empty) {
+                super.updateItem(usuario, empty);
+                if (empty || usuario == null) {
                     setText(null);
                 } else {
-                    setText(cliente.getNombre());
+                    setText(usuario.getNombre());
                 }
             }
         });
         
         cmbCliente.setButtonCell(new ListCell<>() {
             @Override
-            protected void updateItem(Cliente cliente, boolean empty) {
-                super.updateItem(cliente, empty);
-                if (empty || cliente == null) {
+            protected void updateItem(Usuario usuario, boolean empty) {
+                super.updateItem(usuario, empty);
+                if (empty || usuario == null) {
                     setText(null);
                 } else {
-                    setText(cliente.getNombre());
+                    setText(usuario.getNombre());
                 }
             }
         });
     }
 
-    private List<Cliente> obtenerClientes() {
-        List<Cliente> clientes = new ArrayList<>();
-        String sql = "SELECT u.id_usuario, u.nombre, u.correo, u.telefono FROM dueño d JOIN usuario u ON d.id_usuario = u.id_usuario ORDER BY u.nombre";
+    private List<Usuario> obtenerDuenos() {
+        List<Usuario> duenos = new ArrayList<>();
+        String sql = "SELECT u.id_usuario, u.nombre, u.correo, u.telefono, u.contraseña, u.imagen_url FROM dueño d JOIN usuario u ON d.id_usuario = u.id_usuario ORDER BY u.nombre";
         
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
             while (rs.next()) {
-                clientes.add(new Cliente(
+                duenos.add(new Usuario(
                     rs.getInt("id_usuario"),
                     rs.getString("nombre"),
                     rs.getString("correo"),
-                    rs.getString("telefono")
+                    rs.getString("contraseña"),
+                    rs.getString("telefono"),
+                    rs.getString("imagen_url")
                 ));
             }
         } catch (SQLException e) {
             mostrarMensaje(AlertType.ERROR, "Error", "Error al cargar dueños: " + e.getMessage());
         }
-        return clientes;
+        return duenos;
     }
 
     public void setMascotaAModificar(Mascota mascota) {
@@ -107,10 +111,11 @@ public class CrearMascotaControlador {
             txtRaza.setText(mascota.getRaza());
             txtEdad.setText(String.valueOf(mascota.getEdad()));
             txtPeso.setText(String.valueOf(mascota.getPeso()));
+            txtImagenUrl.setText(mascota.getImagenUrl());
             
-            for (Cliente cliente : cmbCliente.getItems()) {
-                if (cliente.getNombre().equals(mascota.getCliente())) {
-                    cmbCliente.setValue(cliente);
+            for (Usuario usuario : cmbCliente.getItems()) {
+                if (usuario.getIdUsuario() == mascota.getIdDueno()) {
+                    cmbCliente.setValue(usuario);
                     break;
                 }
             }
@@ -121,18 +126,17 @@ public class CrearMascotaControlador {
     private void guardarOnAction() {
         if (validarCampos()) {
             try {
-                int idCliente = cmbCliente.getValue().getId();
-                String nombreCliente = cmbCliente.getValue().getNombre();
+                int idDueno = cmbCliente.getValue().getIdUsuario();
                 
                 Mascota mascota = new Mascota(
-                    mascotaAModificar != null ? mascotaAModificar.getId() : 0,
+                    mascotaAModificar != null ? mascotaAModificar.getIdMascota() : 0,
                     txtNombre.getText(),
                     cmbEspecie.getValue(),
                     txtRaza.getText(),
                     Integer.parseInt(txtEdad.getText()),
                     Double.parseDouble(txtPeso.getText()),
-                    nombreCliente,
-                    idCliente
+                    idDueno,
+                    txtImagenUrl.getText().trim()
                 );
 
                 if (mascotaAModificar == null) {
@@ -144,58 +148,46 @@ public class CrearMascotaControlador {
                 }
                 
                 volverOnAction();
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 mostrarMensaje(AlertType.ERROR, "Error", "Error al guardar la mascota: " + e.getMessage());
+            } catch (IOException e) {
+                mostrarMensaje(AlertType.ERROR, "Error", "Error al cerrar la ventana: " + e.getMessage());
             }
         }
     }
 
-    private void insertar(Mascota mascota) {
-        String sql = "INSERT INTO mascota (nombre, especie, raza, edad, peso, id_dueño) VALUES (?, ?, ?, ?, ?, ?)";
+    private void insertar(Mascota mascota) throws SQLException {
+        String sql = "INSERT INTO mascota (nombre, especie, raza, edad, peso, id_dueño, imagen_url) VALUES (?, ?, ?, ?, ?, ?, ?)";
         
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, mascota.getNombre());
-                pstmt.setString(2, mascota.getEspecie());
-                pstmt.setString(3, mascota.getRaza());
-                pstmt.setInt(4, mascota.getEdad());
-                pstmt.setDouble(5, mascota.getPeso());
-                pstmt.setInt(6, mascota.getIdCliente());
-                
-                pstmt.executeUpdate();
-                conn.commit();
-            } catch (SQLException e) {
-                conn.rollback();
-                throw new RuntimeException("Error al insertar mascota", e);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error en la conexión a la base de datos", e);
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, mascota.getNombre());
+            pstmt.setString(2, mascota.getEspecie());
+            pstmt.setString(3, mascota.getRaza());
+            pstmt.setInt(4, mascota.getEdad());
+            pstmt.setDouble(5, mascota.getPeso());
+            pstmt.setInt(6, mascota.getIdDueno());
+            pstmt.setString(7, mascota.getImagenUrl());
+            
+            pstmt.executeUpdate();
         }
     }
 
-    private void actualizar(Mascota mascota) {
-        String sql = "UPDATE mascota SET nombre = ?, especie = ?, raza = ?, edad = ?, peso = ?, id_dueño = ? WHERE id_mascota = ?";
+    private void actualizar(Mascota mascota) throws SQLException {
+        String sql = "UPDATE mascota SET nombre = ?, especie = ?, raza = ?, edad = ?, peso = ?, id_dueño = ?, imagen_url = ? WHERE id_mascota = ?";
         
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, mascota.getNombre());
-                pstmt.setString(2, mascota.getEspecie());
-                pstmt.setString(3, mascota.getRaza());
-                pstmt.setInt(4, mascota.getEdad());
-                pstmt.setDouble(5, mascota.getPeso());
-                pstmt.setInt(6, mascota.getIdCliente());
-                pstmt.setInt(7, mascota.getId());
-                
-                pstmt.executeUpdate();
-                conn.commit();
-            } catch (SQLException e) {
-                conn.rollback();
-                throw new RuntimeException("Error al actualizar mascota", e);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error en la conexión a la base de datos", e);
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, mascota.getNombre());
+            pstmt.setString(2, mascota.getEspecie());
+            pstmt.setString(3, mascota.getRaza());
+            pstmt.setInt(4, mascota.getEdad());
+            pstmt.setDouble(5, mascota.getPeso());
+            pstmt.setInt(6, mascota.getIdDueno());
+            pstmt.setString(7, mascota.getImagenUrl());
+            pstmt.setInt(8, mascota.getIdMascota());
+            
+            pstmt.executeUpdate();
         }
     }
 
@@ -204,10 +196,7 @@ public class CrearMascotaControlador {
             mostrarMensaje(AlertType.WARNING, "Advertencia", "El nombre es obligatorio");
             return false;
         }
-        if (!txtNombre.getText().trim().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]{2,50}$")) {
-            mostrarMensaje(AlertType.WARNING, "Advertencia", "El nombre solo debe contener letras y espacios");
-            return false;
-        }
+        // Eliminada validación de formato de nombre según el esquema proporcionado
 
         if (cmbEspecie.getValue() == null || cmbEspecie.getValue().trim().isEmpty()) {
             mostrarMensaje(AlertType.WARNING, "Advertencia", "Debe seleccionar una especie");

@@ -13,7 +13,7 @@ public class AdminConfigManager {
     private static final String CONFIG_FILE = "admin_config.properties";
     private static final String PASSWORD_HASH_KEY = "admin.password.hash";
     // Contraseña por defecto si el archivo no existe. ¡CAMBIAR ESTA CONTRASEÑA POR DEFECTO LA PRIMERA VEZ QUE EJECUTES LA APP!
-    private static final String DEFAULT_ADMIN_PASSWORD = "defaultadminpass";
+    private static final String DEFAULT_ADMIN_PASSWORD = "admin";
 
     private static String adminPasswordHash = null; // Cache para el hash
 

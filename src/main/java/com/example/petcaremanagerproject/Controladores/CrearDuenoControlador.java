@@ -22,10 +22,9 @@ public class CrearDuenoControlador {
     @FXML private Label lblContrasenaActual;
     @FXML private Label lblNuevaContrasena;
     @FXML private TextField txtNombre;
-    @FXML private TextField txtApellidos;
     @FXML private TextField txtCorreo;
     @FXML private TextField txtTelefono;
-    @FXML private TextField txtDireccion;
+    @FXML private TextField txtImagenUrl;
     @FXML private PasswordField pwdContrasena;
     @FXML private PasswordField pwdContrasenaActual;
     @FXML private PasswordField pwdNuevaContrasena;
@@ -41,6 +40,7 @@ public class CrearDuenoControlador {
             txtNombre.setText(dueno.getNombre());
             txtCorreo.setText(dueno.getCorreo());
             txtTelefono.setText(dueno.getTelefono());
+            txtImagenUrl.setText(dueno.getImagenUrl());
             
             // Ocultar campo de contraseña simple y mostrar campos de modificación
             lblContrasena.setVisible(false);
@@ -62,8 +62,7 @@ public class CrearDuenoControlador {
 
     @FXML
     public void initialize() {
-        if (txtApellidos != null) txtApellidos.setVisible(false);
-        if (txtDireccion != null) txtDireccion.setVisible(false);
+        // No es necesario inicializar campos que ya no existen
     }
 
     @FXML
@@ -163,7 +162,7 @@ public class CrearDuenoControlador {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setInt(1, duenoAModificar.getId());
+            pstmt.setInt(1, duenoAModificar.getIdUsuario());
             ResultSet rs = pstmt.executeQuery();
             
             if (rs.next()) {
@@ -177,7 +176,7 @@ public class CrearDuenoControlador {
     }
 
     private void crear() throws SQLException {
-        String sqlUsuario = "INSERT INTO usuario (nombre, correo, contraseña, telefono) VALUES (?, ?, ?, ?)";
+        String sqlUsuario = "INSERT INTO usuario (nombre, correo, contraseña, telefono, imagen_url) VALUES (?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -186,6 +185,7 @@ public class CrearDuenoControlador {
                 pstmtUsuario.setString(2, txtCorreo.getText().trim());
                 pstmtUsuario.setString(3, pwdContrasena.getText().trim());
                 pstmtUsuario.setString(4, txtTelefono.getText().trim());
+                pstmtUsuario.setString(5, txtImagenUrl.getText().trim());
                 pstmtUsuario.executeUpdate();
                 
                 ResultSet rs = pstmtUsuario.getGeneratedKeys();
@@ -220,7 +220,7 @@ public class CrearDuenoControlador {
             conn.setAutoCommit(false);
 
             // Actualizar datos básicos
-            String sqlUsuario = "UPDATE usuario SET nombre = ?, correo = ?, telefono = ?";
+            String sqlUsuario = "UPDATE usuario SET nombre = ?, correo = ?, telefono = ?, imagen_url = ?";
             // Si se está cambiando la contraseña, añadirla a la actualización
             if (!pwdNuevaContrasena.getText().trim().isEmpty()) {
                 sqlUsuario += ", contraseña = ?";
@@ -232,12 +232,13 @@ public class CrearDuenoControlador {
                 pstmtUsuario.setString(paramIndex++, txtNombre.getText().trim());
                 pstmtUsuario.setString(paramIndex++, txtCorreo.getText().trim());
                 pstmtUsuario.setString(paramIndex++, txtTelefono.getText().trim());
+                pstmtUsuario.setString(paramIndex++, txtImagenUrl.getText().trim());
                 
                 if (!pwdNuevaContrasena.getText().trim().isEmpty()) {
                     pstmtUsuario.setString(paramIndex++, pwdNuevaContrasena.getText().trim());
                 }
                 
-                pstmtUsuario.setInt(paramIndex, duenoAModificar.getId());
+                pstmtUsuario.setInt(paramIndex, duenoAModificar.getIdUsuario());
                 pstmtUsuario.executeUpdate();
             }
             

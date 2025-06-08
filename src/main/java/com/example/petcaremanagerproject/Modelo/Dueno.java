@@ -1,14 +1,19 @@
 package com.example.petcaremanagerproject.Modelo;
 
-public class Dueno extends Cliente {
+public class Dueno extends Usuario {
     private String direccion;
 
-    public Dueno(int id, String nombre, String correo, String telefono) {
-        super(id, nombre, correo, telefono);
+    public Dueno(int idUsuario, String nombre, String correo, String contrasena, String telefono, String imagenUrl) {
+        super(idUsuario, nombre, correo, contrasena, telefono, imagenUrl);
     }
 
-    public Dueno(int id, String nombre, String correo, String telefono, String direccion) {
-        super(id, nombre, correo, telefono);
+    // Constructor sin contrasena e imagenUrl, si es necesario para consultas existentes
+    public Dueno(int idUsuario, String nombre, String correo, String telefono) {
+        super(idUsuario, nombre, correo, null, telefono, null);
+    }
+
+    public Dueno(int idUsuario, String nombre, String correo, String contrasena, String telefono, String imagenUrl, String direccion) {
+        super(idUsuario, nombre, correo, contrasena, telefono, imagenUrl);
         this.direccion = direccion;
     }
 

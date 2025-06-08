@@ -54,7 +54,7 @@ public class MenuAdminControlador {
     @FXML
     private void gestionarServiciosOnAction() throws IOException {
         Stage stage = (Stage) gestionarServicios.getScene().getWindow();
-        App.setRoot("listadoServicios");
+        App.setRoot("gestionarServicios");
         App.configurarVentanaModal(stage);
     }
 

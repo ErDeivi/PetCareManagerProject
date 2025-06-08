@@ -20,10 +20,11 @@ import java.util.List;
 
 public class GestionarDuenosControlador {
     @FXML private TableView<Dueno> tablaDuenos;
-    @FXML private TableColumn<Dueno, Integer> colId;
     @FXML private TableColumn<Dueno, String> colNombre;
     @FXML private TableColumn<Dueno, String> colCorreo;
     @FXML private TableColumn<Dueno, String> colTelefono;
+    @FXML private TableColumn<Dueno, String> colImagenUrl;
+    @FXML private TextField txtBuscar;
 
     private ObservableList<Dueno> duenos = FXCollections.observableArrayList();
 
@@ -34,10 +35,10 @@ public class GestionarDuenosControlador {
     }
 
     private void configurarTabla() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
+        colImagenUrl.setCellValueFactory(new PropertyValueFactory<>("imagenUrl"));
 
         tablaDuenos.getSortOrder().add(colNombre);
     }
@@ -52,7 +53,7 @@ public class GestionarDuenosControlador {
     private List<Dueno> obtenerTodos() {
         List<Dueno> duenos = new ArrayList<>();
         String sql = """
-            SELECT u.id_usuario, u.nombre, u.correo, u.telefono
+            SELECT u.id_usuario, u.nombre, u.correo, u.telefono, u.contraseña, u.imagen_url
             FROM dueño d
             JOIN usuario u ON d.id_usuario = u.id_usuario
             ORDER BY u.nombre
@@ -68,7 +69,9 @@ public class GestionarDuenosControlador {
                         rs.getInt("id_usuario"),
                         rs.getString("nombre"),
                         rs.getString("correo"),
-                        rs.getString("telefono")
+                        rs.getString("telefono"),
+                        rs.getString("contraseña"),
+                        rs.getString("imagen_url")
                     ));
                 }
                 conn.commit();
@@ -85,7 +88,7 @@ public class GestionarDuenosControlador {
     private List<Dueno> buscar(String busqueda) {
         List<Dueno> duenos = new ArrayList<>();
         String sql = """
-            SELECT u.id_usuario, u.nombre, u.correo, u.telefono
+            SELECT u.id_usuario, u.nombre, u.correo, u.telefono, u.contraseña, u.imagen_url
             FROM dueño d
             JOIN usuario u ON d.id_usuario = u.id_usuario
             WHERE u.nombre LIKE ?
@@ -108,7 +111,9 @@ public class GestionarDuenosControlador {
                         rs.getInt("id_usuario"),
                         rs.getString("nombre"),
                         rs.getString("correo"),
-                        rs.getString("telefono")
+                        rs.getString("telefono"),
+                        rs.getString("contraseña"),
+                        rs.getString("imagen_url")
                     ));
                 }
                 conn.commit();
@@ -169,7 +174,7 @@ public class GestionarDuenosControlador {
         if (duenoSeleccionado != null) {
             if (confirmarEliminacion()) {
                 try {
-                    eliminar(duenoSeleccionado.getId());
+                    eliminar(duenoSeleccionado.getIdUsuario());
                     duenos.remove(duenoSeleccionado);
                     tablaDuenos.refresh();
                     mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Dueño eliminado correctamente");

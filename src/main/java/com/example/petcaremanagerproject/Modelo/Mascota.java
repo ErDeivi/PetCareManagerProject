@@ -1,42 +1,47 @@
 package com.example.petcaremanagerproject.Modelo;
 
 public class Mascota {
-    private int id;
+    private int idMascota;
     private String nombre;
     private String especie;
     private String raza;
     private int edad;
     private double peso;
-    private String cliente;
-    private int idCliente;
+    private int idDueno;
+    private String imagenUrl;
+    private String nombreDueno;
 
-    public Mascota(int id, String nombre, String especie, String raza, int edad, double peso, String cliente) {
-        this.id = id;
+    public Mascota(int idMascota, String nombre, String especie, String raza, int edad, double peso, int idDueno, String imagenUrl) {
+        this.idMascota = idMascota;
         this.nombre = nombre;
         this.especie = especie;
         this.raza = raza;
         this.edad = edad;
         this.peso = peso;
-        this.cliente = cliente;
+        this.idDueno = idDueno;
+        this.imagenUrl = imagenUrl;
     }
 
-    public Mascota(int id, String nombre, String especie, String raza, int edad, double peso, String cliente, int idCliente) {
-        this.id = id;
+    public Mascota(int idMascota, String nombre, String especie, String raza, int edad, double peso, int idDueno, String imagenUrl, String nombreDueno) {
+        this.idMascota = idMascota;
         this.nombre = nombre;
         this.especie = especie;
         this.raza = raza;
         this.edad = edad;
         this.peso = peso;
-        this.cliente = cliente;
-        this.idCliente = idCliente;
+        this.idDueno = idDueno;
+        this.imagenUrl = imagenUrl;
+        this.nombreDueno = nombreDueno;
     }
 
-    public int getId() {
-        return id;
+
+
+    public int getIdMascota() {
+        return idMascota;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdMascota(int idMascota) {
+        this.idMascota = idMascota;
     }
 
     public String getNombre() {
@@ -79,24 +84,32 @@ public class Mascota {
         this.peso = peso;
     }
 
-    public String getCliente() {
-        return cliente;
+    public int getIdDueno() {
+        return idDueno;
     }
 
-    public void setCliente(String cliente) {
-        this.cliente = cliente;
+    public void setIdDueno(int idDueno) {
+        this.idDueno = idDueno;
     }
 
-    public int getIdCliente() {
-        return idCliente;
+    public String getImagenUrl() {
+        return imagenUrl;
     }
 
-    public void setIdCliente(int idCliente) {
-        this.idCliente = idCliente;
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
+    }
+
+    public String getNombreDueno() {
+        return nombreDueno;
+    }
+
+    public void setNombreDueno(String nombreDueno) {
+        this.nombreDueno = nombreDueno;
     }
 
     @Override
     public String toString() {
-        return nombre + " (" + especie + " - " + raza + ")";
+        return nombre;
     }
 } 

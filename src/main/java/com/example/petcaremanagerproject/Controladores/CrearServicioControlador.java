@@ -1,11 +1,7 @@
 package com.example.petcaremanagerproject.Controladores;
 
 import com.example.petcaremanagerproject.App;
-import com.example.petcaremanagerproject.Modelo.Categoria;
-import com.example.petcaremanagerproject.Modelo.Cliente;
-import com.example.petcaremanagerproject.Modelo.Cuidador;
-import com.example.petcaremanagerproject.Modelo.Mascota;
-import com.example.petcaremanagerproject.Modelo.Servicio;
+import com.example.petcaremanagerproject.Modelo.*;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -26,8 +22,8 @@ public class CrearServicioControlador {
     @FXML private ComboBox<String> cmbEstado;
     @FXML private TextArea txtObservaciones;
     @FXML private ComboBox<Mascota> cmbMascota;
-    @FXML private ComboBox<Cuidador> cmbCuidador;
-    @FXML private ComboBox<Cliente> cmbDueno;
+    @FXML private ComboBox<Usuario> cmbCuidador;
+    @FXML private ComboBox<Usuario> cmbDueno;
     @FXML private DatePicker dpFechaSolicitud;
     @FXML private Spinner<Integer> spnHoraSolicitud;
     @FXML private Spinner<Integer> spnMinutoSolicitud;
@@ -89,7 +85,7 @@ public class CrearServicioControlador {
 
         cmbCuidador.setCellFactory(param -> new ListCell<>() {
             @Override
-            protected void updateItem(Cuidador cuidador, boolean empty) {
+            protected void updateItem(Usuario cuidador, boolean empty) {
                 super.updateItem(cuidador, empty);
                 if (empty || cuidador == null) {
                     setText(null);
@@ -101,12 +97,12 @@ public class CrearServicioControlador {
 
         cmbDueno.setCellFactory(param -> new ListCell<>() {
             @Override
-            protected void updateItem(Cliente cliente, boolean empty) {
-                super.updateItem(cliente, empty);
-                if (empty || cliente == null) {
+            protected void updateItem(Usuario usuario, boolean empty) {
+                super.updateItem(usuario, empty);
+                if (empty || usuario == null) {
                     setText(null);
                 } else {
-                    setText(cliente.getNombre());
+                    setText(usuario.getNombre());
                 }
             }
         });
@@ -126,7 +122,7 @@ public class CrearServicioControlador {
 
         cmbCuidador.setButtonCell(new ListCell<>() {
             @Override
-            protected void updateItem(Cuidador cuidador, boolean empty) {
+            protected void updateItem(Usuario cuidador, boolean empty) {
                 super.updateItem(cuidador, empty);
                 if (empty || cuidador == null) {
                     setText(null);
@@ -138,12 +134,12 @@ public class CrearServicioControlador {
 
         cmbDueno.setButtonCell(new ListCell<>() {
             @Override
-            protected void updateItem(Cliente cliente, boolean empty) {
-                super.updateItem(cliente, empty);
-                if (empty || cliente == null) {
+            protected void updateItem(Usuario usuario, boolean empty) {
+                super.updateItem(usuario, empty);
+                if (empty || usuario == null) {
                     setText(null);
                 } else {
-                    setText(cliente.getNombre());
+                    setText(usuario.getNombre());
                 }
             }
         });
@@ -180,13 +176,7 @@ public class CrearServicioControlador {
     }
 
     private void cargarMascotas() {
-        String sql = """
-            SELECT m.*, u.nombre as dueno_nombre 
-            FROM mascota m 
-            JOIN dueño d ON m.id_dueño = d.id_usuario
-            JOIN usuario u ON d.id_usuario = u.id_usuario
-            ORDER BY m.nombre
-        """;
+        String sql = "SELECT m.*, u.nombre as dueno_nombre FROM mascota m JOIN dueño d ON m.id_dueño = d.id_usuario JOIN usuario u ON d.id_usuario = u.id_usuario ORDER BY m.nombre";
         
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -200,8 +190,8 @@ public class CrearServicioControlador {
                     rs.getString("raza"),
                     rs.getInt("edad"),
                     rs.getDouble("peso"),
-                    rs.getString("dueno_nombre"),
-                    rs.getInt("id_dueño")
+                    rs.getInt("id_dueño"),
+                    rs.getString("imagen_url")
                 ));
             }
         } catch (SQLException e) {
@@ -210,23 +200,20 @@ public class CrearServicioControlador {
     }
 
     private void cargarCuidadores() {
-        String sql = """
-            SELECT u.* 
-            FROM usuario u 
-            JOIN cuidador c ON u.id_usuario = c.id_usuario
-            ORDER BY u.nombre
-        """;
+        String sql = "SELECT u.* FROM usuario u JOIN cuidador c ON u.id_usuario = c.id_usuario ORDER BY u.nombre";
         
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
             while (rs.next()) {
-                cmbCuidador.getItems().add(new Cuidador(
+                cmbCuidador.getItems().add(new Usuario(
                     rs.getInt("id_usuario"),
                     rs.getString("nombre"),
                     rs.getString("correo"),
-                    rs.getString("telefono")
+                    rs.getString("contraseña"),
+                    rs.getString("telefono"),
+                    rs.getString("imagen_url")
                 ));
             }
         } catch (SQLException e) {
@@ -235,23 +222,20 @@ public class CrearServicioControlador {
     }
 
     private void cargarDuenos() {
-        String sql = """
-            SELECT u.* 
-            FROM usuario u 
-            JOIN dueño d ON u.id_usuario = d.id_usuario
-            ORDER BY u.nombre
-        """;
+        String sql = "SELECT u.* FROM usuario u JOIN dueño d ON u.id_usuario = d.id_usuario ORDER BY u.nombre";
         
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
             while (rs.next()) {
-                cmbDueno.getItems().add(new Cliente(
+                cmbDueno.getItems().add(new Usuario(
                     rs.getInt("id_usuario"),
                     rs.getString("nombre"),
                     rs.getString("correo"),
-                    rs.getString("telefono")
+                    rs.getString("contraseña"),
+                    rs.getString("telefono"),
+                    rs.getString("imagen_url")
                 ));
             }
         } catch (SQLException e) {
@@ -280,24 +264,24 @@ public class CrearServicioControlador {
 
             // Buscar y seleccionar la mascota
             for (Mascota mascota : cmbMascota.getItems()) {
-                if (mascota.getId() == servicioAModificar.getIdMascota()) {
+                if (mascota.getIdMascota() == servicioAModificar.getIdMascota()) {
                     cmbMascota.setValue(mascota);
                     break;
                 }
             }
 
             // Buscar y seleccionar el cuidador
-            for (Cuidador cuidador : cmbCuidador.getItems()) {
-                if (cuidador.getId() == servicioAModificar.getIdCuidador()) {
+            for (Usuario cuidador : cmbCuidador.getItems()) {
+                if (cuidador.getIdUsuario() == servicioAModificar.getIdCuidador()) {
                     cmbCuidador.setValue(cuidador);
                     break;
                 }
             }
 
             // Buscar y seleccionar el dueño
-            for (Cliente cliente : cmbDueno.getItems()) {
-                if (cliente.getId() == servicioAModificar.getIdDueno()) {
-                    cmbDueno.setValue(cliente);
+            for (Usuario usuario : cmbDueno.getItems()) {
+                if (usuario.getIdUsuario() == servicioAModificar.getIdDueno()) {
+                    cmbDueno.setValue(usuario);
                     break;
                 }
             }
@@ -392,11 +376,7 @@ public class CrearServicioControlador {
     }
 
     private void crearServicio() throws SQLException {
-        String sql = """
-            INSERT INTO servicio (id_categoria, estado, observaciones, id_mascota, id_cuidador, id_dueño, 
-            fecha_solicitud, fecha_programada)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """;
+        String sql = "INSERT INTO servicio (id_categoria, estado, observaciones, id_mascota, id_cuidador, id_dueño, fecha_solicitud, fecha_programada) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -404,9 +384,9 @@ public class CrearServicioControlador {
             pstmt.setInt(1, cmbCategoria.getValue().getIdCategoria());
             pstmt.setString(2, cmbEstado.getValue());
             pstmt.setString(3, txtObservaciones.getText().trim());
-            pstmt.setInt(4, cmbMascota.getValue().getId());
-            pstmt.setInt(5, cmbCuidador.getValue().getId());
-            pstmt.setInt(6, cmbDueno.getValue().getId());
+            pstmt.setInt(4, cmbMascota.getValue().getIdMascota());
+            pstmt.setInt(5, cmbCuidador.getValue().getIdUsuario());
+            pstmt.setInt(6, cmbDueno.getValue().getIdUsuario());
             
             LocalDateTime fechaSolicitud = LocalDateTime.of(
                 dpFechaSolicitud.getValue(),
@@ -426,12 +406,7 @@ public class CrearServicioControlador {
     }
 
     private void modificarServicio() throws SQLException {
-        String sql = """
-            UPDATE servicio 
-            SET id_categoria = ?, estado = ?, observaciones = ?, id_mascota = ?, 
-            id_cuidador = ?, id_dueño = ?, fecha_solicitud = ?, fecha_programada = ?
-            WHERE id_servicio = ?
-        """;
+        String sql = "UPDATE servicio SET id_categoria = ?, estado = ?, observaciones = ?, id_mascota = ?, id_cuidador = ?, id_dueño = ?, fecha_solicitud = ?, fecha_programada = ? WHERE id_servicio = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -439,9 +414,9 @@ public class CrearServicioControlador {
             pstmt.setInt(1, cmbCategoria.getValue().getIdCategoria());
             pstmt.setString(2, cmbEstado.getValue());
             pstmt.setString(3, txtObservaciones.getText().trim());
-            pstmt.setInt(4, cmbMascota.getValue().getId());
-            pstmt.setInt(5, cmbCuidador.getValue().getId());
-            pstmt.setInt(6, cmbDueno.getValue().getId());
+            pstmt.setInt(4, cmbMascota.getValue().getIdMascota());
+            pstmt.setInt(5, cmbCuidador.getValue().getIdUsuario());
+            pstmt.setInt(6, cmbDueno.getValue().getIdUsuario());
             
             LocalDateTime fechaSolicitud = LocalDateTime.of(
                 dpFechaSolicitud.getValue(),

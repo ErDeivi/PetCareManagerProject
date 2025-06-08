@@ -1,9 +1,9 @@
 package com.example.petcaremanagerproject.Modelo;
 
-public class Cuidador extends Cliente {
+public class Cuidador extends Usuario {
 
-    public Cuidador(int id, String nombre, String correo, String telefono) {
-        super(id, nombre, correo, telefono);
+    public Cuidador(int idUsuario, String nombre, String correo, String contrasena, String telefono, String imagenUrl) {
+        super(idUsuario, nombre, correo, contrasena, telefono, imagenUrl);
     }
 
     // Eliminados campos especialidad y disponibilidad y su lógica

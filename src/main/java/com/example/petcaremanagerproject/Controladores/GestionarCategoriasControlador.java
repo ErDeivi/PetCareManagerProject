@@ -20,7 +20,6 @@ import java.util.List;
 
 public class GestionarCategoriasControlador {
     @FXML private TableView<Categoria> tablaCategorias;
-    @FXML private TableColumn<Categoria, Integer> colId;
     @FXML private TableColumn<Categoria, String> colTipo;
     @FXML private TableColumn<Categoria, String> colDescripcion;
     @FXML private TextField txtBuscar;
@@ -36,7 +35,6 @@ public class GestionarCategoriasControlador {
     }
 
     private void configurarTabla() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("idCategoria"));
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 

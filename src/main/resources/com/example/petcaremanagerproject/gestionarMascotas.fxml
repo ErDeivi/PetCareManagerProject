@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.GestionarMascotasControlador">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="20.0" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.GestionarMascotasControlador">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
     <HBox alignment="CENTER_LEFT" spacing="10.0">
-        <Label text="Gestión de Mascotas" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+        <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Gestión de Mascotas" />
         <Region HBox.hgrow="ALWAYS" />
-        <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#volverOnAction" text="Volver" style="-fx-font-size: 14px;" />
+        <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#volverOnAction" style="-fx-font-size: 14px;" text="Volver" />
     </HBox>
 
     <HBox alignment="CENTER" spacing="10.0">
-        <TextField fx:id="txtBuscar" promptText="Buscar mascota..." HBox.hgrow="ALWAYS" style="-fx-font-size: 14px;" />
-        <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#buscarMascotaOnAction" text="Buscar" style="-fx-font-size: 14px;" />
+        <TextField fx:id="txtBuscar" promptText="Buscar mascota..." style="-fx-font-size: 14px;" HBox.hgrow="ALWAYS" />
+        <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#buscarMascotaOnAction" style="-fx-font-size: 14px;" text="Buscar" />
     </HBox>
 
-    <TableView fx:id="tablaMascotas" VBox.vgrow="ALWAYS" style="-fx-font-size: 14px;">
+    <TableView fx:id="tablaMascotas" style="-fx-font-size: 14px;" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
             <TableColumn fx:id="colNombre" prefWidth="150.0" text="Nombre" />
             <TableColumn fx:id="colEspecie" prefWidth="100.0" text="Especie" />
             <TableColumn fx:id="colRaza" prefWidth="100.0" text="Raza" />
             <TableColumn fx:id="colEdad" prefWidth="75.0" text="Edad" />
             <TableColumn fx:id="colPeso" prefWidth="75.0" text="Peso (kg)" />
             <TableColumn fx:id="colCliente" prefWidth="150.0" text="Dueño" />
+            <TableColumn fx:id="colImagenUrl" prefWidth="150.0" text="URL Imagen" />
         </columns>
     </TableView>
 
     <HBox alignment="CENTER" spacing="20.0">
-        <Button fx:id="btnAnadir" mnemonicParsing="false" onAction="#anadirMascotaOnAction" text="Nueva Mascota" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;" />
-        <Button fx:id="btnModificar" mnemonicParsing="false" onAction="#modificarMascotaOnAction" text="Modificar" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px;" />
-        <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#eliminarMascotaOnAction" text="Eliminar" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px;" />
+        <Button fx:id="btnAnadir" mnemonicParsing="false" onAction="#anadirMascotaOnAction" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;" text="Nueva Mascota" />
+        <Button fx:id="btnModificar" mnemonicParsing="false" onAction="#modificarMascotaOnAction" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px;" text="Modificar" />
+        <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#eliminarMascotaOnAction" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px;" text="Eliminar" />
     </HBox>
-</VBox> 
+</VBox>
