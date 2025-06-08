@@ -24,48 +24,48 @@
    <children>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="3">
          <children>
-            <Label fx:id="title" alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="35.0" prefWidth="276.0" text="Menú Administrador" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
-            <Button fx:id="gestionarMascotas" mnemonicParsing="false" onAction="#gestionarMascotasOnAction" prefHeight="40.0" prefWidth="250.0" text="Gestionar Mascotas" style="-fx-font-size: 14px;">
+            <Label fx:id="title" alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="35.0" prefWidth="276.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Menú Administrador" />
+            <Button fx:id="gestionarMascotas" mnemonicParsing="false" onAction="#gestionarMascotasOnAction" prefHeight="40.0" prefWidth="250.0" style="-fx-font-size: 14px;" text="Gestionar Mascotas">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="gestionarDuenos" mnemonicParsing="false" onAction="#gestionarDuenosOnAction" prefHeight="40.0" prefWidth="250.0" text="Gestionar Dueños" style="-fx-font-size: 14px;">
+            <Button fx:id="gestionarDuenos" mnemonicParsing="false" onAction="#gestionarDuenosOnAction" prefHeight="40.0" prefWidth="250.0" style="-fx-font-size: 14px;" text="Gestionar Dueños">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="gestionarCuidadores" mnemonicParsing="false" onAction="#gestionarCuidadoresOnAction" prefHeight="40.0" prefWidth="250.0" text="Gestionar Cuidadores" style="-fx-font-size: 14px;">
+            <Button fx:id="gestionarCuidadores" mnemonicParsing="false" onAction="#gestionarCuidadoresOnAction" prefHeight="40.0" prefWidth="250.0" style="-fx-font-size: 14px;" text="Gestionar Cuidadores">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="gestionarServicios" mnemonicParsing="false" onAction="#gestionarServiciosOnAction" prefHeight="40.0" prefWidth="250.0" text="Gestionar Servicios" style="-fx-font-size: 14px;">
+            <Button fx:id="gestionarServicios" mnemonicParsing="false" onAction="#gestionarServiciosOnAction" prefHeight="40.0" prefWidth="250.0" style="-fx-font-size: 14px;" text="Gestionar Servicios">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="gestionarCategorias" mnemonicParsing="false" onAction="#gestionarCategoriasOnAction" prefHeight="40.0" prefWidth="250.0" text="Gestionar Categorías" style="-fx-font-size: 14px;">
+            <Button fx:id="gestionarCategorias" mnemonicParsing="false" onAction="#gestionarCategoriasOnAction" prefHeight="40.0" prefWidth="250.0" style="-fx-font-size: 14px;" text="Gestionar Categorías">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="cambiarContrasena" mnemonicParsing="false" onAction="#cambiarContrasenaOnAction" prefHeight="40.0" prefWidth="250.0" text="Cambiar contraseña" style="-fx-font-size: 14px;">
+            <Button fx:id="cambiarContrasena" mnemonicParsing="false" onAction="#cambiarContrasenaOnAction" prefHeight="40.0" prefWidth="250.0" style="-fx-font-size: 14px;" text="Cambiar contraseña">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="cerrarSesion" mnemonicParsing="false" onAction="#cerrarSesionOnAction" prefHeight="40.0" prefWidth="250.0" text="Cerrar sesión" style="-fx-font-size: 14px;">
+            <Button fx:id="importarDb" mnemonicParsing="false" onAction="#importarDbOnAction" prefHeight="40.0" prefWidth="250.0" style="-fx-font-size: 14px;" text="Importar Base de Datos">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="exportarDb" mnemonicParsing="false" onAction="#exportarDbOnAction" prefHeight="40.0" prefWidth="250.0" text="Exportar Base de Datos" style="-fx-font-size: 14px;">
+            <Button fx:id="exportarDb" mnemonicParsing="false" onAction="#exportarDbOnAction" prefHeight="40.0" prefWidth="250.0" style="-fx-font-size: 14px;" text="Exportar Base de Datos">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="importarDb" mnemonicParsing="false" onAction="#importarDbOnAction" prefHeight="40.0" prefWidth="250.0" text="Importar Base de Datos" style="-fx-font-size: 14px;">
+            <Button fx:id="cerrarSesion" mnemonicParsing="false" onAction="#cerrarSesionOnAction" prefHeight="40.0" prefWidth="250.0" style="-fx-font-size: 14px;" text="Cerrar sesión">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
