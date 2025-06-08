@@ -4,6 +4,7 @@ import com.example.petcaremanagerproject.App;
 import com.example.petcaremanagerproject.Util.AdminConfigManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.text.Text;
@@ -37,12 +38,17 @@ public class CambiarContrasenaControlador {
         String nueva2 = contrasenaNueva2.getText();
 
         if (vieja.isEmpty() || nueva.isEmpty() || nueva2.isEmpty()) {
-            camposVacios.setVisible(true);
+            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Todos los campos son obligatorios.");
             return;
         }
 
         if (!nueva.equals(nueva2)) {
-            contrasenaCoincidir.setVisible(true);
+            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Las nuevas contraseñas no coinciden.");
+            return;
+        }
+
+        if (nueva.length() < 5) {
+            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "La nueva contraseña debe tener al menos 5 caracteres.");
             return;
         }
 
@@ -53,19 +59,26 @@ public class CambiarContrasenaControlador {
 
             AdminConfigManager.saveAdminHash(nuevoHash);
 
-            mensajeExito.setText("Contraseña cambiada exitosamente.");
-            mensajeExito.setVisible(true);
+            mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Contraseña cambiada exitosamente.");
             
             contrasenaVieja.clear();
             contrasenaNueva.clear();
             contrasenaNueva2.clear();
 
         } else {
-            contrasenaAntigua.setVisible(true);
+            mostrarMensaje(Alert.AlertType.ERROR, "Error", "La contraseña actual es incorrecta.");
         }
     }
 
     public void volverOnAction(ActionEvent actionEvent) throws IOException {
         App.setRoot("menuAdmin");
+    }
+
+    private void mostrarMensaje(Alert.AlertType tipo, String titulo, String contenido) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(contenido);
+        alert.showAndWait();
     }
 }

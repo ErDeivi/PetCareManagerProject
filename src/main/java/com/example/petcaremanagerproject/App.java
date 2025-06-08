@@ -38,24 +38,12 @@ public class App extends Application {
         if (primaryStage == null) {
             throw new IllegalStateException("El Stage principal no está inicializado");
         }
-        
+
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         primaryStage.setScene(scene);
-        primaryStage.show();
-        // Añadir un pequeño retraso antes de maximizar
         javafx.application.Platform.runLater(() -> {
             primaryStage.setMaximized(true);
-            primaryStage.centerOnScreen();
-        });
-    }
-
-    public static void configurarVentanaModal(Stage stage) {
-        stage.show();
-        // Añadir un pequeño retraso antes de maximizar
-        javafx.application.Platform.runLater(() -> {
-            stage.setMaximized(true);
-            stage.centerOnScreen();
         });
     }
 

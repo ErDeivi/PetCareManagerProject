@@ -438,7 +438,7 @@ public class CrearServicioControlador {
 
     private void cerrarVentana() {
         Stage stage = (Stage) lblTitulo.getScene().getWindow();
-        App.configurarVentanaModal(stage);
+      //  App.configurarVentanaModal(stage);
         stage.close();
     }
 
