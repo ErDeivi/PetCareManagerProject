@@ -36,6 +36,7 @@ public class GestionarServiciosControlador {
     @FXML private TableColumn<Servicio, LocalDateTime> colFechaRealizacion;
     @FXML private TextField txtBuscar;
     @FXML private Button btnBuscar;
+    @FXML private ComboBox<String> cmbFiltros;
 
     private ObservableList<Servicio> servicios = FXCollections.observableArrayList();
 
@@ -44,6 +45,7 @@ public class GestionarServiciosControlador {
         configurarTabla();
         cargarServicios();
         configurarBusqueda();
+        configurarFiltros();
     }
 
     private void configurarTabla() {
@@ -63,6 +65,91 @@ public class GestionarServiciosControlador {
     private void configurarBusqueda() {
         txtBuscar.setOnAction(event -> buscarServicioOnAction());
         btnBuscar.setOnAction(event -> buscarServicioOnAction());
+    }
+
+    private void configurarFiltros() {
+        cmbFiltros.getItems().addAll(
+            "Todos los servicios",
+            "Servicios pendientes",
+            "Servicios programados",
+            "Servicios completados"
+        );
+        cmbFiltros.setValue("Todos los servicios");
+        cmbFiltros.setOnAction(e -> aplicarFiltro());
+    }
+
+    private void aplicarFiltro() {
+        String filtroSeleccionado = cmbFiltros.getValue();
+        List<Servicio> serviciosFiltrados = new ArrayList<>();
+
+        switch (filtroSeleccionado) {
+            case "Todos los servicios":
+                serviciosFiltrados = obtenerTodos();
+                break;
+            case "Servicios pendientes":
+                serviciosFiltrados = obtenerServiciosPorEstado("Pendiente");
+                break;
+            case "Servicios programados":
+                serviciosFiltrados = obtenerServiciosPorEstado("Programado");
+                break;
+            case "Servicios completados":
+                serviciosFiltrados = obtenerServiciosPorEstado("Completado");
+                break;
+        }
+
+        servicios.clear();
+        servicios.addAll(serviciosFiltrados);
+        tablaServicios.refresh();
+    }
+
+    private List<Servicio> obtenerServiciosPorEstado(String estado) {
+        List<Servicio> servicios = new ArrayList<>();
+        String sql = """
+            SELECT s.id_servicio, s.id_categoria, s.id_mascota, s.id_cuidador, s.id_dueño, c.tipo AS nombre_categoria, s.estado, s.observaciones, 
+                   m.nombre AS nombre_mascota, u_cuidador.nombre AS nombre_cuidador, u_dueno.nombre AS nombre_dueno,
+                   s.fecha_solicitud, s.fecha_programada, s.fecha_realizacion
+            FROM servicio s
+            JOIN categoria c ON s.id_categoria = c.id_categoria
+            JOIN mascota m ON s.id_mascota = m.id_mascota
+            JOIN usuario u_cuidador ON s.id_cuidador = u_cuidador.id_usuario
+            JOIN usuario u_dueno ON s.id_dueño = u_dueno.id_usuario
+            WHERE s.estado = ?
+            ORDER BY s.fecha_solicitud DESC
+        """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, estado);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                String nombreCategoria = rs.getString("nombre_categoria");
+                String nombreMascota = rs.getString("nombre_mascota");
+                String nombreCuidador = rs.getString("nombre_cuidador");
+                String nombreDueno = rs.getString("nombre_dueno");
+
+                servicios.add(new Servicio(
+                    rs.getInt("id_servicio"),
+                    rs.getInt("id_categoria"),
+                    rs.getTimestamp("fecha_solicitud").toLocalDateTime(),
+                    rs.getTimestamp("fecha_programada").toLocalDateTime(),
+                    rs.getTimestamp("fecha_realizacion") != null ? rs.getTimestamp("fecha_realizacion").toLocalDateTime() : null,
+                    rs.getString("estado"),
+                    rs.getString("observaciones"),
+                    rs.getInt("id_mascota"),
+                    rs.getInt("id_cuidador"),
+                    rs.getInt("id_dueño"),
+                    nombreCategoria, 
+                    nombreMascota, 
+                    nombreCuidador, 
+                    nombreDueno 
+                ));
+            }
+        } catch (SQLException e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al filtrar servicios por estado: " + e.getMessage());
+        }
+        return servicios;
     }
 
     private void cargarServicios() {

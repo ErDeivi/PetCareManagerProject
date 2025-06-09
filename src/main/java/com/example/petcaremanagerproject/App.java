@@ -2,6 +2,7 @@ package com.example.petcaremanagerproject;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
@@ -15,18 +16,18 @@ public class App extends Application {
     private static Stage primaryStage; // Almacenar el escenario principal
     private static Mascota mascotaModificar;
     private static Servicio servicioModificar;
+    private static Scene scene;
+    private static Stage stage;
 
     @Override
     public void start(Stage stage) throws IOException {
         // Guardar el escenario principal
         primaryStage = stage;
-        
-        // Cargar la vista inicial
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("login.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+
+        scene = new Scene(loadFXML("login"));
         stage.setTitle("PetCare Manager");
+        stage.setMaximized(true);
         stage.setScene(scene);
-        stage.setMaximized(true); // Establecer la ventana maximizada
         stage.show();
     }
 
@@ -35,18 +36,17 @@ public class App extends Application {
     }
 
     public static void setRoot(String fxml) throws IOException {
-        if (primaryStage == null) {
-            throw new IllegalStateException("El Stage principal no está inicializado");
+        try {
+            scene.setRoot(loadFXML(fxml));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        primaryStage.setScene(scene);
-        javafx.application.Platform.runLater(() -> {
-            primaryStage.setMaximized(true);
-        });
     }
 
+    private static Parent loadFXML(String fxml) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+        return fxmlLoader.load();
+    }
     public static void setMascotaModificar(Mascota mascota) {
         mascotaModificar = mascota;
     }

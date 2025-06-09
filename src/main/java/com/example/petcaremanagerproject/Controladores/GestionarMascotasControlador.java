@@ -29,6 +29,7 @@ public class GestionarMascotasControlador {
     @FXML private TableColumn<Mascota, String> colImagenUrl;
     @FXML private TextField txtBuscar;
     @FXML private Button btnBuscar;
+    @FXML private ComboBox<String> cmbFiltros;
 
     private ObservableList<Mascota> mascotas = FXCollections.observableArrayList();
 
@@ -37,6 +38,7 @@ public class GestionarMascotasControlador {
         configurarTabla();
         cargarMascotas();
         configurarBusqueda();
+        configurarFiltros();
     }
 
     private void configurarTabla() {
@@ -80,6 +82,196 @@ public class GestionarMascotasControlador {
         
         // Buscar al hacer clic en el botón
         btnBuscar.setOnAction(event -> buscarMascotaOnAction());
+    }
+
+    private void configurarFiltros() {
+        cmbFiltros.getItems().addAll(
+            "Todas las mascotas",
+            "Mascotas jóvenes (0-3 años)",
+            "Mascotas adultas (3 o más años)",
+            "Perros",
+            "Gatos",
+            "Mascotas por peso (más de 10kg)",
+            "Mascotas sin imagen"
+        );
+        cmbFiltros.setValue("Todas las mascotas");
+        cmbFiltros.setOnAction(e -> aplicarFiltro());
+    }
+
+    private void aplicarFiltro() {
+        String filtroSeleccionado = cmbFiltros.getValue();
+        List<Mascota> mascotasFiltradas = new ArrayList<>();
+
+        switch (filtroSeleccionado) {
+            case "Todas las mascotas":
+                mascotasFiltradas = obtenerTodas();
+                break;
+            case "Mascotas jóvenes (0-3 años)":
+                mascotasFiltradas = obtenerMascotasPorEdad(0, 3);
+                break;
+            case "Mascotas adultas (3 o más años)":
+                mascotasFiltradas = obtenerMascotasPorEdad(3, 100);
+                break;
+            case "Perros":
+                mascotasFiltradas = obtenerMascotasPorEspecie("Perro");
+                break;
+            case "Gatos":
+                mascotasFiltradas = obtenerMascotasPorEspecie("Gato");
+                break;
+            case "Mascotas por peso (más de 10kg)":
+                mascotasFiltradas = obtenerMascotasPorPeso(10.0);
+                break;
+            case "Mascotas sin imagen":
+                mascotasFiltradas = obtenerMascotasSinImagen();
+                break;
+        }
+
+        mascotas.clear();
+        mascotas.addAll(mascotasFiltradas);
+        tablaMascotas.refresh();
+    }
+
+    private List<Mascota> obtenerMascotasPorEdad(int edadMin, int edadMax) {
+        List<Mascota> mascotas = new ArrayList<>();
+        String sql = """
+            SELECT m.id_mascota, m.nombre AS mascota_nombre, m.especie, m.raza, m.edad, m.peso, u.nombre AS dueno_nombre, m.id_dueño, m.imagen_url
+            FROM mascota m 
+            JOIN dueño d ON m.id_dueño = d.id_usuario
+            JOIN usuario u ON d.id_usuario = u.id_usuario
+            WHERE m.edad >= ? AND m.edad < ?
+            ORDER BY m.nombre
+        """;
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, edadMin);
+            pstmt.setInt(2, edadMax);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                mascotas.add(new Mascota(
+                    rs.getInt("id_mascota"),
+                    rs.getString("mascota_nombre"),
+                    rs.getString("especie"),
+                    rs.getString("raza"),
+                    rs.getInt("edad"),
+                    rs.getDouble("peso"),
+                    rs.getInt("id_dueño"),
+                    rs.getString("imagen_url"),
+                    rs.getString("dueno_nombre")
+                ));
+            }
+        } catch (SQLException e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al filtrar mascotas por edad: " + e.getMessage());
+        }
+        return mascotas;
+    }
+
+    private List<Mascota> obtenerMascotasPorEspecie(String especie) {
+        List<Mascota> mascotas = new ArrayList<>();
+        String sql = """
+            SELECT m.id_mascota, m.nombre AS mascota_nombre, m.especie, m.raza, m.edad, m.peso, u.nombre AS dueno_nombre, m.id_dueño, m.imagen_url
+            FROM mascota m 
+            JOIN dueño d ON m.id_dueño = d.id_usuario
+            JOIN usuario u ON d.id_usuario = u.id_usuario
+            WHERE m.especie = ?
+            ORDER BY m.nombre
+        """;
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, especie);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                mascotas.add(new Mascota(
+                    rs.getInt("id_mascota"),
+                    rs.getString("mascota_nombre"),
+                    rs.getString("especie"),
+                    rs.getString("raza"),
+                    rs.getInt("edad"),
+                    rs.getDouble("peso"),
+                    rs.getInt("id_dueño"),
+                    rs.getString("imagen_url"),
+                    rs.getString("dueno_nombre")
+                ));
+            }
+        } catch (SQLException e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al filtrar mascotas por especie: " + e.getMessage());
+        }
+        return mascotas;
+    }
+
+    private List<Mascota> obtenerMascotasPorPeso(double pesoMin) {
+        List<Mascota> mascotas = new ArrayList<>();
+        String sql = """
+            SELECT m.id_mascota, m.nombre AS mascota_nombre, m.especie, m.raza, m.edad, m.peso, u.nombre AS dueno_nombre, m.id_dueño, m.imagen_url
+            FROM mascota m 
+            JOIN dueño d ON m.id_dueño = d.id_usuario
+            JOIN usuario u ON d.id_usuario = u.id_usuario
+            WHERE m.peso >= ?
+            ORDER BY m.peso DESC
+        """;
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setDouble(1, pesoMin);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                mascotas.add(new Mascota(
+                    rs.getInt("id_mascota"),
+                    rs.getString("mascota_nombre"),
+                    rs.getString("especie"),
+                    rs.getString("raza"),
+                    rs.getInt("edad"),
+                    rs.getDouble("peso"),
+                    rs.getInt("id_dueño"),
+                    rs.getString("imagen_url"),
+                    rs.getString("dueno_nombre")
+                ));
+            }
+        } catch (SQLException e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al filtrar mascotas por peso: " + e.getMessage());
+        }
+        return mascotas;
+    }
+
+    private List<Mascota> obtenerMascotasSinImagen() {
+        List<Mascota> mascotas = new ArrayList<>();
+        String sql = """
+            SELECT m.id_mascota, m.nombre AS mascota_nombre, m.especie, m.raza, m.edad, m.peso, u.nombre AS dueno_nombre, m.id_dueño, m.imagen_url
+            FROM mascota m 
+            JOIN dueño d ON m.id_dueño = d.id_usuario
+            JOIN usuario u ON d.id_usuario = u.id_usuario
+            WHERE m.imagen_url IS NULL OR m.imagen_url = ''
+            ORDER BY m.nombre
+        """;
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                mascotas.add(new Mascota(
+                    rs.getInt("id_mascota"),
+                    rs.getString("mascota_nombre"),
+                    rs.getString("especie"),
+                    rs.getString("raza"),
+                    rs.getInt("edad"),
+                    rs.getDouble("peso"),
+                    rs.getInt("id_dueño"),
+                    rs.getString("imagen_url"),
+                    rs.getString("dueno_nombre")
+                ));
+            }
+        } catch (SQLException e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al filtrar mascotas sin imagen: " + e.getMessage());
+        }
+        return mascotas;
     }
 
     private void cargarMascotas() {
