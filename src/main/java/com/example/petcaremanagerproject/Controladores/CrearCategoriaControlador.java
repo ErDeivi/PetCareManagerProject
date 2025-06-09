@@ -14,7 +14,6 @@ public class CrearCategoriaControlador {
     @FXML private Label lblTitulo;
     @FXML private TextField txtTipo;
     @FXML private TextArea txtDescripcion;
-    @FXML private Button btnGuardar;
     @FXML private Button btnCancelar;
 
     private Categoria categoriaAModificar;

@@ -12,6 +12,11 @@ public class Dueno extends Usuario {
         super(idUsuario, nombre, correo, null, telefono, null);
     }
 
+    // Constructor para mostrar en la tabla
+    public Dueno(int idUsuario, String nombre, String correo, String telefono, String imagenUrl) {
+        super(idUsuario, nombre, correo, null, telefono, imagenUrl);
+    }
+
     public Dueno(int idUsuario, String nombre, String correo, String contrasena, String telefono, String imagenUrl, String direccion) {
         super(idUsuario, nombre, correo, contrasena, telefono, imagenUrl);
         this.direccion = direccion;

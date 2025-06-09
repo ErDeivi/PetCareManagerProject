@@ -1,6 +1,5 @@
 package com.example.petcaremanagerproject.Controladores;
 
-import com.example.petcaremanagerproject.App;
 import com.example.petcaremanagerproject.Modelo.*;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.fxml.FXML;
@@ -12,8 +11,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CrearServicioControlador {
     @FXML private Label lblTitulo;
@@ -438,7 +435,6 @@ public class CrearServicioControlador {
 
     private void cerrarVentana() {
         Stage stage = (Stage) lblTitulo.getScene().getWindow();
-      //  App.configurarVentanaModal(stage);
         stage.close();
     }
 

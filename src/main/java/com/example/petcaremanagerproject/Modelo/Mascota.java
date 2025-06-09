@@ -1,15 +1,9 @@
 package com.example.petcaremanagerproject.Modelo;
 
 public class Mascota {
-    private int idMascota;
-    private String nombre;
-    private String especie;
-    private String raza;
-    private int edad;
+    private int idMascota,idDueno,edad;
+    private String nombre,especie,raza, imagenUrl,nombreDueno;
     private double peso;
-    private int idDueno;
-    private String imagenUrl;
-    private String nombreDueno;
 
     public Mascota(int idMascota, String nombre, String especie, String raza, int edad, double peso, int idDueno, String imagenUrl) {
         this.idMascota = idMascota;

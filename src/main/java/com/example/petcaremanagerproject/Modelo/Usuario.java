@@ -2,11 +2,7 @@ package com.example.petcaremanagerproject.Modelo;
 
 public class Usuario {
     private int idUsuario;
-    private String nombre;
-    private String correo;
-    private String contrasena;
-    private String telefono;
-    private String imagenUrl;
+    private String nombre,correo,contrasena,telefono,imagenUrl;
 
     public Usuario(int idUsuario, String nombre, String correo, String contrasena, String telefono, String imagenUrl) {
         this.idUsuario = idUsuario;

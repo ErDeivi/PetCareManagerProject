@@ -17,19 +17,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class CrearCuidadorControlador {
-    @FXML private Label lblTitulo;
-    @FXML private Label lblContrasena;
-    @FXML private Label lblContrasenaActual;
-    @FXML private Label lblNuevaContrasena;
-    @FXML private TextField txtNombre;
-    @FXML private TextField txtCorreo;
-    @FXML private TextField txtTelefono;
-    @FXML private TextField txtImagenUrl;
-    @FXML private PasswordField pwdContrasena;
-    @FXML private PasswordField pwdContrasenaActual;
-    @FXML private PasswordField pwdNuevaContrasena;
-    @FXML private Button btnGuardar;
-    @FXML private Button btnCancelar;
+    @FXML private Label lblTitulo,lblContrasena,lblContrasenaActual,lblNuevaContrasena;
+    @FXML private TextField txtNombre,txtCorreo,txtTelefono,txtImagenUrl;
+    @FXML private PasswordField pwdContrasena, pwdContrasenaActual, pwdNuevaContrasena;
 
     private Cuidador cuidadorAModificar;
 

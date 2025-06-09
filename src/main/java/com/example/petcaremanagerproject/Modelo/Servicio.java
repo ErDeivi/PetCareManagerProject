@@ -3,20 +3,9 @@ package com.example.petcaremanagerproject.Modelo;
 import java.time.LocalDateTime;
 
 public class Servicio {
-    private int idServicio;
-    private int idCategoria;
-    private LocalDateTime fechaSolicitud;
-    private LocalDateTime fechaProgramada;
-    private LocalDateTime fechaRealizacion;
-    private String estado;
-    private String observaciones;
-    private int idMascota;
-    private int idCuidador;
-    private int idDueno;
-    private String nombreCategoria;
-    private String nombreMascota;
-    private String nombreCuidador;
-    private String nombreDueno;
+    private int idServicio,idCategoria,idMascota,idCuidador,idDueno;
+    private LocalDateTime fechaSolicitud,fechaProgramada,fechaRealizacion;
+    private String estado,observaciones, nombreCategoria,nombreMascota, nombreCuidador,nombreDueno;
 
     public Servicio(int idServicio, int idCategoria, LocalDateTime fechaSolicitud, LocalDateTime fechaProgramada,
                     LocalDateTime fechaRealizacion, String estado, String observaciones,

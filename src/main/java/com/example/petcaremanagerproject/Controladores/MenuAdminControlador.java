@@ -4,30 +4,13 @@ import com.example.petcaremanagerproject.App;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.nio.file.Paths;
 
 public class MenuAdminControlador {
-    @FXML private Button gestionarMascotas;
-    @FXML private Button gestionarDuenos;
-    @FXML private Button gestionarCuidadores;
-    @FXML private Button gestionarCitas;
-    @FXML private Button gestionarServicios;
-    @FXML private Button gestionarCategorias;
-    @FXML private Button gestionarUsuarios;
-    @FXML private Button cambiarContrasena;
-    @FXML private Button cerrarSesion;
-    @FXML private Button exportarDb;
-    @FXML private Button importarDb;
 
     @FXML
     private void gestionarMascotasOnAction() throws IOException {
@@ -57,11 +40,6 @@ public class MenuAdminControlador {
     @FXML
     private void gestionarCategoriasOnAction() throws IOException {
         App.setRoot("gestionarCategorias");
-    }
-
-    @FXML
-    private void gestionarUsuariosOnAction() throws IOException {
-        App.setRoot("gestionarUsuarios");
     }
 
     @FXML

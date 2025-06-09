@@ -2,8 +2,7 @@ package com.example.petcaremanagerproject.Modelo;
 
 public class Categoria {
     private int idCategoria;
-    private String tipo;
-    private String descripcion;
+    private String tipo, descripcion;
 
     public Categoria(int idCategoria, String tipo, String descripcion) {
         this.idCategoria = idCategoria;

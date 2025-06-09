@@ -53,7 +53,7 @@ public class GestionarDuenosControlador {
     private List<Dueno> obtenerTodos() {
         List<Dueno> duenos = new ArrayList<>();
         String sql = """
-            SELECT u.id_usuario, u.nombre, u.correo, u.telefono, u.contraseña, u.imagen_url
+            SELECT u.id_usuario, u.nombre, u.correo, u.telefono, u.imagen_url
             FROM dueño d
             JOIN usuario u ON d.id_usuario = u.id_usuario
             ORDER BY u.nombre
@@ -70,7 +70,6 @@ public class GestionarDuenosControlador {
                         rs.getString("nombre"),
                         rs.getString("correo"),
                         rs.getString("telefono"),
-                        rs.getString("contraseña"),
                         rs.getString("imagen_url")
                     ));
                 }
@@ -88,7 +87,7 @@ public class GestionarDuenosControlador {
     private List<Dueno> buscar(String busqueda) {
         List<Dueno> duenos = new ArrayList<>();
         String sql = """
-            SELECT u.id_usuario, u.nombre, u.correo, u.telefono, u.contraseña, u.imagen_url
+            SELECT u.id_usuario, u.nombre, u.correo, u.telefono, u.imagen_url
             FROM dueño d
             JOIN usuario u ON d.id_usuario = u.id_usuario
             WHERE u.nombre LIKE ?
@@ -112,7 +111,6 @@ public class GestionarDuenosControlador {
                         rs.getString("nombre"),
                         rs.getString("correo"),
                         rs.getString("telefono"),
-                        rs.getString("contraseña"),
                         rs.getString("imagen_url")
                     ));
                 }
@@ -194,18 +192,27 @@ public class GestionarDuenosControlador {
     }
 
     private void eliminar(int id) throws SQLException {
-        String sql = "DELETE FROM dueño WHERE id_usuario = ?";
+        String sqlDueno = "DELETE FROM dueño WHERE id_usuario = ?";
+        String sqlUsuario = "DELETE FROM usuario WHERE id_usuario = ?";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, id);
-                int filasAfectadas = pstmt.executeUpdate();
-                 if (filasAfectadas > 0) {
-                    conn.commit();
-                } else {
-                    conn.rollback();
-                    throw new SQLException("No se encontró el dueño para eliminar");
+            try {
+                // Primero eliminar de la tabla dueño
+                try (PreparedStatement pstmtDueno = conn.prepareStatement(sqlDueno)) {
+                    pstmtDueno.setInt(1, id);
+                    int filasAfectadas = pstmtDueno.executeUpdate();
+                    if (filasAfectadas > 0) {
+                        // Luego eliminar de la tabla usuario
+                        try (PreparedStatement pstmtUsuario = conn.prepareStatement(sqlUsuario)) {
+                            pstmtUsuario.setInt(1, id);
+                            pstmtUsuario.executeUpdate();
+                        }
+                        conn.commit();
+                    } else {
+                        conn.rollback();
+                        throw new SQLException("No se encontró el dueño para eliminar");
+                    }
                 }
             } catch (SQLException e) {
                 conn.rollback();
