@@ -18,6 +18,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controlador para la gestión de dueños en la aplicación.
+ * Permite realizar operaciones CRUD sobre los dueños y gestionar su visualización.
+ */
 public class GestionarDuenosControlador {
     @FXML private TableView<Dueno> tablaDuenos;
     @FXML private TableColumn<Dueno, String> colNombre;
@@ -28,12 +32,18 @@ public class GestionarDuenosControlador {
 
     private ObservableList<Dueno> duenos = FXCollections.observableArrayList();
 
+    /**
+     * Inicializa el controlador configurando la tabla y cargando los dueños.
+     */
     @FXML
     public void initialize() {
         configurarTabla();
         cargarDuenos();
     }
 
+    /**
+     * Configura las columnas de la tabla y establece el ordenamiento por defecto.
+     */
     private void configurarTabla() {
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
@@ -43,6 +53,9 @@ public class GestionarDuenosControlador {
         tablaDuenos.getSortOrder().add(colNombre);
     }
 
+    /**
+     * Carga los dueños desde la base de datos y los muestra en la tabla.
+     */
     private void cargarDuenos() {
         List<Dueno> listaDuenos = obtenerTodos();
         duenos.clear();
@@ -50,6 +63,10 @@ public class GestionarDuenosControlador {
         tablaDuenos.setItems(duenos);
     }
 
+    /**
+     * Obtiene todos los dueños de la base de datos.
+     * @return Lista de dueños ordenados por nombre
+     */
     private List<Dueno> obtenerTodos() {
         List<Dueno> duenos = new ArrayList<>();
         String sql = """
@@ -84,6 +101,11 @@ public class GestionarDuenosControlador {
         return duenos;
     }
 
+    /**
+     * Busca dueños que coincidan con el criterio de búsqueda.
+     * @param busqueda Texto a buscar en nombre, correo o teléfono
+     * @return Lista de dueños que coinciden con la búsqueda
+     */
     private List<Dueno> buscar(String busqueda) {
         List<Dueno> duenos = new ArrayList<>();
         String sql = """
@@ -125,11 +147,19 @@ public class GestionarDuenosControlador {
         return duenos;
     }
 
+    /**
+     * Navega de vuelta al menú de administrador.
+     * @throws IOException Si hay un error al cargar la vista
+     */
     @FXML
     private void atras() throws IOException {
         App.setRoot("menuAdmin");
     }
 
+    /**
+     * Abre la ventana para crear un nuevo dueño.
+     * @throws IOException Si hay un error al cargar la vista
+     */
     @FXML
     private void nuevoDuenoOnAction() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearDueno.fxml"));
@@ -144,6 +174,10 @@ public class GestionarDuenosControlador {
         cargarDuenos();
     }
 
+    /**
+     * Abre la ventana para modificar el dueño seleccionado.
+     * @throws IOException Si hay un error al cargar la vista
+     */
     @FXML
     private void modificarDuenoOnAction() throws IOException {
         Dueno duenoSeleccionado = tablaDuenos.getSelectionModel().getSelectedItem();
@@ -166,6 +200,9 @@ public class GestionarDuenosControlador {
         }
     }
 
+    /**
+     * Elimina el dueño seleccionado después de confirmar la acción.
+     */
     @FXML
     private void borrarDuenoOnAction() {
         Dueno duenoSeleccionado = tablaDuenos.getSelectionModel().getSelectedItem();
@@ -191,6 +228,11 @@ public class GestionarDuenosControlador {
         }
     }
 
+    /**
+     * Elimina un dueño de la base de datos.
+     * @param id El ID del dueño a eliminar
+     * @throws SQLException si ocurre un error durante la eliminación
+     */
     private void eliminar(int id) throws SQLException {
         String sqlDueno = "DELETE FROM dueño WHERE id_usuario = ?";
         String sqlUsuario = "DELETE FROM usuario WHERE id_usuario = ?";
@@ -221,6 +263,12 @@ public class GestionarDuenosControlador {
         }
     }
 
+    /**
+     * Muestra un diálogo de confirmación para la eliminación de un dueño.
+     * El diálogo incluye una advertencia sobre las mascotas asociadas.
+     * 
+     * @return true si el usuario confirma la eliminación, false en caso contrario
+     */
     private boolean confirmarEliminacion() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar eliminación");
@@ -229,6 +277,13 @@ public class GestionarDuenosControlador {
         return alert.showAndWait().get() == ButtonType.OK;
     }
 
+    /**
+     * Muestra un mensaje de alerta al usuario.
+     * 
+     * @param tipo El tipo de alerta a mostrar (ERROR, WARNING, INFORMATION, etc.)
+     * @param titulo El título de la ventana de alerta
+     * @param contenido El mensaje a mostrar en la alerta
+     */
     private void mostrarMensaje(Alert.AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);

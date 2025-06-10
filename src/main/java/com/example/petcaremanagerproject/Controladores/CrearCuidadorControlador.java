@@ -16,6 +16,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Controlador para la creación y modificación de cuidadores en el sistema.
+ * Gestiona la interfaz de usuario para añadir nuevos cuidadores o modificar los existentes.
+ */
 public class CrearCuidadorControlador {
     @FXML private Label lblTitulo,lblContrasena,lblContrasenaActual,lblNuevaContrasena;
     @FXML private TextField txtNombre,txtCorreo,txtTelefono,txtImagenUrl;
@@ -23,11 +27,18 @@ public class CrearCuidadorControlador {
 
     private Cuidador cuidadorAModificar;
 
+    /**
+     * Inicializa el controlador. No requiere configuración adicional.
+     */
     @FXML
     public void initialize() {
         // No hay campos adicionales que ocultar según el esquema actual.
     }
 
+    /**
+     * Configura el controlador para crear un nuevo cuidador o modificar uno existente.
+     * @param cuidador El cuidador a modificar, o null si se está creando uno nuevo
+     */
     public void setCuidadorAModificar(Cuidador cuidador) {
         this.cuidadorAModificar = cuidador;
         if (cuidador != null) {
@@ -56,6 +67,10 @@ public class CrearCuidadorControlador {
         }
     }
 
+    /**
+     * Maneja el evento de guardar los datos del cuidador.
+     * Crea un nuevo cuidador o actualiza uno existente según corresponda.
+     */
     @FXML
     private void guardarOnAction() {
         if (validarCampos()) {
@@ -78,18 +93,25 @@ public class CrearCuidadorControlador {
         }
     }
 
+    /**
+     * Maneja el evento de cancelar la operación actual.
+     * Cierra la ventana sin guardar cambios.
+     */
     @FXML
     private void cancelarOnAction() {
         cerrarVentana();
     }
 
+    /**
+     * Valida todos los campos del formulario.
+     * @return true si todos los campos son válidos, false en caso contrario
+     */
     private boolean validarCampos() {
         // Validar nombre
         if (txtNombre.getText().trim().isEmpty()) {
             mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "El nombre es obligatorio");
             return false;
         }
-        // Eliminada validación de formato de nombre según el esquema
 
         // Validar correo electrónico
         if (txtCorreo.getText().trim().isEmpty()) {
@@ -148,6 +170,10 @@ public class CrearCuidadorControlador {
         return true;
     }
 
+    /**
+     * Valida que la contraseña actual proporcionada sea correcta.
+     * @return true si la contraseña es correcta, false en caso contrario
+     */
     private boolean validarContrasenaActual() {
         String sql = "SELECT contraseña FROM usuario WHERE id_usuario = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -158,7 +184,6 @@ public class CrearCuidadorControlador {
             
             if (rs.next()) {
                 String contrasenaActual = rs.getString("contraseña");
-                // Aquí podrías usar una librería para comparar hashes de contraseña si estuvieras usando encriptación
                 return contrasenaActual.equals(pwdContrasenaActual.getText().trim());
             }
         } catch (SQLException e) {
@@ -167,6 +192,10 @@ public class CrearCuidadorControlador {
         return false;
     }
 
+    /**
+     * Crea un nuevo cuidador en la base de datos.
+     * @throws SQLException si ocurre un error al acceder a la base de datos
+     */
     private void crear() throws SQLException {
         String sqlUsuario = "INSERT INTO usuario (nombre, correo, contraseña, telefono, imagen_url) VALUES (?, ?, ?, ?, ?)";
         

@@ -18,6 +18,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controlador para la gestión de cuidadores en la aplicación.
+ * Permite realizar operaciones CRUD sobre los cuidadores y gestionar su visualización.
+ */
 public class GestionarCuidadoresControlador {
     @FXML private TableView<Cuidador> tablaCuidadores;
     @FXML private TableColumn<Cuidador, String> colNombre;
@@ -28,6 +32,10 @@ public class GestionarCuidadoresControlador {
 
     private ObservableList<Cuidador> cuidadores = FXCollections.observableArrayList();
 
+    /**
+     * Inicializa el controlador configurando la tabla, cargando los cuidadores
+     * y configurando la funcionalidad de búsqueda.
+     */
     @FXML
     public void initialize() {
         configurarTabla();
@@ -35,6 +43,9 @@ public class GestionarCuidadoresControlador {
         configurarBusqueda();
     }
 
+    /**
+     * Configura las columnas de la tabla y establece el ordenamiento por defecto.
+     */
     private void configurarTabla() {
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
@@ -61,10 +72,16 @@ public class GestionarCuidadoresControlador {
         });
     }
 
+    /**
+     * Configura el evento de búsqueda para el campo de texto.
+     */
     private void configurarBusqueda() {
         txtBuscar.setOnAction(event -> buscarCuidadorOnAction());
     }
 
+    /**
+     * Carga los cuidadores desde la base de datos y los muestra en la tabla.
+     */
     private void cargarCuidadores() {
         List<Cuidador> listaCuidadores = obtenerTodos();
         cuidadores.clear();
@@ -72,6 +89,10 @@ public class GestionarCuidadoresControlador {
         tablaCuidadores.setItems(cuidadores);
     }
 
+    /**
+     * Obtiene todos los cuidadores de la base de datos.
+     * @return Lista de cuidadores ordenados por nombre
+     */
     private List<Cuidador> obtenerTodos() {
         List<Cuidador> cuidadores = new ArrayList<>();
         String sql = "SELECT u.id_usuario, u.nombre, u.correo, u.contraseña, u.telefono, u.imagen_url FROM usuario u JOIN cuidador c ON u.id_usuario = c.id_usuario ORDER BY u.nombre";
@@ -96,11 +117,19 @@ public class GestionarCuidadoresControlador {
         return cuidadores;
     }
 
+    /**
+     * Maneja el evento de volver al menú de administrador.
+     * @throws IOException si hay un error al cargar la vista
+     */
     @FXML
     private void volverOnAction() throws IOException {
         App.setRoot("menuAdmin");
     }
 
+    /**
+     * Abre la ventana para añadir un nuevo cuidador.
+     * @throws IOException si hay un error al cargar la vista
+     */
     @FXML
     private void anadirCuidadorOnAction() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearCuidador.fxml"));
@@ -112,9 +141,13 @@ public class GestionarCuidadoresControlador {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.showAndWait();
 
-        cargarCuidadores(); // Recargar la tabla después de cerrar la ventana de creación
+        cargarCuidadores();
     }
 
+    /**
+     * Abre la ventana para modificar un cuidador seleccionado.
+     * @throws IOException si hay un error al cargar la vista
+     */
     @FXML
     private void modificarCuidadorOnAction() throws IOException {
         Cuidador cuidadorSeleccionado = tablaCuidadores.getSelectionModel().getSelectedItem();
@@ -131,12 +164,15 @@ public class GestionarCuidadoresControlador {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
             
-            cargarCuidadores(); // Recargar la tabla después de cerrar la ventana de modificación
+            cargarCuidadores();
         } else {
             mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Por favor, seleccione un cuidador para modificar.");
         }
     }
 
+    /**
+     * Maneja la eliminación de un cuidador seleccionado.
+     */
     @FXML
     private void eliminarCuidadorOnAction() {
         Cuidador cuidadorSeleccionado = tablaCuidadores.getSelectionModel().getSelectedItem();
@@ -156,6 +192,11 @@ public class GestionarCuidadoresControlador {
         }
     }
 
+    /**
+     * Valida si un cuidador puede ser eliminado verificando si tiene servicios asociados.
+     * @param cuidador El cuidador a validar
+     * @return true si el cuidador puede ser eliminado, false en caso contrario
+     */
     private boolean validarEliminacion(Cuidador cuidador) {
         String sql = "SELECT COUNT(*) FROM servicio WHERE id_cuidador = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -176,6 +217,11 @@ public class GestionarCuidadoresControlador {
         return true;
     }
 
+    /**
+     * Elimina un usuario de la base de datos.
+     * @param idUsuario El ID del usuario a eliminar
+     * @throws SQLException si ocurre un error durante la eliminación
+     */
     private void eliminar(int idUsuario) throws SQLException {
         String sql = "DELETE FROM usuario WHERE id_usuario = ?";
         
@@ -186,6 +232,10 @@ public class GestionarCuidadoresControlador {
         }
     }
 
+    /**
+     * Maneja la búsqueda de cuidadores basada en el texto ingresado.
+     * Si el campo de búsqueda está vacío, recarga todos los cuidadores.
+     */
     @FXML
     private void buscarCuidadorOnAction() {
         String busqueda = txtBuscar.getText().trim();
@@ -198,6 +248,13 @@ public class GestionarCuidadoresControlador {
         }
     }
 
+    /**
+     * Busca cuidadores en la base de datos que coincidan con el texto de búsqueda.
+     * La búsqueda se realiza en nombre, correo y teléfono de los cuidadores.
+     * 
+     * @param busqueda El texto a buscar en los cuidadores
+     * @return Lista de cuidadores que coinciden con el criterio de búsqueda
+     */
     private List<Cuidador> buscar(String busqueda) {
         List<Cuidador> cuidadores = new ArrayList<>();
         String sql = "SELECT u.id_usuario, u.nombre, u.correo, u.contraseña, u.telefono, u.imagen_url FROM usuario u JOIN cuidador c ON u.id_usuario = c.id_usuario WHERE u.nombre LIKE ? OR u.correo LIKE ? OR u.telefono LIKE ? ORDER BY u.nombre";
@@ -226,6 +283,11 @@ public class GestionarCuidadoresControlador {
         return cuidadores;
     }
 
+    /**
+     * Muestra un diálogo de confirmación para la eliminación de un cuidador.
+     * 
+     * @return true si el usuario confirma la eliminación, false en caso contrario
+     */
     private boolean confirmarEliminacion() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar eliminación");
@@ -234,6 +296,13 @@ public class GestionarCuidadoresControlador {
         return alert.showAndWait().get() == ButtonType.OK;
     }
 
+    /**
+     * Muestra un mensaje de alerta al usuario.
+     * 
+     * @param tipo El tipo de alerta a mostrar (ERROR, WARNING, INFORMATION, etc.)
+     * @param titulo El título de la ventana de alerta
+     * @param contenido El contenido del mensaje a mostrar
+     */
     private void mostrarMensaje(Alert.AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);

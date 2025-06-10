@@ -10,43 +10,81 @@ import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Controlador para el menú de administrador.
+ * Maneja la navegación entre las diferentes secciones de la aplicación y las operaciones
+ * de exportación e importación de la base de datos.
+ */
 public class MenuAdminControlador {
 
+    /**
+     * Navega a la vista de gestión de mascotas.
+     * @throws IOException si hay un error al cargar la vista
+     */
     @FXML
     private void gestionarMascotasOnAction() throws IOException {
         App.setRoot("gestionarMascotas");
     }
 
+    /**
+     * Navega a la vista de gestión de dueños.
+     * @throws IOException si hay un error al cargar la vista
+     */
     @FXML
     private void gestionarDuenosOnAction() throws IOException {
         App.setRoot("gestionarDuenos");
     }
 
+    /**
+     * Navega a la vista de gestión de cuidadores.
+     * @throws IOException si hay un error al cargar la vista
+     */
     @FXML
     private void gestionarCuidadoresOnAction() throws IOException {
         App.setRoot("gestionarCuidadores");
     }
 
+    /**
+     * Navega a la vista de gestión de citas.
+     * @throws IOException si hay un error al cargar la vista
+     */
     @FXML
     private void gestionarCitasOnAction() throws IOException {
         App.setRoot("gestionarCitas");
     }
 
+    /**
+     * Navega a la vista de gestión de servicios.
+     * @throws IOException si hay un error al cargar la vista
+     */
     @FXML
     private void gestionarServiciosOnAction() throws IOException {
         App.setRoot("gestionarServicios");
     }
 
+    /**
+     * Navega a la vista de gestión de categorías.
+     * @throws IOException si hay un error al cargar la vista
+     */
     @FXML
     private void gestionarCategoriasOnAction() throws IOException {
         App.setRoot("gestionarCategorias");
     }
 
+    /**
+     * Navega a la vista de cambio de contraseña.
+     * @throws IOException si hay un error al cargar la vista
+     */
     @FXML
     private void cambiarContrasenaOnAction() throws IOException {
         App.setRoot("cambiarContrasena");
     }
 
+    /**
+     * Maneja el cierre de sesión del administrador.
+     * Muestra un diálogo de confirmación antes de cerrar la sesión.
+     * @throws IOException si hay un error al cargar la vista de login
+     */
     @FXML
     private void cerrarSesionOnAction() throws IOException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -59,6 +97,10 @@ public class MenuAdminControlador {
         }
     }
 
+    /**
+     * Exporta la base de datos a un archivo SQL.
+     * Muestra un mensaje de éxito o error según corresponda.
+     */
     @FXML
     private void exportarDbOnAction() {
         try {
@@ -70,6 +112,10 @@ public class MenuAdminControlador {
         }
     }
 
+    /**
+     * Importa una base de datos desde un archivo SQL seleccionado.
+     * Permite al usuario seleccionar el archivo y muestra mensajes de éxito o error.
+     */
     @FXML
     private void importarDbOnAction() {
         FileChooser fileChooser = new FileChooser();
@@ -98,6 +144,12 @@ public class MenuAdminControlador {
         }
     }
 
+    /**
+     * Muestra un diálogo de alerta con el tipo, título y contenido especificados.
+     * @param tipo El tipo de alerta a mostrar
+     * @param titulo El título del diálogo
+     * @param contenido El contenido del mensaje
+     */
     private void mostrarMensaje(Alert.AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);

@@ -23,23 +23,24 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controlador para la gestión de servicios en la aplicación.
+ * Permite realizar operaciones CRUD sobre los servicios y gestionar su visualización.
+ */
 public class GestionarServiciosControlador {
     @FXML private TableView<Servicio> tablaServicios;
-    @FXML private TableColumn<Servicio, String> colCategoria;
-    @FXML private TableColumn<Servicio, String> colEstado;
-    @FXML private TableColumn<Servicio, String> colObservaciones;
-    @FXML private TableColumn<Servicio, String> colMascota;
-    @FXML private TableColumn<Servicio, String> colCuidador;
-    @FXML private TableColumn<Servicio, String> colDueno;
-    @FXML private TableColumn<Servicio, LocalDateTime> colFechaSolicitud;
-    @FXML private TableColumn<Servicio, LocalDateTime> colFechaProgramada;
-    @FXML private TableColumn<Servicio, LocalDateTime> colFechaRealizacion;
+    @FXML private TableColumn<Servicio, String> colCategoria, colEstado,colObservaciones, colMascota,colCuidador, colDueno;
+    @FXML private TableColumn<Servicio, LocalDateTime> colFechaSolicitud,colFechaProgramada,colFechaRealizacion;
     @FXML private TextField txtBuscar;
     @FXML private Button btnBuscar;
     @FXML private ComboBox<String> cmbFiltros;
 
     private ObservableList<Servicio> servicios = FXCollections.observableArrayList();
 
+    /**
+     * Inicializa el controlador configurando la tabla, cargando los servicios
+     * y configurando la búsqueda y filtros.
+     */
     @FXML
     public void initialize() {
         configurarTabla();
@@ -48,6 +49,9 @@ public class GestionarServiciosControlador {
         configurarFiltros();
     }
 
+    /**
+     * Configura las columnas de la tabla de servicios con sus respectivos valores.
+     */
     private void configurarTabla() {
         colCategoria.setCellValueFactory(new PropertyValueFactory<>("nombreCategoria"));
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
@@ -62,15 +66,21 @@ public class GestionarServiciosControlador {
         tablaServicios.getSortOrder().add(colFechaSolicitud);
     }
 
+    /**
+     * Configura los eventos de búsqueda para el campo de texto y el botón.
+     */
     private void configurarBusqueda() {
         txtBuscar.setOnAction(event -> buscarServicioOnAction());
         btnBuscar.setOnAction(event -> buscarServicioOnAction());
     }
 
+    /**
+     * Configura los filtros disponibles en el ComboBox y establece el valor por defecto.
+     */
     private void configurarFiltros() {
         cmbFiltros.getItems().addAll(
             "Todos los servicios",
-            "Servicios pendientes",
+            "Servicios pendientes", 
             "Servicios programados",
             "Servicios completados"
         );
@@ -78,6 +88,9 @@ public class GestionarServiciosControlador {
         cmbFiltros.setOnAction(e -> aplicarFiltro());
     }
 
+    /**
+     * Aplica el filtro seleccionado a la lista de servicios.
+     */
     private void aplicarFiltro() {
         String filtroSeleccionado = cmbFiltros.getValue();
         List<Servicio> serviciosFiltrados = new ArrayList<>();
@@ -102,6 +115,11 @@ public class GestionarServiciosControlador {
         tablaServicios.refresh();
     }
 
+    /**
+     * Obtiene los servicios filtrados por estado.
+     * @param estado El estado por el que filtrar los servicios
+     * @return Lista de servicios que coinciden con el estado especificado
+     */
     private List<Servicio> obtenerServiciosPorEstado(String estado) {
         List<Servicio> servicios = new ArrayList<>();
         String sql = """
@@ -152,6 +170,9 @@ public class GestionarServiciosControlador {
         return servicios;
     }
 
+    /**
+     * Carga todos los servicios en la tabla.
+     */
     private void cargarServicios() {
         List<Servicio> listaServicios = obtenerTodos();
         System.out.println("Cargados " + listaServicios.size() + " servicios."); // Debugging line
@@ -161,6 +182,10 @@ public class GestionarServiciosControlador {
         tablaServicios.refresh();
     }
 
+    /**
+     * Obtiene todos los servicios de la base de datos.
+     * @return Lista con todos los servicios
+     */
     private List<Servicio> obtenerTodos() {
         List<Servicio> servicios = new ArrayList<>();
         String sql = """
@@ -214,11 +239,20 @@ public class GestionarServiciosControlador {
         return servicios;
     }
 
+    /**
+     * Maneja el evento de volver al menú de administrador.
+     * @throws IOException si hay un error al cargar la vista del menú
+     */
     @FXML
     private void volverOnAction() throws IOException {
         App.setRoot("menuAdmin");
     }
 
+    /**
+     * Maneja el evento de añadir un nuevo servicio.
+     * Abre una nueva ventana modal para crear un servicio.
+     * @throws IOException si hay un error al cargar la vista de creación
+     */
     @FXML
     private void anadirServicioOnAction() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearServicio.fxml"));
@@ -233,6 +267,11 @@ public class GestionarServiciosControlador {
         cargarServicios();
     }
 
+    /**
+     * Maneja el evento de modificar un servicio existente.
+     * Abre una ventana modal para modificar el servicio seleccionado.
+     * @throws IOException si hay un error al cargar la vista de modificación
+     */
     @FXML
     private void modificarServicioOnAction() throws IOException {
         Servicio servicioSeleccionado = tablaServicios.getSelectionModel().getSelectedItem();
@@ -255,6 +294,10 @@ public class GestionarServiciosControlador {
         }
     }
 
+    /**
+     * Maneja el evento de eliminar un servicio.
+     * Elimina el servicio seleccionado después de confirmar la acción.
+     */
     @FXML
     private void eliminarServicioOnAction() {
         Servicio servicioSeleccionado = tablaServicios.getSelectionModel().getSelectedItem();
@@ -274,6 +317,11 @@ public class GestionarServiciosControlador {
         }
     }
 
+    /**
+     * Elimina un servicio de la base de datos.
+     * @param id el ID del servicio a eliminar
+     * @throws SQLException si ocurre un error durante la eliminación
+     */
     private void eliminar(int id) throws SQLException {
         String sql = "DELETE FROM servicio WHERE id_servicio = ?";
 
@@ -289,6 +337,10 @@ public class GestionarServiciosControlador {
         }
     }
 
+    /**
+     * Maneja el evento de búsqueda de servicios.
+     * Realiza la búsqueda si hay texto en el campo de búsqueda.
+     */
     @FXML
     private void buscarServicioOnAction() {
         String busqueda = txtBuscar.getText().trim();
@@ -301,6 +353,11 @@ public class GestionarServiciosControlador {
         }
     }
 
+    /**
+     * Busca servicios que coincidan con el texto de búsqueda.
+     * @param busqueda el texto a buscar
+     * @return lista de servicios que coinciden con la búsqueda
+     */
     private List<Servicio> buscar(String busqueda) {
         List<Servicio> servicios = new ArrayList<>();
         String sql = """
@@ -357,6 +414,10 @@ public class GestionarServiciosControlador {
         return servicios;
     }
 
+    /**
+     * Muestra un diálogo de confirmación para eliminar un servicio.
+     * @return true si el usuario confirma la eliminación, false en caso contrario
+     */
     private boolean confirmarEliminacion() {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirmar eliminación");
@@ -365,6 +426,12 @@ public class GestionarServiciosControlador {
         return alert.showAndWait().get() == ButtonType.OK;
     }
 
+    /**
+     * Muestra un mensaje de alerta al usuario.
+     * @param tipo el tipo de alerta
+     * @param titulo el título del mensaje
+     * @param contenido el contenido del mensaje
+     */
     private void mostrarMensaje(AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);

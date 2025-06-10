@@ -10,6 +10,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+/**
+ * Controlador para la creación y modificación de categorías.
+ * Maneja la interfaz de usuario y la lógica para crear o modificar categorías en la base de datos.
+ */
 public class CrearCategoriaControlador {
     @FXML private Label lblTitulo;
     @FXML private TextField txtTipo;
@@ -18,6 +22,10 @@ public class CrearCategoriaControlador {
 
     private Categoria categoriaAModificar;
 
+    /**
+     * Inicializa el controlador configurando los límites de caracteres para los campos de texto.
+     * El tipo de categoría está limitado a 50 caracteres y la descripción a 200 caracteres.
+     */
     @FXML
     public void initialize() {
         // Configurar validación de campos
@@ -34,6 +42,10 @@ public class CrearCategoriaControlador {
         });
     }
 
+    /**
+     * Establece la categoría a modificar y actualiza la interfaz de usuario.
+     * @param categoria La categoría que se va a modificar, o null si se está creando una nueva
+     */
     public void setCategoriaAModificar(Categoria categoria) {
         this.categoriaAModificar = categoria;
         if (categoria != null) {
@@ -43,6 +55,10 @@ public class CrearCategoriaControlador {
         }
     }
 
+    /**
+     * Maneja el evento de guardar la categoría.
+     * Valida los campos y crea o modifica la categoría según corresponda.
+     */
     @FXML
     private void guardarOnAction() {
         if (validarCampos()) {
@@ -60,6 +76,10 @@ public class CrearCategoriaControlador {
         }
     }
 
+    /**
+     * Valida que los campos requeridos no estén vacíos.
+     * @return true si todos los campos son válidos, false en caso contrario
+     */
     private boolean validarCampos() {
         String tipo = txtTipo.getText().trim();
         String descripcion = txtDescripcion.getText().trim();
@@ -81,6 +101,10 @@ public class CrearCategoriaControlador {
         return true;
     }
 
+    /**
+     * Crea una nueva categoría en la base de datos.
+     * @throws SQLException si ocurre un error al interactuar con la base de datos
+     */
     private void crear() throws SQLException {
         String sql = "INSERT INTO categoria (tipo, descripcion) VALUES (?, ?)";
         
@@ -100,6 +124,10 @@ public class CrearCategoriaControlador {
         }
     }
 
+    /**
+     * Modifica una categoría existente en la base de datos.
+     * @throws SQLException si ocurre un error al interactuar con la base de datos
+     */
     private void modificar() throws SQLException {
         String sql = "UPDATE categoria SET tipo = ?, descripcion = ? WHERE id_categoria = ?";
         
@@ -120,16 +148,29 @@ public class CrearCategoriaControlador {
         }
     }
 
+    /**
+     * Maneja el evento de cancelar la operación.
+     * Cierra la ventana actual.
+     */
     @FXML
     private void cancelarOnAction() {
         cerrarVentana();
     }
 
+    /**
+     * Cierra la ventana actual.
+     */
     private void cerrarVentana() {
         Stage stage = (Stage) btnCancelar.getScene().getWindow();
         stage.close();
     }
 
+    /**
+     * Muestra un mensaje de alerta al usuario.
+     * @param tipo El tipo de alerta a mostrar
+     * @param titulo El título de la alerta
+     * @param contenido El contenido del mensaje
+     */
     private void mostrarMensaje(Alert.AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);
@@ -137,4 +178,4 @@ public class CrearCategoriaControlador {
         alert.setContentText(contenido);
         alert.showAndWait();
     }
-} 
+}

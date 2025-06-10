@@ -12,6 +12,10 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 
+/**
+ * Controlador para la funcionalidad de cambio de contraseña del administrador.
+ * Maneja la interfaz de usuario y la lógica para cambiar la contraseña del administrador.
+ */
 public class CambiarContrasenaControlador {
     @FXML
     private PasswordField contrasenaVieja, contrasenaNueva, contrasenaNueva2;
@@ -19,6 +23,10 @@ public class CambiarContrasenaControlador {
     private Text contrasenaCoincidir,camposVacios,contrasenaAntigua, mensajeExito;
     @FXML
     private Button enviar,volver;
+
+    /**
+     * Inicializa el controlador ocultando todos los mensajes de texto.
+     */
     @FXML
     public void initialize() {
         contrasenaCoincidir.setVisible(false);
@@ -27,6 +35,12 @@ public class CambiarContrasenaControlador {
         mensajeExito.setVisible(false);
     }
 
+    /**
+     * Maneja el evento de cambio de contraseña.
+     * Valida los campos y realiza el cambio de contraseña si todas las validaciones son exitosas.
+     *
+     * @param actionEvent El evento que desencadenó esta acción
+     */
     public void cambiarContrasenaOnAction(ActionEvent actionEvent) {
         contrasenaCoincidir.setVisible(false);
         camposVacios.setVisible(false);
@@ -70,10 +84,23 @@ public class CambiarContrasenaControlador {
         }
     }
 
+    /**
+     * Maneja el evento de volver al menú de administrador.
+     *
+     * @param actionEvent El evento que desencadenó esta acción
+     * @throws IOException Si ocurre un error al cargar la vista del menú de administrador
+     */
     public void volverOnAction(ActionEvent actionEvent) throws IOException {
         App.setRoot("menuAdmin");
     }
 
+    /**
+     * Muestra un mensaje de alerta al usuario.
+     *
+     * @param tipo El tipo de alerta (WARNING, ERROR, INFORMATION)
+     * @param titulo El título del mensaje
+     * @param contenido El contenido del mensaje
+     */
     private void mostrarMensaje(Alert.AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);

@@ -12,25 +12,50 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controlador para la creación y modificación de servicios en el sistema.
+ * Gestiona la interfaz de usuario para crear nuevos servicios o modificar los existentes,
+ * incluyendo la selección de categorías, mascotas, cuidadores y programación de fechas.
+ */
 public class CrearServicioControlador {
+    /** Etiqueta que muestra el título de la ventana */
     @FXML private Label lblTitulo;
+    /** ComboBox para seleccionar la categoría del servicio */
     @FXML private ComboBox<Categoria> cmbCategoria;
+    /** Área de texto que muestra la descripción de la categoría seleccionada */
     @FXML private TextArea txtDescripcionCategoria;
+    /** ComboBox para seleccionar el estado del servicio */
     @FXML private ComboBox<String> cmbEstado;
+    /** Área de texto para ingresar observaciones del servicio */
     @FXML private TextArea txtObservaciones;
+    /** ComboBox para seleccionar la mascota del servicio */
     @FXML private ComboBox<Mascota> cmbMascota;
+    /** ComboBox para seleccionar el cuidador del servicio */
     @FXML private ComboBox<Usuario> cmbCuidador;
+    /** ComboBox para seleccionar el dueño de la mascota */
     @FXML private ComboBox<Usuario> cmbDueno;
+    /** Selector de fecha para la solicitud del servicio */
     @FXML private DatePicker dpFechaSolicitud;
+    /** Spinner para seleccionar la hora de solicitud */
     @FXML private Spinner<Integer> spnHoraSolicitud;
+    /** Spinner para seleccionar los minutos de solicitud */
     @FXML private Spinner<Integer> spnMinutoSolicitud;
+    /** Selector de fecha para la programación del servicio */
     @FXML private DatePicker dpFechaProgramada;
+    /** Spinner para seleccionar la hora programada */
     @FXML private Spinner<Integer> spnHoraProgramada;
+    /** Spinner para seleccionar los minutos programados */
     @FXML private Spinner<Integer> spnMinutoProgramada;
 
+    /** Servicio que se está modificando, null si es un nuevo servicio */
     private Servicio servicioAModificar;
+    /** Formateador para las horas en formato HH:mm */
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
+    /**
+     * Inicializa el controlador configurando los componentes de la interfaz
+     * y cargando los datos necesarios.
+     */
     @FXML
     public void initialize() {
         configurarComboBoxes();
@@ -38,6 +63,10 @@ public class CrearServicioControlador {
         cargarDatos();
     }
 
+    /**
+     * Configura los spinners para la selección de horas y minutos,
+     * estableciendo valores por defecto basados en la hora actual.
+     */
     private void configurarSpinners() {
         // Configurar formato de los spinners
         spnHoraSolicitud.setEditable(true);
@@ -53,6 +82,10 @@ public class CrearServicioControlador {
         spnMinutoProgramada.getValueFactory().setValue(ahora.getMinute());
     }
 
+    /**
+     * Configura los ComboBoxes de la interfaz, incluyendo la carga de estados
+     * y la configuración de los cell factories para mostrar información relevante.
+     */
     private void configurarComboBoxes() {
         // Configurar estados
         cmbEstado.getItems().addAll("Pendiente", "En proceso", "Completado", "Cancelado");
@@ -142,6 +175,10 @@ public class CrearServicioControlador {
         });
     }
 
+    /**
+     * Carga los datos iniciales necesarios para el formulario,
+     * incluyendo categorías, mascotas, cuidadores y dueños.
+     */
     private void cargarDatos() {
         cargarCategorias();
         cargarMascotas();
@@ -154,6 +191,9 @@ public class CrearServicioControlador {
         cmbEstado.setValue("Pendiente");
     }
 
+    /**
+     * Carga las categorías de servicios desde la base de datos.
+     */
     private void cargarCategorias() {
         String sql = "SELECT * FROM categoria ORDER BY tipo";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -172,6 +212,9 @@ public class CrearServicioControlador {
         }
     }
 
+    /**
+     * Carga las mascotas registradas desde la base de datos.
+     */
     private void cargarMascotas() {
         String sql = "SELECT m.*, u.nombre as dueno_nombre FROM mascota m JOIN dueño d ON m.id_dueño = d.id_usuario JOIN usuario u ON d.id_usuario = u.id_usuario ORDER BY m.nombre";
         
@@ -196,6 +239,9 @@ public class CrearServicioControlador {
         }
     }
 
+    /**
+     * Carga los cuidadores registrados desde la base de datos.
+     */
     private void cargarCuidadores() {
         String sql = "SELECT u.* FROM usuario u JOIN cuidador c ON u.id_usuario = c.id_usuario ORDER BY u.nombre";
         
@@ -217,7 +263,9 @@ public class CrearServicioControlador {
             mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al cargar cuidadores: " + e.getMessage());
         }
     }
-
+    /**
+     * Carga los dueños registrados desde la base de datos.
+     */
     private void cargarDuenos() {
         String sql = "SELECT u.* FROM usuario u JOIN dueño d ON u.id_usuario = d.id_usuario ORDER BY u.nombre";
         
@@ -240,12 +288,19 @@ public class CrearServicioControlador {
         }
     }
 
+    /**
+     * Establece el servicio a modificar y actualiza la interfaz.
+     * @param servicio El servicio que se va a modificar
+     */
     public void setServicioAModificar(Servicio servicio) {
         this.servicioAModificar = servicio;
         lblTitulo.setText("Modificar Servicio");
         cargarDatosServicio();
     }
 
+    /**
+     * Carga los datos del servicio en los campos del formulario.
+     */
     private void cargarDatosServicio() {
         if (servicioAModificar != null) {
             // Buscar y seleccionar la categoría
@@ -294,6 +349,10 @@ public class CrearServicioControlador {
         }
     }
 
+    /**
+     * Maneja el evento de guardar el servicio.
+     * Crea un nuevo servicio o modifica uno existente según corresponda.
+     */
     @FXML
     private void guardarOnAction() {
         try {
@@ -310,11 +369,18 @@ public class CrearServicioControlador {
         }
     }
 
+    /**
+     * Maneja el evento de cancelar la operación.
+     */
     @FXML
     private void cancelarOnAction() {
         cerrarVentana();
     }
 
+    /**
+     * Valida que todos los campos requeridos estén completos y sean válidos.
+     * @return true si todos los campos son válidos, false en caso contrario
+     */
     private boolean validarCampos() {
         if (cmbCategoria.getValue() == null) {
             mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar una categoría");
@@ -372,6 +438,10 @@ public class CrearServicioControlador {
         return true;
     }
 
+    /**
+     * Crea un nuevo servicio en la base de datos.
+     * @throws SQLException si ocurre un error al acceder a la base de datos
+     */
     private void crearServicio() throws SQLException {
         String sql = "INSERT INTO servicio (id_categoria, estado, observaciones, id_mascota, id_cuidador, id_dueño, fecha_solicitud, fecha_programada) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -402,6 +472,12 @@ public class CrearServicioControlador {
         }
     }
 
+    /**
+     * Modifica un servicio existente en la base de datos.
+     * Actualiza todos los campos del servicio con los valores actuales del formulario.
+     * 
+     * @throws SQLException si ocurre un error al acceder a la base de datos
+     */
     private void modificarServicio() throws SQLException {
         String sql = "UPDATE servicio SET id_categoria = ?, estado = ?, observaciones = ?, id_mascota = ?, id_cuidador = ?, id_dueño = ?, fecha_solicitud = ?, fecha_programada = ? WHERE id_servicio = ?";
 
@@ -433,11 +509,22 @@ public class CrearServicioControlador {
         }
     }
 
+    /**
+     * Cierra la ventana actual del formulario.
+     * Obtiene la referencia a la ventana actual y la cierra.
+     */
     private void cerrarVentana() {
         Stage stage = (Stage) lblTitulo.getScene().getWindow();
         stage.close();
     }
 
+    /**
+     * Muestra un mensaje de alerta al usuario.
+     * 
+     * @param tipo El tipo de alerta a mostrar (ERROR, WARNING, INFORMATION, etc.)
+     * @param titulo El título de la ventana de alerta
+     * @param contenido El mensaje a mostrar en la alerta
+     */
     private void mostrarMensaje(Alert.AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);

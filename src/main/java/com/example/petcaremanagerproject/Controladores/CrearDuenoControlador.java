@@ -16,6 +16,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Controlador para la creación y modificación de dueños en el sistema.
+ * Maneja la interfaz de usuario y la lógica de negocio para crear nuevos dueños
+ * y modificar los existentes.
+ */
 public class CrearDuenoControlador {
     @FXML private Label lblTitulo,lblContrasena,lblContrasenaActual,lblNuevaContrasena;
     @FXML private TextField txtNombre,txtCorreo,txtTelefono,txtImagenUrl;
@@ -23,6 +28,10 @@ public class CrearDuenoControlador {
 
     private Dueno duenoAModificar;
 
+    /**
+     * Establece el dueño a modificar y configura la interfaz según corresponda.
+     * @param dueno El dueño a modificar, o null si se está creando uno nuevo
+     */
     public void setDuenoAModificar(Dueno dueno) {
         this.duenoAModificar = dueno;
         if (dueno != null) {
@@ -50,11 +59,18 @@ public class CrearDuenoControlador {
         }
     }
 
+    /**
+     * Inicializa el controlador.
+     */
     @FXML
     public void initialize() {
         // No es necesario inicializar campos que ya no existen
     }
 
+    /**
+     * Maneja el evento de guardar los datos del dueño.
+     * Crea un nuevo dueño o actualiza uno existente según corresponda.
+     */
     @FXML
     private void guardarOnAction() {
         if (validarCampos()) {
@@ -77,11 +93,18 @@ public class CrearDuenoControlador {
         }
     }
 
+    /**
+     * Maneja el evento de cancelar la operación.
+     */
     @FXML
     private void cancelarOnAction() {
         cerrarVentana();
     }
 
+    /**
+     * Valida todos los campos del formulario.
+     * @return true si todos los campos son válidos, false en caso contrario
+     */
     private boolean validarCampos() {
         if (txtNombre.getText().trim().isEmpty()) {
             mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "El nombre es obligatorio");
@@ -147,6 +170,10 @@ public class CrearDuenoControlador {
         return true;
     }
 
+    /**
+     * Valida que la contraseña actual ingresada coincida con la almacenada en la base de datos.
+     * @return true si la contraseña es correcta, false en caso contrario
+     */
     private boolean validarContrasenaActual() {
         String sql = "SELECT contraseña FROM usuario WHERE id_usuario = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -165,6 +192,10 @@ public class CrearDuenoControlador {
         return false;
     }
 
+    /**
+     * Crea un nuevo dueño en la base de datos.
+     * @throws SQLException si ocurre un error al interactuar con la base de datos
+     */
     private void crear() throws SQLException {
         String sqlUsuario = "INSERT INTO usuario (nombre, correo, contraseña, telefono, imagen_url) VALUES (?, ?, ?, ?, ?)";
         

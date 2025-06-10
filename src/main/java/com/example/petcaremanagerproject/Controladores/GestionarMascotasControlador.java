@@ -18,6 +18,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controlador para la gestión de mascotas en la aplicación.
+ * Permite realizar operaciones CRUD sobre las mascotas y gestionar su visualización.
+ */
 public class GestionarMascotasControlador {
     @FXML private TableView<Mascota> tablaMascotas;
     @FXML private TableColumn<Mascota, String> colNombre;
@@ -33,6 +37,10 @@ public class GestionarMascotasControlador {
 
     private ObservableList<Mascota> mascotas = FXCollections.observableArrayList();
 
+    /**
+     * Inicializa el controlador configurando la tabla, cargando las mascotas
+     * y configurando los componentes de búsqueda y filtrado.
+     */
     @FXML
     public void initialize() {
         configurarTabla();
@@ -41,6 +49,9 @@ public class GestionarMascotasControlador {
         configurarFiltros();
     }
 
+    /**
+     * Configura las columnas de la tabla y establece el ordenamiento.
+     */
     private void configurarTabla() {
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colEspecie.setCellValueFactory(new PropertyValueFactory<>("especie"));
@@ -50,7 +61,6 @@ public class GestionarMascotasControlador {
         colCliente.setCellValueFactory(new PropertyValueFactory<>("nombreDueno"));
         colImagenUrl.setCellValueFactory(new PropertyValueFactory<>("imagenUrl"));
 
-        // Permitir ordenamiento en todas las columnas
         tablaMascotas.getSortOrder().add(colNombre);
         tablaMascotas.setSortPolicy(tableView -> {
             ObservableList<Mascota> items = FXCollections.observableArrayList(tableView.getItems());
@@ -76,14 +86,17 @@ public class GestionarMascotasControlador {
         });
     }
 
+    /**
+     * Configura los eventos de búsqueda para el campo de texto y el botón.
+     */
     private void configurarBusqueda() {
-        // Buscar al presionar Enter en el campo de búsqueda
         txtBuscar.setOnAction(event -> buscarMascotaOnAction());
-        
-        // Buscar al hacer clic en el botón
         btnBuscar.setOnAction(event -> buscarMascotaOnAction());
     }
 
+    /**
+     * Configura los filtros disponibles en el ComboBox.
+     */
     private void configurarFiltros() {
         cmbFiltros.getItems().addAll(
             "Todas las mascotas",
@@ -98,6 +111,9 @@ public class GestionarMascotasControlador {
         cmbFiltros.setOnAction(e -> aplicarFiltro());
     }
 
+    /**
+     * Aplica el filtro seleccionado a la lista de mascotas.
+     */
     private void aplicarFiltro() {
         String filtroSeleccionado = cmbFiltros.getValue();
         List<Mascota> mascotasFiltradas = new ArrayList<>();
@@ -131,6 +147,12 @@ public class GestionarMascotasControlador {
         tablaMascotas.refresh();
     }
 
+    /**
+     * Obtiene las mascotas dentro de un rango de edad específico.
+     * @param edadMin Edad mínima del rango
+     * @param edadMax Edad máxima del rango
+     * @return Lista de mascotas que cumplen con el criterio de edad
+     */
     private List<Mascota> obtenerMascotasPorEdad(int edadMin, int edadMax) {
         List<Mascota> mascotas = new ArrayList<>();
         String sql = """
@@ -168,6 +190,11 @@ public class GestionarMascotasControlador {
         return mascotas;
     }
 
+    /**
+     * Obtiene las mascotas de una especie específica.
+     * @param especie Especie de mascota a filtrar
+     * @return Lista de mascotas de la especie especificada
+     */
     private List<Mascota> obtenerMascotasPorEspecie(String especie) {
         List<Mascota> mascotas = new ArrayList<>();
         String sql = """
@@ -204,6 +231,11 @@ public class GestionarMascotasControlador {
         return mascotas;
     }
 
+    /**
+     * Obtiene las mascotas que tienen un peso mayor o igual al especificado.
+     * @param pesoMin Peso mínimo para filtrar las mascotas
+     * @return Lista de mascotas que cumplen con el criterio de peso
+     */
     private List<Mascota> obtenerMascotasPorPeso(double pesoMin) {
         List<Mascota> mascotas = new ArrayList<>();
         String sql = """
@@ -240,6 +272,10 @@ public class GestionarMascotasControlador {
         return mascotas;
     }
 
+    /**
+     * Obtiene las mascotas que no tienen imagen asociada.
+     * @return Lista de mascotas sin imagen
+     */
     private List<Mascota> obtenerMascotasSinImagen() {
         List<Mascota> mascotas = new ArrayList<>();
         String sql = """
@@ -274,6 +310,9 @@ public class GestionarMascotasControlador {
         return mascotas;
     }
 
+    /**
+     * Carga todas las mascotas en la tabla de la interfaz gráfica.
+     */
     private void cargarMascotas() {
         List<Mascota> listaMascotas = obtenerTodas();
         System.out.println("Cargadas " + listaMascotas.size() + " mascotas."); // Debugging line
@@ -283,6 +322,11 @@ public class GestionarMascotasControlador {
         tablaMascotas.refresh();
     }
 
+    /**
+     * Obtiene todas las mascotas de la base de datos.
+     * @return Lista con todas las mascotas ordenadas por nombre
+     * @throws RuntimeException si ocurre un error al cargar las mascotas
+     */
     private List<Mascota> obtenerTodas() {
         List<Mascota> mascotas = new ArrayList<>();
         String sql = """
@@ -299,7 +343,6 @@ public class GestionarMascotasControlador {
                  ResultSet rs = stmt.executeQuery(sql)) {
                 
                 while (rs.next()) {
-                    // Usar el alias 'dueno_nombre' para obtener el nombre del dueño
                     String nombreDueno = rs.getString("dueno_nombre");
 
                     mascotas.add(new Mascota(
@@ -325,11 +368,20 @@ public class GestionarMascotasControlador {
         return mascotas;
     }
 
+    /**
+     * Maneja el evento de volver al menú de administrador.
+     * @throws IOException si ocurre un error al cargar la vista del menú
+     */
     @FXML
     private void volverOnAction() throws IOException {
         App.setRoot("menuAdmin");
     }
 
+    /**
+     * Maneja el evento de añadir una nueva mascota.
+     * Abre una nueva ventana para crear una mascota.
+     * @throws IOException si ocurre un error al cargar la vista de creación
+     */
     @FXML
     private void anadirMascotaOnAction() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearMascota.fxml"));
@@ -341,9 +393,14 @@ public class GestionarMascotasControlador {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.showAndWait();
 
-        cargarMascotas(); // Recargar la tabla después de cerrar la ventana de creación
+        cargarMascotas();
     }
 
+    /**
+     * Maneja el evento de modificar una mascota existente.
+     * Abre una nueva ventana para modificar la mascota seleccionada.
+     * @throws IOException si ocurre un error al cargar la vista de modificación
+     */
     @FXML
     private void modificarMascotaOnAction() throws IOException {
         Mascota mascotaSeleccionada = tablaMascotas.getSelectionModel().getSelectedItem();
@@ -360,12 +417,16 @@ public class GestionarMascotasControlador {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
             
-            cargarMascotas(); // Recargar la tabla después de cerrar la ventana de modificación
+            cargarMascotas();
         } else {
             mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Por favor, seleccione una mascota para modificar.");
         }
     }
 
+    /**
+     * Maneja el evento de eliminar una mascota.
+     * Realiza las validaciones necesarias y elimina la mascota seleccionada.
+     */
     @FXML
     private void eliminarMascotaOnAction() {
         Mascota mascotaSeleccionada = tablaMascotas.getSelectionModel().getSelectedItem();
@@ -374,7 +435,7 @@ public class GestionarMascotasControlador {
                 try {
                     eliminar(mascotaSeleccionada.getIdMascota());
                     mascotas.remove(mascotaSeleccionada);
-                    tablaMascotas.refresh(); // Asegurar que la tabla se actualice visualmente
+                    tablaMascotas.refresh();
                     mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Mascota eliminada correctamente");
                 } catch (SQLException e) {
                     if (e.getMessage().contains("FOREIGN KEY constraint failed")) {
@@ -391,6 +452,11 @@ public class GestionarMascotasControlador {
         }
     }
 
+    /**
+     * Valida si una mascota puede ser eliminada verificando si tiene servicios asociados.
+     * @param mascota La mascota a validar
+     * @return true si la mascota puede ser eliminada, false si tiene servicios asociados
+     */
     private boolean validarEliminacion(Mascota mascota) {
         // Verificar si la mascota tiene servicios asociados
         String sql = "SELECT COUNT(*) FROM servicio WHERE id_mascota = ?"; // Table name is 'servicio'
@@ -412,6 +478,11 @@ public class GestionarMascotasControlador {
         return true;
     }
 
+    /**
+     * Elimina una mascota de la base de datos.
+     * @param id El ID de la mascota a eliminar
+     * @throws SQLException si ocurre un error durante la eliminación
+     */
     private void eliminar(int id) throws SQLException {
         String sql = "DELETE FROM mascota WHERE id_mascota = ?";
         
@@ -433,6 +504,10 @@ public class GestionarMascotasControlador {
         }
     }
 
+    /**
+     * Maneja el evento de búsqueda de mascotas.
+     * Actualiza la tabla con los resultados de la búsqueda o carga todas las mascotas si la búsqueda está vacía.
+     */
     @FXML
     private void buscarMascotaOnAction() {
         String busqueda = txtBuscar.getText().trim();
@@ -445,6 +520,11 @@ public class GestionarMascotasControlador {
         }
     }
 
+    /**
+     * Busca mascotas que coincidan con el criterio de búsqueda.
+     * @param busqueda El texto de búsqueda
+     * @return Lista de mascotas que coinciden con el criterio de búsqueda
+     */
     private List<Mascota> buscar(String busqueda) {
         List<Mascota> mascotas = new ArrayList<>();
         String sql = """
@@ -495,6 +575,10 @@ public class GestionarMascotasControlador {
         return mascotas;
     }
 
+    /**
+     * Muestra un diálogo de confirmación para la eliminación de una mascota.
+     * @return true si el usuario confirma la eliminación, false en caso contrario
+     */
     private boolean confirmarEliminacion() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar eliminación");
@@ -503,6 +587,12 @@ public class GestionarMascotasControlador {
         return alert.showAndWait().get() == ButtonType.OK;
     }
 
+    /**
+     * Muestra un mensaje de alerta al usuario.
+     * @param tipo El tipo de alerta a mostrar (ERROR, WARNING, INFORMATION, etc.)
+     * @param titulo El título de la ventana de alerta
+     * @param contenido El mensaje a mostrar en la alerta
+     */
     private void mostrarMensaje(Alert.AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);
