@@ -5,55 +5,31 @@ import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Controlador para la creación y modificación de servicios en el sistema.
- * Gestiona la interfaz de usuario para crear nuevos servicios o modificar los existentes,
- * incluyendo la selección de categorías, mascotas, cuidadores y programación de fechas.
- */
-public class CrearServicioControlador {
-    /** Etiqueta que muestra el título de la ventana */
+public class ModificarServicioControlador {
     @FXML private Label lblTitulo;
-    /** ComboBox para seleccionar la categoría del servicio */
     @FXML private ComboBox<Categoria> cmbCategoria;
-    /** Área de texto que muestra la descripción de la categoría seleccionada */
     @FXML private TextArea txtDescripcionCategoria;
-    /** ComboBox para seleccionar el estado del servicio */
     @FXML private ComboBox<String> cmbEstado;
-    /** Área de texto para ingresar observaciones del servicio */
     @FXML private TextArea txtObservaciones;
-    /** ComboBox para seleccionar la mascota del servicio */
     @FXML private ComboBox<Mascota> cmbMascota;
-    /** ComboBox para seleccionar el cuidador del servicio */
     @FXML private ComboBox<Usuario> cmbCuidador;
-    /** ComboBox para seleccionar el dueño de la mascota */
     @FXML private ComboBox<Usuario> cmbDueno;
-    /** Selector de fecha para la solicitud del servicio */
     @FXML private DatePicker dpFechaSolicitud;
-    /** Spinner para seleccionar la hora de solicitud */
     @FXML private Spinner<Integer> spnHoraSolicitud;
-    /** Spinner para seleccionar los minutos de solicitud */
     @FXML private Spinner<Integer> spnMinutoSolicitud;
-    /** Selector de fecha para la programación del servicio */
     @FXML private DatePicker dpFechaProgramada;
-    /** Spinner para seleccionar la hora programada */
     @FXML private Spinner<Integer> spnHoraProgramada;
-    /** Spinner para seleccionar los minutos programados */
     @FXML private Spinner<Integer> spnMinutoProgramada;
 
-    /** Formateador para las horas en formato HH:mm */
+    private Servicio servicioAModificar;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
-    /**
-     * Inicializa el controlador configurando los componentes de la interfaz
-     * y cargando los datos necesarios.
-     */
     @FXML
     public void initialize() {
         configurarComboBoxes();
@@ -61,15 +37,96 @@ public class CrearServicioControlador {
         cargarDatos();
     }
 
+    private void configurarSpinners() {
+        spnHoraSolicitud.setEditable(true);
+        spnMinutoSolicitud.setEditable(true);
+        spnHoraProgramada.setEditable(true);
+        spnMinutoProgramada.setEditable(true);
+    }
+
+    private void configurarComboBoxes() {
+        cmbEstado.getItems().addAll("Pendiente", "En proceso", "Completado", "Cancelado");
+        cmbCategoria.setOnAction(event -> {
+            Categoria categoriaSeleccionada = cmbCategoria.getValue();
+            if (categoriaSeleccionada != null) {
+                txtDescripcionCategoria.setText(categoriaSeleccionada.getDescripcion());
+            } else {
+                txtDescripcionCategoria.clear();
+            }
+        });
+        cmbMascota.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(Mascota mascota, boolean empty) {
+                super.updateItem(mascota, empty);
+                if (empty || mascota == null) {
+                    setText(null);
+                } else {
+                    setText(mascota.getNombre() + " (" + mascota.getEspecie() + ")");
+                }
+            }
+        });
+        cmbCuidador.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(Usuario cuidador, boolean empty) {
+                super.updateItem(cuidador, empty);
+                if (empty || cuidador == null) {
+                    setText(null);
+                } else {
+                    setText(cuidador.getNombre());
+                }
+            }
+        });
+        cmbDueno.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(Usuario usuario, boolean empty) {
+                super.updateItem(usuario, empty);
+                if (empty || usuario == null) {
+                    setText(null);
+                } else {
+                    setText(usuario.getNombre());
+                }
+            }
+        });
+        cmbMascota.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(Mascota mascota, boolean empty) {
+                super.updateItem(mascota, empty);
+                if (empty || mascota == null) {
+                    setText(null);
+                } else {
+                    setText(mascota.getNombre() + " (" + mascota.getEspecie() + ")");
+                }
+            }
+        });
+        cmbCuidador.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(Usuario cuidador, boolean empty) {
+                super.updateItem(cuidador, empty);
+                if (empty || cuidador == null) {
+                    setText(null);
+                } else {
+                    setText(cuidador.getNombre());
+                }
+            }
+        });
+        cmbDueno.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(Usuario usuario, boolean empty) {
+                super.updateItem(usuario, empty);
+                if (empty || usuario == null) {
+                    setText(null);
+                } else {
+                    setText(usuario.getNombre());
+                }
+            }
+        });
+    }
+
     private void cargarDatos() {
         cargarCategorias();
         cargarMascotas();
         cargarCuidadores();
         cargarDuenos();
-        // Establecer valores por defecto
-        dpFechaSolicitud.setValue(LocalDate.now());
-        dpFechaProgramada.setValue(LocalDate.now());
-        cmbEstado.setValue("Pendiente");
     }
 
     private void cargarCategorias() {
@@ -148,127 +205,54 @@ public class CrearServicioControlador {
         }
     }
 
-    /**
-     * Configura los spinners para la selección de horas y minutos,
-     * estableciendo valores por defecto basados en la hora actual.
-     */
-    private void configurarSpinners() {
-        // Configurar formato de los spinners
-        spnHoraSolicitud.setEditable(true);
-        spnMinutoSolicitud.setEditable(true);
-        spnHoraProgramada.setEditable(true);
-        spnMinutoProgramada.setEditable(true);
-
-        // Establecer valores por defecto
-        LocalTime ahora = LocalTime.now();
-        spnHoraSolicitud.getValueFactory().setValue(ahora.getHour());
-        spnMinutoSolicitud.getValueFactory().setValue(ahora.getMinute());
-        spnHoraProgramada.getValueFactory().setValue(ahora.plusHours(1).getHour());
-        spnMinutoProgramada.getValueFactory().setValue(ahora.getMinute());
+    public void setServicioAModificar(Servicio servicio) {
+        this.servicioAModificar = servicio;
+        lblTitulo.setText("Modificar Servicio");
+        cargarDatosServicio();
     }
 
-    /**
-     * Configura los ComboBoxes de la interfaz, incluyendo la carga de estados
-     * y la configuración de los cell factories para mostrar información relevante.
-     */
-    private void configurarComboBoxes() {
-        // Configurar estados
-        cmbEstado.getItems().addAll("Pendiente", "En proceso", "Completado", "Cancelado");
-        
-        // Configurar listener para mostrar la descripción de la categoría
-        cmbCategoria.setOnAction(event -> {
-            Categoria categoriaSeleccionada = cmbCategoria.getValue();
-            if (categoriaSeleccionada != null) {
-                txtDescripcionCategoria.setText(categoriaSeleccionada.getDescripcion());
-            } else {
-                txtDescripcionCategoria.clear();
-            }
-        });
-
-        // Configurar cell factories para mostrar nombres en lugar de IDs
-        cmbMascota.setCellFactory(param -> new ListCell<>() {
-            @Override
-            protected void updateItem(Mascota mascota, boolean empty) {
-                super.updateItem(mascota, empty);
-                if (empty || mascota == null) {
-                    setText(null);
-                } else {
-                    setText(mascota.getNombre() + " (" + mascota.getEspecie() + ")");
+    private void cargarDatosServicio() {
+        if (servicioAModificar != null) {
+            for (Categoria categoria : cmbCategoria.getItems()) {
+                if (categoria.getIdCategoria() == servicioAModificar.getIdCategoria()) {
+                    cmbCategoria.setValue(categoria);
+                    break;
                 }
             }
-        });
-
-        cmbCuidador.setCellFactory(param -> new ListCell<>() {
-            @Override
-            protected void updateItem(Usuario cuidador, boolean empty) {
-                super.updateItem(cuidador, empty);
-                if (empty || cuidador == null) {
-                    setText(null);
-                } else {
-                    setText(cuidador.getNombre());
+            cmbEstado.setValue(servicioAModificar.getEstado());
+            txtObservaciones.setText(servicioAModificar.getObservaciones());
+            for (Mascota mascota : cmbMascota.getItems()) {
+                if (mascota.getIdMascota() == servicioAModificar.getIdMascota()) {
+                    cmbMascota.setValue(mascota);
+                    break;
                 }
             }
-        });
-
-        cmbDueno.setCellFactory(param -> new ListCell<>() {
-            @Override
-            protected void updateItem(Usuario usuario, boolean empty) {
-                super.updateItem(usuario, empty);
-                if (empty || usuario == null) {
-                    setText(null);
-                } else {
-                    setText(usuario.getNombre());
+            for (Usuario cuidador : cmbCuidador.getItems()) {
+                if (cuidador.getIdUsuario() == servicioAModificar.getIdCuidador()) {
+                    cmbCuidador.setValue(cuidador);
+                    break;
                 }
             }
-        });
-
-        // Configurar button cells
-        cmbMascota.setButtonCell(new ListCell<>() {
-            @Override
-            protected void updateItem(Mascota mascota, boolean empty) {
-                super.updateItem(mascota, empty);
-                if (empty || mascota == null) {
-                    setText(null);
-                } else {
-                    setText(mascota.getNombre() + " (" + mascota.getEspecie() + ")");
+            for (Usuario usuario : cmbDueno.getItems()) {
+                if (usuario.getIdUsuario() == servicioAModificar.getIdDueno()) {
+                    cmbDueno.setValue(usuario);
+                    break;
                 }
             }
-        });
-
-        cmbCuidador.setButtonCell(new ListCell<>() {
-            @Override
-            protected void updateItem(Usuario cuidador, boolean empty) {
-                super.updateItem(cuidador, empty);
-                if (empty || cuidador == null) {
-                    setText(null);
-                } else {
-                    setText(cuidador.getNombre());
-                }
-            }
-        });
-
-        cmbDueno.setButtonCell(new ListCell<>() {
-            @Override
-            protected void updateItem(Usuario usuario, boolean empty) {
-                super.updateItem(usuario, empty);
-                if (empty || usuario == null) {
-                    setText(null);
-                } else {
-                    setText(usuario.getNombre());
-                }
-            }
-        });
+            dpFechaSolicitud.setValue(servicioAModificar.getFechaSolicitud().toLocalDate());
+            spnHoraSolicitud.getValueFactory().setValue(servicioAModificar.getFechaSolicitud().getHour());
+            spnMinutoSolicitud.getValueFactory().setValue(servicioAModificar.getFechaSolicitud().getMinute());
+            dpFechaProgramada.setValue(servicioAModificar.getFechaProgramada().toLocalDate());
+            spnHoraProgramada.getValueFactory().setValue(servicioAModificar.getFechaProgramada().getHour());
+            spnMinutoProgramada.getValueFactory().setValue(servicioAModificar.getFechaProgramada().getMinute());
+        }
     }
 
-    /**
-     * Maneja el evento de guardar el servicio.
-     * Crea un nuevo servicio o modifica uno existente según corresponda.
-     */
     @FXML
     private void guardarOnAction() {
         try {
             if (validarCampos()) {
-                crearServicio();
+                modificarServicio();
                 cerrarVentana();
             }
         } catch (SQLException e) {
@@ -276,18 +260,11 @@ public class CrearServicioControlador {
         }
     }
 
-    /**
-     * Maneja el evento de cancelar la operación.
-     */
     @FXML
     private void cancelarOnAction() {
         cerrarVentana();
     }
 
-    /**
-     * Valida que todos los campos requeridos estén completos y sean válidos.
-     * @return true si todos los campos son válidos, false en caso contrario
-     */
     private boolean validarCampos() {
         if (cmbCategoria.getValue() == null) {
             mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar una categoría");
@@ -325,8 +302,6 @@ public class CrearServicioControlador {
             mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Debe seleccionar una hora programada");
             return false;
         }
-
-        // Validar que la fecha programada no sea anterior a la fecha de solicitud
         LocalDateTime fechaSolicitud = LocalDateTime.of(
             dpFechaSolicitud.getValue(),
             LocalTime.of(spnHoraSolicitud.getValue(), spnMinutoSolicitud.getValue())
@@ -335,33 +310,24 @@ public class CrearServicioControlador {
             dpFechaProgramada.getValue(),
             LocalTime.of(spnHoraProgramada.getValue(), spnMinutoProgramada.getValue())
         );
-
         if (fechaProgramada.isBefore(fechaSolicitud)) {
             mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", 
                 "La fecha programada no puede ser anterior a la fecha de solicitud");
             return false;
         }
-
         return true;
     }
 
-    /**
-     * Crea un nuevo servicio en la base de datos.
-     * @throws SQLException si ocurre un error al acceder a la base de datos
-     */
-    private void crearServicio() throws SQLException {
-        String sql = "INSERT INTO servicio (id_categoria, estado, observaciones, id_mascota, id_cuidador, id_dueño, fecha_solicitud, fecha_programada) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
+    private void modificarServicio() throws SQLException {
+        String sql = "UPDATE servicio SET id_categoria = ?, estado = ?, observaciones = ?, id_mascota = ?, id_cuidador = ?, id_dueño = ?, fecha_solicitud = ?, fecha_programada = ? WHERE id_servicio = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
             pstmt.setInt(1, cmbCategoria.getValue().getIdCategoria());
             pstmt.setString(2, cmbEstado.getValue());
             pstmt.setString(3, txtObservaciones.getText().trim());
             pstmt.setInt(4, cmbMascota.getValue().getIdMascota());
             pstmt.setInt(5, cmbCuidador.getValue().getIdUsuario());
             pstmt.setInt(6, cmbDueno.getValue().getIdUsuario());
-            
             LocalDateTime fechaSolicitud = LocalDateTime.of(
                 dpFechaSolicitud.getValue(),
                 LocalTime.of(spnHoraSolicitud.getValue(), spnMinutoSolicitud.getValue())
@@ -370,31 +336,19 @@ public class CrearServicioControlador {
                 dpFechaProgramada.getValue(),
                 LocalTime.of(spnHoraProgramada.getValue(), spnMinutoProgramada.getValue())
             );
-            
             pstmt.setTimestamp(7, Timestamp.valueOf(fechaSolicitud));
             pstmt.setTimestamp(8, Timestamp.valueOf(fechaProgramada));
-
+            pstmt.setInt(9, servicioAModificar.getIdServicio());
             pstmt.executeUpdate();
-            mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Servicio creado correctamente");
+            mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Servicio modificado correctamente");
         }
     }
 
-    /**
-     * Cierra la ventana actual del formulario.
-     * Obtiene la referencia a la ventana actual y la cierra.
-     */
     private void cerrarVentana() {
         Stage stage = (Stage) lblTitulo.getScene().getWindow();
         stage.close();
     }
 
-    /**
-     * Muestra un mensaje de alerta al usuario.
-     * 
-     * @param tipo El tipo de alerta a mostrar (ERROR, WARNING, INFORMATION, etc.)
-     * @param titulo El título de la ventana de alerta
-     * @param contenido El mensaje a mostrar en la alerta
-     */
     private void mostrarMensaje(Alert.AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);

@@ -12,13 +12,13 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="20.0" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.CrearMascotaControlador">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="20.0" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.ModificarMascotaControlador">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
     <HBox alignment="CENTER_LEFT" spacing="10.0">
-        <Label fx:id="lblTitulo" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Nueva Mascota" />
+        <Label fx:id="lblTitulo" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Modificar Mascota" />
         <Region HBox.hgrow="ALWAYS" />
         <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#volverOnAction" style="-fx-font-size: 14px;" text="Volver" />
     </HBox>
@@ -60,4 +60,4 @@
         <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#guardarOnAction" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px;" text="Guardar" />
         <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#cancelarOnAction" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px;" text="Cancelar" />
     </HBox>
-</VBox>
+</VBox> 

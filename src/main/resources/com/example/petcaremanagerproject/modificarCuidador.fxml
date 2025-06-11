@@ -11,12 +11,12 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.CrearCuidadorControlador">
+<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.petcaremanagerproject.Controladores.ModificarCuidadorControlador">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <Label fx:id="lblTitulo" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Nuevo Cuidador" />
+    <Label fx:id="lblTitulo" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Modificar Cuidador" />
 
     <GridPane hgap="10.0" vgap="10.0">
         <columnConstraints>
@@ -43,4 +43,4 @@
         <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#guardarOnAction" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Guardar" />
         <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#cancelarOnAction" style="-fx-background-color: #f44336; -fx-text-fill: white;" text="Cancelar" />
     </HBox>
-</VBox>
+</VBox> 

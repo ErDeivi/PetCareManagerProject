@@ -2,6 +2,7 @@ package com.example.petcaremanagerproject.Controladores;
 
 import com.example.petcaremanagerproject.App;
 import com.example.petcaremanagerproject.Modelo.Cuidador;
+import com.example.petcaremanagerproject.Modelo.Dueno;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,9 +39,62 @@ public class GestionarCuidadoresControlador {
      */
     @FXML
     public void initialize() {
+        if (tablaCuidadores == null) {
+            System.err.println("Error: tablaCuidadores no se ha inicializado");
+            return;
+        }
         configurarTabla();
         cargarCuidadores();
-        configurarBusqueda();
+        configurarBusquedaEnTiempoReal();
+    }
+    /**
+     * Configura la búsqueda en tiempo real si el campo de texto está disponible
+     */
+    private void configurarBusquedaEnTiempoReal() {
+        if (txtBuscar != null) {
+            txtBuscar.textProperty().addListener((observable, oldValue, newValue) -> {
+                try {
+                    realizarBusqueda();
+                } catch (Exception e) {
+                    System.err.println("Error en búsqueda en tiempo real: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            System.out.println("Advertencia: txtBuscar no está disponible para búsqueda en tiempo real");
+        }
+    }
+
+    /**
+     * Realiza la búsqueda basada en el texto ingresado
+     */
+    private void realizarBusqueda() {
+        String textoBusqueda = obtenerTextoBusqueda();
+
+        if (!textoBusqueda.isEmpty()) {
+            List<Cuidador> resultados = buscar(textoBusqueda);
+            cuidadores.clear();
+            cuidadores.addAll(resultados);
+            if (tablaCuidadores != null) {
+                tablaCuidadores.setItems(cuidadores);
+            }
+        } else {
+            cargarCuidadores(); // Mostrar todos si no hay búsqueda
+        }
+    }
+
+    /**
+     * Obtiene el texto de búsqueda de forma segura
+     * @return El texto de búsqueda o cadena vacía si no está disponible
+     */
+    private String obtenerTextoBusqueda() {
+        if (txtBuscar == null) {
+            System.out.println("Advertencia: txtBuscar es null, retornando cadena vacía");
+            return "";
+        }
+
+        String texto = txtBuscar.getText();
+        return (texto != null) ? texto.trim() : "";
     }
 
     /**
@@ -72,12 +126,7 @@ public class GestionarCuidadoresControlador {
         });
     }
 
-    /**
-     * Configura el evento de búsqueda para el campo de texto.
-     */
-    private void configurarBusqueda() {
-        txtBuscar.setOnAction(event -> buscarCuidadorOnAction());
-    }
+
 
     /**
      * Carga los cuidadores desde la base de datos y los muestra en la tabla.
@@ -152,18 +201,15 @@ public class GestionarCuidadoresControlador {
     private void modificarCuidadorOnAction() throws IOException {
         Cuidador cuidadorSeleccionado = tablaCuidadores.getSelectionModel().getSelectedItem();
         if (cuidadorSeleccionado != null) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearCuidador.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/modificarCuidador.fxml"));
             Scene scene = new Scene(loader.load());
-            
-            CrearCuidadorControlador controlador = loader.getController();
+            ModificarCuidadorControlador controlador = loader.getController();
             controlador.setCuidadorAModificar(cuidadorSeleccionado);
-            
             Stage stage = new Stage();
             stage.setTitle("Modificar Cuidador");
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-            
             cargarCuidadores();
         } else {
             mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Por favor, seleccione un cuidador para modificar.");

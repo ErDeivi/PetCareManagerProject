@@ -1,5 +1,6 @@
 package com.example.petcaremanagerproject.Controladores;
 
+import com.example.petcaremanagerproject.Modelo.Cuidador;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -7,43 +8,34 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-/**
- * Controlador para la creación y modificación de dueños en el sistema.
- * Maneja la interfaz de usuario y la lógica de negocio para crear nuevos dueños
- * y modificar los existentes.
- */
-public class CrearDuenoControlador {
+public class ModificarCuidadorControlador {
     @FXML private TextField txtNombre, txtCorreo, txtTelefono;
     @FXML private javafx.scene.control.Label lblTitulo;
+    private Cuidador cuidadorAModificar;
 
-    /**
-     * Inicializa el controlador.
-     */
-    @FXML
-    public void initialize() {
-        lblTitulo.setText("Nuevo Dueño");
-        txtNombre.setText("");
-        txtCorreo.setText("");
-        txtTelefono.setText("");
+    public void setCuidadorAModificar(Cuidador cuidador) {
+        this.cuidadorAModificar = cuidador;
+        txtNombre.setText(cuidador.getNombre());
+        txtCorreo.setText(cuidador.getCorreo());
+        txtTelefono.setText(cuidador.getTelefono());
     }
 
-    /**
-     * Maneja el evento de guardar los datos del dueño.
-     * Crea un nuevo dueño con contraseña por defecto y sin imagen.
-     */
+    @FXML
+    public void initialize() {
+        lblTitulo.setText("Modificar Cuidador");
+    }
+
     @FXML
     private void guardarOnAction() {
         if (validarCampos()) {
             try {
-                crear();
-                mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Dueño creado correctamente");
+                actualizar();
+                mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Cuidador actualizado correctamente");
                 cerrarVentana();
             } catch (SQLException e) {
-                mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al guardar el dueño: " + e.getMessage());
+                mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al guardar el cuidador: " + e.getMessage());
             }
         }
     }
@@ -81,36 +73,15 @@ public class CrearDuenoControlador {
         return true;
     }
 
-    private void crear() throws SQLException {
-        String sqlUsuario = "INSERT INTO usuario (nombre, correo, contraseña, telefono, imagen_url) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
-            try (PreparedStatement pstmtUsuario = conn.prepareStatement(sqlUsuario, Statement.RETURN_GENERATED_KEYS)) {
-                pstmtUsuario.setString(1, txtNombre.getText().trim());
-                pstmtUsuario.setString(2, txtCorreo.getText().trim());
-                pstmtUsuario.setString(3, "123456"); // Contraseña por defecto
-                pstmtUsuario.setString(4, txtTelefono.getText().trim());
-                pstmtUsuario.setNull(5, java.sql.Types.VARCHAR); // Imagen URL null
-                pstmtUsuario.executeUpdate();
-                ResultSet rs = pstmtUsuario.getGeneratedKeys();
-                int idUsuario = -1;
-                if (rs.next()) {
-                    idUsuario = rs.getInt(1);
-                }
-                if (idUsuario == -1) {
-                    conn.rollback();
-                    throw new SQLException("No se pudo obtener el ID del usuario insertado");
-                }
-                String sqlDuenoSimple = "INSERT INTO dueño (id_usuario) VALUES (?)";
-                try (PreparedStatement pstmtDueno = conn.prepareStatement(sqlDuenoSimple)) {
-                    pstmtDueno.setInt(1, idUsuario);
-                    pstmtDueno.executeUpdate();
-                }
-                conn.commit();
-            } catch (SQLException e) {
-                conn.rollback();
-                throw new SQLException("Error al crear dueño: " + e.getMessage());
-            }
+    private void actualizar() throws SQLException {
+        String sql = "UPDATE usuario SET nombre = ?, correo = ?, telefono = ? WHERE id_usuario = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, txtNombre.getText().trim());
+            pstmt.setString(2, txtCorreo.getText().trim());
+            pstmt.setString(3, txtTelefono.getText().trim());
+            pstmt.setInt(4, cuidadorAModificar.getIdUsuario());
+            pstmt.executeUpdate();
         }
     }
 

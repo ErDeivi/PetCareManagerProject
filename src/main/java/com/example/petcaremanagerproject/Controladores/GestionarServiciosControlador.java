@@ -32,7 +32,6 @@ public class GestionarServiciosControlador {
     @FXML private TableColumn<Servicio, String> colCategoria, colEstado,colObservaciones, colMascota,colCuidador, colDueno;
     @FXML private TableColumn<Servicio, LocalDateTime> colFechaSolicitud,colFechaProgramada,colFechaRealizacion;
     @FXML private TextField txtBuscar;
-    @FXML private Button btnBuscar;
     @FXML private ComboBox<String> cmbFiltros;
 
     private ObservableList<Servicio> servicios = FXCollections.observableArrayList();
@@ -43,12 +42,64 @@ public class GestionarServiciosControlador {
      */
     @FXML
     public void initialize() {
+        if (tablaServicios == null) {
+            System.err.println("Error: tablaServicios no se ha inicializado");
+            return;
+        }
         configurarTabla();
         cargarServicios();
-        configurarBusqueda();
+        configurarBusquedaEnTiempoReal();
         configurarFiltros();
     }
+    /**
+     * Configura la búsqueda en tiempo real si el campo de texto está disponible
+     */
+    private void configurarBusquedaEnTiempoReal() {
+        if (txtBuscar != null) {
+            txtBuscar.textProperty().addListener((observable, oldValue, newValue) -> {
+                try {
+                    realizarBusqueda();
+                } catch (Exception e) {
+                    System.err.println("Error en búsqueda en tiempo real: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            System.out.println("Advertencia: txtBuscar no está disponible para búsqueda en tiempo real");
+        }
+    }
 
+    /**
+     * Realiza la búsqueda basada en el texto ingresado
+     */
+    private void realizarBusqueda() {
+        String textoBusqueda = obtenerTextoBusqueda();
+
+        if (!textoBusqueda.isEmpty()) {
+            List<Servicio> resultados = buscar(textoBusqueda);
+            servicios.clear();
+            servicios.addAll(resultados);
+            if (tablaServicios != null) {
+                tablaServicios.setItems(servicios);
+            }
+        } else {
+            cargarServicios(); // Mostrar todos si no hay búsqueda
+        }
+    }
+
+    /**
+     * Obtiene el texto de búsqueda de forma segura
+     * @return El texto de búsqueda o cadena vacía si no está disponible
+     */
+    private String obtenerTextoBusqueda() {
+        if (txtBuscar == null) {
+            System.out.println("Advertencia: txtBuscar es null, retornando cadena vacía");
+            return "";
+        }
+
+        String texto = txtBuscar.getText();
+        return (texto != null) ? texto.trim() : "";
+    }
     /**
      * Configura las columnas de la tabla de servicios con sus respectivos valores.
      */
@@ -64,14 +115,6 @@ public class GestionarServiciosControlador {
         colFechaRealizacion.setCellValueFactory(new PropertyValueFactory<>("fechaRealizacion"));
 
         tablaServicios.getSortOrder().add(colFechaSolicitud);
-    }
-
-    /**
-     * Configura los eventos de búsqueda para el campo de texto y el botón.
-     */
-    private void configurarBusqueda() {
-        txtBuscar.setOnAction(event -> buscarServicioOnAction());
-        btnBuscar.setOnAction(event -> buscarServicioOnAction());
     }
 
     /**
@@ -257,13 +300,11 @@ public class GestionarServiciosControlador {
     private void anadirServicioOnAction() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearServicio.fxml"));
         Scene scene = new Scene(loader.load());
-
         Stage stage = new Stage();
         stage.setTitle("Nuevo Servicio");
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.showAndWait();
-
         cargarServicios();
     }
 
@@ -276,18 +317,15 @@ public class GestionarServiciosControlador {
     private void modificarServicioOnAction() throws IOException {
         Servicio servicioSeleccionado = tablaServicios.getSelectionModel().getSelectedItem();
         if (servicioSeleccionado != null) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearServicio.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/modificarServicio.fxml"));
             Scene scene = new Scene(loader.load());
-
-            CrearServicioControlador controlador = loader.getController();
+            ModificarServicioControlador controlador = loader.getController();
             controlador.setServicioAModificar(servicioSeleccionado);
-
             Stage stage = new Stage();
             stage.setTitle("Modificar Servicio");
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-
             cargarServicios();
         } else {
             mostrarMensaje(AlertType.WARNING, "Advertencia", "Por favor, seleccione un servicio para modificar.");
@@ -375,14 +413,12 @@ public class GestionarServiciosControlador {
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
             String busquedaPattern = "%" + busqueda + "%";
             pstmt.setString(1, busquedaPattern);
             pstmt.setString(2, busquedaPattern);
             pstmt.setString(3, busquedaPattern);
             pstmt.setString(4, busquedaPattern);
             pstmt.setString(5, busquedaPattern);
-            
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 String nombreCategoria = rs.getString("nombre_categoria");
@@ -407,7 +443,6 @@ public class GestionarServiciosControlador {
                     nombreDueno 
                 ));
             }
-            conn.commit();
         } catch (SQLException e) {
             throw new RuntimeException("Error al buscar servicios: " + e.getMessage(), e);
         }

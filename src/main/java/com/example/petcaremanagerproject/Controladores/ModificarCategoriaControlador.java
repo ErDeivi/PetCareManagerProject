@@ -5,34 +5,25 @@ import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-/**
- * Controlador para la creación y modificación de categorías.
- * Maneja la interfaz de usuario y la lógica para crear o modificar categorías en la base de datos.
- */
-public class CrearCategoriaControlador {
+public class ModificarCategoriaControlador {
     @FXML private Label lblTitulo;
     @FXML private TextField txtTipo;
     @FXML private TextArea txtDescripcion;
     @FXML private Button btnCancelar;
 
-    /**
-     * Inicializa el controlador configurando los límites de caracteres para los campos de texto.
-     * El tipo de categoría está limitado a 50 caracteres y la descripción a 200 caracteres.
-     */
+    private Categoria categoriaAModificar;
+
     @FXML
     public void initialize() {
-        // Configurar validación de campos
         txtTipo.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && newVal.length() > 50) {
                 txtTipo.setText(oldVal);
             }
         });
-
         txtDescripcion.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && newVal.length() > 200) {
                 txtDescripcion.setText(oldVal);
@@ -40,94 +31,69 @@ public class CrearCategoriaControlador {
         });
     }
 
-    /**
-     * Maneja el evento de guardar la categoría.
-     * Valida los campos y crea o modifica la categoría según corresponda.
-     */
+    public void setCategoriaAModificar(Categoria categoria) {
+        this.categoriaAModificar = categoria;
+        if (categoria != null) {
+            lblTitulo.setText("Modificar Categoría");
+            txtTipo.setText(categoria.getTipo());
+            txtDescripcion.setText(categoria.getDescripcion());
+        }
+    }
+
     @FXML
     private void guardarOnAction() {
         if (validarCampos()) {
             try {
-                crear();
+                modificar();
                 cerrarVentana();
             } catch (SQLException e) {
-                mostrarMensaje(Alert.AlertType.ERROR, "Error", 
-                    "Error al guardar la categoría: " + e.getMessage());
+                mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al modificar la categoría: " + e.getMessage());
             }
         }
     }
 
-    /**
-     * Valida que los campos requeridos no estén vacíos.
-     * @return true si todos los campos son válidos, false en caso contrario
-     */
     private boolean validarCampos() {
         String tipo = txtTipo.getText().trim();
         String descripcion = txtDescripcion.getText().trim();
-
         if (tipo.isEmpty()) {
-            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", 
-                "El tipo de categoría es obligatorio.");
+            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "El tipo de categoría es obligatorio.");
             txtTipo.requestFocus();
             return false;
         }
-
         if (descripcion.isEmpty()) {
-            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", 
-                "La descripción es obligatoria.");
+            mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "La descripción es obligatoria.");
             txtDescripcion.requestFocus();
             return false;
         }
-
         return true;
     }
 
-    /**
-     * Crea una nueva categoría en la base de datos.
-     * @throws SQLException si ocurre un error al interactuar con la base de datos
-     */
-    private void crear() throws SQLException {
-        String sql = "INSERT INTO categoria (tipo, descripcion) VALUES (?, ?)";
-        
+    private void modificar() throws SQLException {
+        String sql = "UPDATE categoria SET tipo = ?, descripcion = ? WHERE id_categoria = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
             pstmt.setString(1, txtTipo.getText().trim());
             pstmt.setString(2, txtDescripcion.getText().trim());
-            
+            pstmt.setInt(3, categoriaAModificar.getIdCategoria());
             int filasAfectadas = pstmt.executeUpdate();
             if (filasAfectadas > 0) {
-                mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", 
-                    "Categoría creada correctamente");
+                mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Categoría modificada correctamente");
             } else {
-                throw new SQLException("No se pudo crear la categoría");
+                throw new SQLException("No se pudo modificar la categoría");
             }
         }
     }
 
-    /**
-     * Maneja el evento de cancelar la operación.
-     * Cierra la ventana actual.
-     */
     @FXML
     private void cancelarOnAction() {
         cerrarVentana();
     }
 
-    /**
-     * Cierra la ventana actual.
-     */
     private void cerrarVentana() {
         Stage stage = (Stage) btnCancelar.getScene().getWindow();
         stage.close();
     }
 
-    /**
-     * Muestra un mensaje de alerta al usuario.
-     * @param tipo El tipo de alerta a mostrar
-     * @param titulo El título de la alerta
-     * @param contenido El contenido del mensaje
-     */
     private void mostrarMensaje(Alert.AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);
@@ -135,4 +101,4 @@ public class CrearCategoriaControlador {
         alert.setContentText(contenido);
         alert.showAndWait();
     }
-}
+} 

@@ -17,44 +17,21 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Controlador para la creación y modificación de mascotas en el sistema PetCare Manager.
- * Esta clase maneja la interfaz de usuario para agregar nuevas mascotas o modificar las existentes,
- * incluyendo la validación de datos y la persistencia en la base de datos.
- *
- * @author PetCare Manager Team
- * @version 1.0
- */
-public class CrearMascotaControlador {
-    /** Etiqueta que muestra el título de la ventana */
+public class ModificarMascotaControlador {
     @FXML private Label lblTitulo;
-    
-    /** ComboBox para seleccionar la especie de la mascota */
-    @FXML private ComboBox<String> cmbEspecie;
-    
-    /** Campos de texto para los datos de la mascota */
-    @FXML private TextField txtRaza, txtEdad, txtPeso;
     @FXML private TextField txtNombre;
-    
-    /** ComboBox para seleccionar el dueño de la mascota */
+    @FXML private ComboBox<String> cmbEspecie;
+    @FXML private TextField txtRaza, txtEdad, txtPeso;
     @FXML private ComboBox<Usuario> cmbCliente;
 
-    /** Referencia a la mascota que se está modificando, si es el caso */
     private Mascota mascotaAModificar;
 
-    /**
-     * Inicializa el controlador configurando los campos y cargando los datos necesarios.
-     * Este método es llamado automáticamente por JavaFX después de cargar el FXML.
-     */
     @FXML
     public void initialize() {
         configurarCampos();
         cargarDatos();
     }
 
-    /**
-     * Configura los campos de la interfaz con sus validaciones y valores iniciales.
-     */
     private void configurarCampos() {
         // Configurar ComboBox de especies
         ObservableList<String> especies = FXCollections.observableArrayList(
@@ -93,19 +70,11 @@ public class CrearMascotaControlador {
         });
     }
 
-    /**
-     * Carga los datos necesarios para la interfaz, incluyendo la lista de dueños disponibles.
-     */
     private void cargarDatos() {
         List<Usuario> duenos = obtenerDuenos();
         cmbCliente.getItems().addAll(duenos);
     }
 
-    /**
-     * Obtiene la lista de dueños desde la base de datos.
-     *
-     * @return Lista de usuarios que son dueños de mascotas
-     */
     private List<Usuario> obtenerDuenos() {
         List<Usuario> duenos = new ArrayList<>();
         String sql = """
@@ -135,15 +104,9 @@ public class CrearMascotaControlador {
         return duenos;
     }
 
-    /**
-     * Establece la mascota a modificar y carga sus datos en la interfaz.
-     *
-     * @param mascota La mascota a modificar, o null si se está creando una nueva
-     */
     public void setMascotaAModificar(Mascota mascota) {
         this.mascotaAModificar = mascota;
         if (mascota != null) {
-            lblTitulo.setText("Modificar Mascota");
             txtNombre.setText(mascota.getNombre());
             cmbEspecie.setValue(mascota.getEspecie());
             txtRaza.setText(mascota.getRaza());
@@ -160,82 +123,30 @@ public class CrearMascotaControlador {
         }
     }
 
-    /**
-     * Maneja el evento de guardar la mascota, validando y persistiendo los datos.
-     */
     @FXML
     private void guardarOnAction() {
         if (validarCampos()) {
             try {
-                if (mascotaAModificar == null) {
-                    // Crear nueva mascota
-                    Mascota mascota = new Mascota(
-                        0, // El ID se generará automáticamente
-                        txtNombre.getText().trim(),
-                        cmbEspecie.getValue(),
-                        txtRaza.getText().trim(),
-                        Integer.parseInt(txtEdad.getText().trim()),
-                        Double.parseDouble(txtPeso.getText().trim()),
-                        cmbCliente.getValue().getIdUsuario(),
-                        null // URL de imagen siempre null para nuevas mascotas
-                    );
-                    insertar(mascota);
-                    mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Mascota creada correctamente");
-                } else {
-                    // Modificar mascota existente
-                    Mascota mascota = new Mascota(
-                        mascotaAModificar.getIdMascota(),
-                        txtNombre.getText().trim(),
-                        cmbEspecie.getValue(),
-                        txtRaza.getText().trim(),
-                        Integer.parseInt(txtEdad.getText().trim()),
-                        Double.parseDouble(txtPeso.getText().trim()),
-                        cmbCliente.getValue().getIdUsuario(),
-                        mascotaAModificar.getImagenUrl() // Mantener la URL de imagen existente
-                    );
-                    actualizar(mascota);
-                    mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Mascota modificada correctamente");
-                }
+                Mascota mascota = new Mascota(
+                    mascotaAModificar.getIdMascota(),
+                    txtNombre.getText().trim(),
+                    cmbEspecie.getValue(),
+                    txtRaza.getText().trim(),
+                    Integer.parseInt(txtEdad.getText().trim()),
+                    Double.parseDouble(txtPeso.getText().trim()),
+                    cmbCliente.getValue().getIdUsuario(),
+                    mascotaAModificar.getImagenUrl() // Mantener la URL de imagen existente
+                );
+                
+                actualizar(mascota);
+                mostrarMensaje(Alert.AlertType.INFORMATION, "Éxito", "Mascota modificada correctamente");
                 cerrarVentana();
             } catch (SQLException e) {
-                mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al guardar la mascota: " + e.getMessage());
+                mostrarMensaje(Alert.AlertType.ERROR, "Error", "Error al modificar la mascota: " + e.getMessage());
             }
         }
     }
 
-    /**
-     * Inserta una nueva mascota en la base de datos.
-     *
-     * @param mascota La mascota a insertar
-     * @throws SQLException Si ocurre un error al acceder a la base de datos
-     */
-    private void insertar(Mascota mascota) throws SQLException {
-        String sql = """
-            INSERT INTO mascota (nombre, especie, raza, edad, peso, id_dueño, imagen_url)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """;
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
-            pstmt.setString(1, mascota.getNombre());
-            pstmt.setString(2, mascota.getEspecie());
-            pstmt.setString(3, mascota.getRaza());
-            pstmt.setInt(4, mascota.getEdad());
-            pstmt.setDouble(5, mascota.getPeso());
-            pstmt.setInt(6, mascota.getIdDueno());
-            pstmt.setNull(7, java.sql.Types.VARCHAR); // URL de imagen siempre null
-            
-            pstmt.executeUpdate();
-        }
-    }
-
-    /**
-     * Actualiza una mascota existente en la base de datos.
-     *
-     * @param mascota La mascota con los datos actualizados
-     * @throws SQLException Si ocurre un error al acceder a la base de datos
-     */
     private void actualizar(Mascota mascota) throws SQLException {
         String sql = """
             UPDATE mascota 
@@ -258,12 +169,6 @@ public class CrearMascotaControlador {
         }
     }
 
-    /**
-     * Valida todos los campos del formulario de mascota.
-     * Verifica que los campos obligatorios no estén vacíos y que los valores numéricos sean válidos.
-     * 
-     * @return true si todos los campos son válidos, false en caso contrario
-     */
     private boolean validarCampos() {
         if (txtNombre.getText().trim().isEmpty()) {
             mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "El nombre es obligatorio");
@@ -312,47 +217,26 @@ public class CrearMascotaControlador {
         return true;
     }
 
-    /**
-     * Maneja el evento de cancelar la operación actual.
-     * Cierra la ventana sin guardar cambios.
-     */
     @FXML
     private void cancelarOnAction() {
         cerrarVentana();
     }
 
-    /**
-     * Cierra la ventana actual y retorna a la pantalla anterior.
-     * 
-     * @throws IOException Si ocurre un error al cerrar la ventana
-     */
     @FXML
     private void volverOnAction() throws IOException {
         App.setRoot("gestionarMascotas");
     }
 
-    /**
-     * Muestra un mensaje de alerta al usuario.
-     * 
-     * @param tipo El tipo de alerta (INFORMATION, WARNING, ERROR, etc.)
-     * @param titulo El título de la alerta
-     * @param contenido El mensaje a mostrar
-     */
+    private void cerrarVentana() {
+        Stage stage = (Stage) txtNombre.getScene().getWindow();
+        stage.close();
+    }
+
     private void mostrarMensaje(Alert.AlertType tipo, String titulo, String contenido) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(contenido);
         alert.showAndWait();
-    }
-
-    /**
-     * Cierra la ventana actual y retorna a la pantalla anterior.
-     * 
-     * @throws IOException Si ocurre un error al cerrar la ventana
-     */
-    private void cerrarVentana() {
-        Stage stage = (Stage) txtNombre.getScene().getWindow();
-        stage.close();
     }
 } 

@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -12,18 +13,24 @@
     <padding>
         <Insets bottom="10" left="10" right="10" top="10" />
     </padding>
-    
+   
     <HBox alignment="CENTER_LEFT" spacing="10">
         <Button onAction="#atras" text="Atrás" />
         <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Gestión de Dueños" />
     </HBox>
-    
+   
     <HBox alignment="CENTER_LEFT" spacing="10">
         <Button onAction="#nuevoDuenoOnAction" text="Nuevo Dueño" />
         <Button onAction="#modificarDuenoOnAction" text="Modificar Dueño" />
         <Button onAction="#borrarDuenoOnAction" text="Borrar Dueño" />
     </HBox>
     
+    <!-- Sección de búsqueda -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="Buscar:" />
+        <TextField fx:id="txtBuscar" prefWidth="300" promptText="Buscar por nombre, correo o teléfono..." HBox.hgrow="ALWAYS" />
+    </HBox>
+   
     <TableView fx:id="tablaDuenos" style="-fx-font-size: 14px;" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn fx:id="colNombre" prefWidth="150.0" text="Nombre" />

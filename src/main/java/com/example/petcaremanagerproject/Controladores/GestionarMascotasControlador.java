@@ -1,6 +1,7 @@
 package com.example.petcaremanagerproject.Controladores;
 
 import com.example.petcaremanagerproject.App;
+import com.example.petcaremanagerproject.Modelo.Dueno;
 import com.example.petcaremanagerproject.Modelo.Mascota;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.collections.FXCollections;
@@ -43,12 +44,64 @@ public class GestionarMascotasControlador {
      */
     @FXML
     public void initialize() {
+        if (tablaMascotas == null) {
+            System.err.println("Error: tablaMascotas no se ha inicializado");
+            return;
+        }
         configurarTabla();
         cargarMascotas();
-        configurarBusqueda();
+        configurarBusquedaEnTiempoReal();
         configurarFiltros();
     }
+    /**
+     * Configura la búsqueda en tiempo real si el campo de texto está disponible
+     */
+    private void configurarBusquedaEnTiempoReal() {
+        if (txtBuscar != null) {
+            txtBuscar.textProperty().addListener((observable, oldValue, newValue) -> {
+                try {
+                    realizarBusqueda();
+                } catch (Exception e) {
+                    System.err.println("Error en búsqueda en tiempo real: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            System.out.println("Advertencia: txtBuscar no está disponible para búsqueda en tiempo real");
+        }
+    }
 
+    /**
+     * Realiza la búsqueda basada en el texto ingresado
+     */
+    private void realizarBusqueda() {
+        String textoBusqueda = obtenerTextoBusqueda();
+
+        if (!textoBusqueda.isEmpty()) {
+            List<Mascota> resultados = buscar(textoBusqueda);
+            mascotas.clear();
+            mascotas.addAll(resultados);
+            if (tablaMascotas != null) {
+                tablaMascotas.setItems(mascotas);
+            }
+        } else {
+            cargarMascotas(); // Mostrar todos si no hay búsqueda
+        }
+    }
+
+    /**
+     * Obtiene el texto de búsqueda de forma segura
+     * @return El texto de búsqueda o cadena vacía si no está disponible
+     */
+    private String obtenerTextoBusqueda() {
+        if (txtBuscar == null) {
+            System.out.println("Advertencia: txtBuscar es null, retornando cadena vacía");
+            return "";
+        }
+
+        String texto = txtBuscar.getText();
+        return (texto != null) ? texto.trim() : "";
+    }
     /**
      * Configura las columnas de la tabla y establece el ordenamiento.
      */
@@ -405,10 +458,10 @@ public class GestionarMascotasControlador {
     private void modificarMascotaOnAction() throws IOException {
         Mascota mascotaSeleccionada = tablaMascotas.getSelectionModel().getSelectedItem();
         if (mascotaSeleccionada != null) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearMascota.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/modificarMascota.fxml"));
             Scene scene = new Scene(loader.load());
             
-            CrearMascotaControlador controlador = loader.getController();
+            ModificarMascotaControlador controlador = loader.getController();
             controlador.setMascotaAModificar(mascotaSeleccionada);
             
             Stage stage = new Stage();

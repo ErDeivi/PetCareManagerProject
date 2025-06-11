@@ -2,6 +2,7 @@ package com.example.petcaremanagerproject.Controladores;
 
 import com.example.petcaremanagerproject.App;
 import com.example.petcaremanagerproject.Modelo.Categoria;
+import com.example.petcaremanagerproject.Modelo.Dueno;
 import com.example.petcaremanagerproject.Util.DatabaseConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,7 +28,6 @@ public class GestionarCategoriasControlador {
     @FXML private TableColumn<Categoria, String> colTipo;
     @FXML private TableColumn<Categoria, String> colDescripcion;
     @FXML private TextField txtBuscar;
-    @FXML private Button btnBuscar;
 
     private ObservableList<Categoria> categorias = FXCollections.observableArrayList();
 
@@ -37,9 +37,61 @@ public class GestionarCategoriasControlador {
      */
     @FXML
     public void initialize() {
+        if (tablaCategorias == null) {
+            System.err.println("Error: tablaCategorias no se ha inicializado");
+            return;
+        }
         configurarTabla();
         cargarCategorias();
-        configurarBusqueda();
+        configurarBusquedaEnTiempoReal();    }
+    /**
+     * Configura la búsqueda en tiempo real si el campo de texto está disponible
+     */
+    private void configurarBusquedaEnTiempoReal() {
+        if (txtBuscar != null) {
+            txtBuscar.textProperty().addListener((observable, oldValue, newValue) -> {
+                try {
+                    realizarBusqueda();
+                } catch (Exception e) {
+                    System.err.println("Error en búsqueda en tiempo real: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            System.out.println("Advertencia: txtBuscar no está disponible para búsqueda en tiempo real");
+        }
+    }
+
+    /**
+     * Realiza la búsqueda basada en el texto ingresado
+     */
+    private void realizarBusqueda() {
+        String textoBusqueda = obtenerTextoBusqueda();
+
+        if (!textoBusqueda.isEmpty()) {
+            List<Categoria> resultados = buscar(textoBusqueda);
+            categorias.clear();
+            categorias.addAll(resultados);
+            if (tablaCategorias != null) {
+                tablaCategorias.setItems(categorias);
+            }
+        } else {
+            cargarCategorias(); // Mostrar todos si no hay búsqueda
+        }
+    }
+
+    /**
+     * Obtiene el texto de búsqueda de forma segura
+     * @return El texto de búsqueda o cadena vacía si no está disponible
+     */
+    private String obtenerTextoBusqueda() {
+        if (txtBuscar == null) {
+            System.out.println("Advertencia: txtBuscar es null, retornando cadena vacía");
+            return "";
+        }
+
+        String texto = txtBuscar.getText();
+        return (texto != null) ? texto.trim() : "";
     }
 
     /**
@@ -50,14 +102,6 @@ public class GestionarCategoriasControlador {
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
         tablaCategorias.getSortOrder().add(colTipo);
-    }
-
-    /**
-     * Configura los eventos de búsqueda para el campo de texto y el botón.
-     */
-    private void configurarBusqueda() {
-        txtBuscar.setOnAction(event -> buscarCategoriaOnAction());
-        btnBuscar.setOnAction(event -> buscarCategoriaOnAction());
     }
 
     /**
@@ -113,13 +157,11 @@ public class GestionarCategoriasControlador {
     private void anadirCategoriaOnAction() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearCategoria.fxml"));
         Scene scene = new Scene(loader.load());
-
         Stage stage = new Stage();
         stage.setTitle("Nueva Categoría");
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.showAndWait();
-
         cargarCategorias();
     }
 
@@ -131,18 +173,15 @@ public class GestionarCategoriasControlador {
     private void modificarCategoriaOnAction() throws IOException {
         Categoria categoriaSeleccionada = tablaCategorias.getSelectionModel().getSelectedItem();
         if (categoriaSeleccionada != null) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/crearCategoria.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/petcaremanagerproject/modificarCategoria.fxml"));
             Scene scene = new Scene(loader.load());
-            
-            CrearCategoriaControlador controlador = loader.getController();
+            ModificarCategoriaControlador controlador = loader.getController();
             controlador.setCategoriaAModificar(categoriaSeleccionada);
-            
             Stage stage = new Stage();
             stage.setTitle("Modificar Categoría");
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
-            
             cargarCategorias();
         } else {
             mostrarMensaje(Alert.AlertType.WARNING, "Advertencia", "Por favor, seleccione una categoría para modificar.");
