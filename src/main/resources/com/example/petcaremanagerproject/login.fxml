@@ -43,5 +43,5 @@
 
     <Text fx:id="error" fill="RED" text="Usuario o contraseña incorrectos" visible="false" />
 
-    <Button mnemonicParsing="false" onAction="#iniciarSesion" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Iniciar Sesión" />
+    <Button defaultButton="true" mnemonicParsing="false" onAction="#iniciarSesion" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Iniciar Sesión" />
 </VBox>
